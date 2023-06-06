@@ -1,0 +1,32 @@
+Stage1:
+  Range: 80:90
+  Reduce: 50 #Percent
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage1"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage1"
+  Color: GREEN
+  Style: SEGMENTED_10
+  Effects:
+    - "SLOW:1"
+  Actions:
+    - "[title] &cThis is very bad."
+    - "[title-sub] &cDon't drink drity water."
+    - "[message] &cDon't drink drity water."
+    - "[sound] BLOCK_ANVIL_BREAK"
+    - "[player] help"
+    - "[console] msg <player> drinking."
+Stage2:
+  Range: 70:80
+  Reduce: 100 #Percent
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
+  Color: RED
+  Style: SEGMENTED_10
+  Effects:
+    - "SLOW:2"
+  Actions:
+    - "[title] &cThis is very bad."
+    - "[title-sub] &cDon't drink drity water."
+    - "[message] &cDon't drink drity water."
+    - "[sound] BLOCK_ANVIL_BREAK"
+    - "[player] help"
+    - "[console] msg <player> drinking."

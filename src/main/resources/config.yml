@@ -1,0 +1,57 @@
+Thirsty:
+  Max: 100
+  Reduce: 1
+  Time: 20 #Tick
+  Damage: 0.5 #Lost 0.5 hp when thirsty to 0
+CooldownRefresh: 5 #Second
+DisableWorlds:
+  - "world_nether"
+FlagReduce:
+  - "test:2"
+DrinkingWater:
+  Enable: true
+  Delay: 10 #Tick
+  Value: 5 #Value to increase thirst
+  Reduce: 50 #Percent
+  Duration: 100 #Tick
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  Color: BLUE
+  Style: SEGMENTED_10
+  Effects:
+    - "SLOW:1"
+  Actions:
+    - "[title] &cThis is very bad."
+    - "[title-sub] &cDon't drink drity water."
+    - "[message] &cDon't drink drity water."
+    - "[sound] BLOCK_ANVIL_BREAK"
+    - "[player] help"
+    - "[console] msg <player> drinking."
+DrinkingRain:
+  Enable: true
+  Delay: 10 #Tick
+  Value: 5 #Value to increase thirst
+  Reduce: 50 #Percent
+  Duration: 100 #Tick
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  Color: BLUE
+  Style: SEGMENTED_10
+  Effects:
+    - "SLOW:1"
+  Actions:
+    - "[title] &cThis is very bad."
+    - "[title-sub] &cDon't drink drity water."
+    - "[message] &cDon't drink drity water."
+    - "[sound] BLOCK_ANVIL_BREAK"
+    - "[player] help"
+    - "[console] msg <player> drinking."
+Food: true #Replace food to thirst
+BossBar:
+  Enable: true
+  Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
+  Color: BLUE #BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+  Style: SEGMENTED_10 #SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+ActionBar:
+  Enable: true
+  Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
