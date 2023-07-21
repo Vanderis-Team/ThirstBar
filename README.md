@@ -1,9 +1,9 @@
-## THIRST BAR
+# THIRST BAR
 - Author: Vanderis Developer Team
 
 - Current Version: 2.0
-# Introduce
 ![Thirst_Bar_3](https://github.com/Vanderis-Team/ThirstBar/assets/135495959/09962c6c-0845-4f55-bb13-78c458050c2e)
+# Introduce
 Basically, the plugin allows the player to add a new unit called thirst.
 
 The other features are all complemented around this thirst unit
