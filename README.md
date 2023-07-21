@@ -2,13 +2,13 @@
 - Author: Vanderis Developer Team
 
 - Current Version: 2.0
+# Introduce
 ![Thirst_Bar_3](https://github.com/Vanderis-Team/ThirstBar/assets/135495959/09962c6c-0845-4f55-bb13-78c458050c2e)
-## Introduce
 Basically, the plugin allows the player to add a new unit called thirst.
 
 The other features are all complemented around this thirst unit
 
-## Features
+# Features
 ![Features](https://github.com/Vanderis-Team/ThirstBar/assets/135495959/d5cc823c-c751-4093-88d1-f4cab36ac135)
 1. Display the current and the maximum thirst value of players through various forms such as BossBar, ActionBar, and PlaceholderAPI. (This value can be an integer or a real number)
 2. The player's current thirst value will always be decremented over time, the default value and duration of each drop can be customized by the admin.
