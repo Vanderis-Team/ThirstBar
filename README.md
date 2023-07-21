@@ -14,3 +14,5 @@ The other features are all complemented around this thirst unit
 4. When the thirst bar reaches a certain value, you can change the color, change the bossbar title or change the title action bar. 
     - Also apply certain effects (Potion Effect) on the player, such as at 100%, the player's thirst bar is green, and has a speed 1 effect, while at 25%, the player's thirst bar is green. the player's thirst is red and has a slow effect 1. 
     - In addition to the potion effects, and changing the display status of the action bar/bossbar, we can also add actions like [title], [message], [sound], or [player]/[console]
+5. Disable the thirst bar in some special worlds (DisabledWorld) or some special zones (Region - WorldGuard flag).
+6. Another special display method is to replace the hunger bar with the thirst bar. (Hunger bar will almost be removed and useless when you enable this feature)
