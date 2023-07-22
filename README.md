@@ -5,7 +5,7 @@
 
 ![Thirst_Bar_3](https://github.com/Vanderis-Team/ThirstBar/assets/135495959/09962c6c-0845-4f55-bb13-78c458050c2e)
 # INTRODUCE
-This plugin adds thirst to Minecraft. The other features are all designed to complement this unit.
+This plugin adds a new unit called thirst to your server. The other features of the plugin are all designed to complement this unit. This makes the experience for players more realistic and challenging.
 
 # FEATURES
 ![Features](https://github.com/Vanderis-Team/ThirstBar/assets/135495959/d5cc823c-c751-4093-88d1-f4cab36ac135)
