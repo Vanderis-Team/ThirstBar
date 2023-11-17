@@ -4,6 +4,7 @@ import me.orineko.pluginspigottools.FileManager;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
+import me.orineko.thirstbar.manager.Method;
 import me.orineko.thirstbar.manager.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
@@ -13,11 +14,7 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.player.PlayerDataList;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import javax.annotation.Nullable;
-import javax.swing.*;
 
 public final class ThirstBar extends JavaPlugin {
 
@@ -37,7 +34,7 @@ public final class ThirstBar extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         plugin = this;
-        itemsFile = new FileManager("items.db", this);
+        itemsFile = new FileManager("customitems.db", this);
         messageFile = new FileManager("message.yml", this);
         playersFile = new FileManager("players.db", this);
         stageFile = new FileManager("stages.yml", this);
@@ -46,6 +43,7 @@ public final class ThirstBar extends JavaPlugin {
         playersFile.createFile();
         stageFile.copyDefault();
         renewData();
+        Bukkit.getOnlinePlayers().forEach(Method::disableGameMode);
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
         getServer().getPluginManager().registerEvents(new ThirstListener(), this);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new PlaceholderAPI().register();
@@ -78,7 +76,7 @@ public final class ThirstBar extends JavaPlugin {
         playerDataList = new PlayerDataList();
         Bukkit.getOnlinePlayers().forEach(p -> {
             PlayerData playerData = getPlayerDataList().addData(p);
-            boolean check = ConfigData.DISABLE_WORLDS.stream().anyMatch(w ->
+            boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                     p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             playerData.setDisableAll(check);
             playerData.updateAll(p);

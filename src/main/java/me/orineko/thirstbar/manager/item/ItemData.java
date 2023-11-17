@@ -13,6 +13,7 @@ public class ItemData {
     private ItemStack itemStack;
     private double value;
     private double valuePercent;
+    private boolean vanilla;
     private final FileManager file;
 
     public ItemData(@Nonnull String name){
@@ -20,6 +21,7 @@ public class ItemData {
         this.itemStack = null;
         this.value = 0;
         this.valuePercent = 0;
+        this.vanilla = false;
         this.file = ThirstBar.getInstance().getItemsFile();
     }
 
@@ -40,8 +42,13 @@ public class ItemData {
         return valuePercent;
     }
 
+    public boolean isVanilla() {
+        return vanilla;
+    }
+
     public void setItemStack(ItemStack itemStack) {
-        this.itemStack = itemStack;
+        this.itemStack = itemStack.clone();
+        this.itemStack.setAmount(1);
     }
 
     public void setValue(double value) {
@@ -50,6 +57,10 @@ public class ItemData {
 
     public void setValuePercent(double valuePercent) {
         this.valuePercent = valuePercent;
+    }
+
+    public void setVanilla(boolean vanilla) {
+        this.vanilla = vanilla;
     }
 
     public void saveData(){

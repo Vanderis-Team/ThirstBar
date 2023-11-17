@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandManager.CommandInfo(aliases = {"ThirstBar", "TB", "thirstbar.admin"})
+@CommandManager.CommandInfo(aliases = {"ThirstBar", "TB", "Refresh", "RefreshAll"}, permissions = {"thirstbar.admin"})
 public class MainCommand extends CommandManager {
     public MainCommand(@Nonnull Plugin plugin) {
         super(plugin);
@@ -36,7 +36,7 @@ public class MainCommand extends CommandManager {
         if (checkEqualArgs(args, 0, "item")) {
             if (checkEqualArgs(args, 1, "save", "give")) {
                 if (args.length == 3) return ThirstBar.getInstance().getItemDataList().getDataList()
-                        .stream().map(ItemData::getName).collect(Collectors.toList());
+                        .stream().filter(v -> !v.isVanilla()).map(ItemData::getName).collect(Collectors.toList());
             }
         }
         if (checkEqualArgs(args, 0, "help")) {
@@ -52,17 +52,45 @@ public class MainCommand extends CommandManager {
     @CommandSub(length = 0, names = "help", permissions = "thirstbar.help")
     public void onHelp(CommandSender sender, String[] args) {
         if (MessageData.HELP.isEmpty()) return;
-        if (args.length <= 1) {
-            List<String> list = MessageData.HELP.getOrDefault(new ArrayList<>(MessageData.HELP.keySet()).get(0), null);
-            if (list == null) return;
-            list.forEach(sender::sendMessage);
+
+        List<String> list = null;
+        if(args.length >= 1) {
+            if(checkEqualArgs(args, 0, "help")) {
+                if(args.length >= 2){
+                    if(args[1].equalsIgnoreCase("2")){
+                        list = MessageData.HELP.getOrDefault("2", null);
+                    } else {
+                        list = MessageData.HELP.getOrDefault("1", null);
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("1")) {
+                list = MessageData.HELP.getOrDefault("1", null);
+            } else {
+                list = MessageData.HELP.getOrDefault("1", null);
+            }
         } else {
-            if (!checkEqualArgs(args, 0, "help")) return;
-            String key = args[1];
-            List<String> list = MessageData.HELP.getOrDefault(key, null);
-            if (list == null) return;
-            list.forEach(sender::sendMessage);
+            list = MessageData.HELP.getOrDefault("1", null);
         }
+        if (list == null) return;
+        list.forEach(sender::sendMessage);
+    }
+
+    @CommandSub(length = 0, names = "1", permissions = "thirstbar.help")
+    public void onHelp1(CommandSender sender, String[] args) {
+        if (MessageData.HELP.isEmpty()) return;
+
+        List<String> list = MessageData.HELP.getOrDefault("1", null);
+        if (list == null) return;
+        list.forEach(sender::sendMessage);
+    }
+
+    @CommandSub(length = 0, names = "2", permissions = "thirstbar.help")
+    public void onHelp2(CommandSender sender, String[] args) {
+        if (MessageData.HELP.isEmpty()) return;
+
+        List<String> list = MessageData.HELP.getOrDefault("2", null);
+        if (list == null) return;
+        list.forEach(sender::sendMessage);
     }
 
     @CommandSub(length = 1, names = "reload", permissions = "thirstbar.reload")
@@ -72,9 +100,9 @@ public class MainCommand extends CommandManager {
         sender.sendMessage(MessageData.RELOAD);
     }
 
-    @CommandSub(length = 1, names = "refresh")
+    @CommandSub(length = 0, command = "Refresh")
     public void onRefresh(CommandSender sender, String[] args) {
-        if (args.length > 1) {
+        if (args.length > 0) {
             if (!(sender instanceof Player &&
                     (sender.isOp() ||
                             sender.hasPermission("thirstbar.refresh.other")) ||
@@ -82,7 +110,7 @@ public class MainCommand extends CommandManager {
                 sender.sendMessage(MessageData.ERROR_PERMISSION);
                 return;
             }
-            Player player = Bukkit.getPlayer(args[1]);
+            Player player = Bukkit.getPlayer(args[0]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
             PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
             if (data.getName().equals(player.getName()))
@@ -115,7 +143,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 1, names = "refreshall", permissions = "thirstbar.refreshall")
+    @CommandSub(length = 0, command = "RefreshAll", permissions = "thirstbar.refreshall")
     public void onRefreshAll(CommandSender sender, String[] args) {
         ThirstBar.getInstance().getPlayerDataList().getDataList().forEach(playerData -> {
             playerData.refresh();
@@ -314,7 +342,13 @@ public class MainCommand extends CommandManager {
         if (args.length > 3) {
             Player player = Bukkit.getPlayer(args[3]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            Method.sendItemToInv(player, data.getItemStack());
+            ItemStack item = data.getItemStack();
+            if(args.length > 4){
+                if(checkObjectIsFalse(MethodDefault.checkFormatNumber(args[4]), sender, MessageData.ERROR_FORMAT)) return;
+                item.setAmount((int) MethodDefault.formatNumber(args[4], 1));
+            }
+            Method.sendItemToInv(player, item);
+
             player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
             if (!sender.getName().equals(player.getName()))
                 sender.sendMessage(MessageData.PLAYER_LOAD_OTHER(player.getName(), data.getName()));

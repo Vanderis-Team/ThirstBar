@@ -3,7 +3,9 @@ package me.orineko.thirstbar.manager.player;
 import me.orineko.pluginspigottools.DataList;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.file.ConfigData;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -33,10 +35,14 @@ public class PlayerDataList extends DataList<PlayerData> {
     public void removeDataPlayersOnline(){
         getDataList().stream().filter(p -> p.getPlayer() != null)
                 .forEach(playerData -> {
+                    ThirstBar.getInstance().getPlayersFile().set(playerData.getName()+".Thirst", playerData.getThirst());
                     playerData.getBossBar().removePlayer(playerData.getPlayer());
                     playerData.disableExecuteReduce();
                     playerData.disableExecuteRefresh();
+                    Player player = playerData.getPlayer();
+                    if(player != null) playerData.disableStage(player, null);
                 });
+        ThirstBar.getInstance().getPlayersFile().save();
     }
 
     public void loadData(){
@@ -50,8 +56,21 @@ public class PlayerDataList extends DataList<PlayerData> {
                 playerData.setThirstMax(max.doubleValue());
                 playerData.refresh();
             }
-            boolean disable = file.getBoolean(name+".Disable", false);
-            if(disable) playerData.setDisable(true);
+            Player player = Bukkit.getPlayer(playerData.getName());
+            if(player != null) {
+                boolean disable = file.getBoolean(name + ".Disable", false);
+                if (disable) playerData.setDisable(true);
+                boolean check1 = false;
+                try {
+                    check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                            player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+                } catch (IllegalArgumentException ignore) {
+                }
+                boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
+                        player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
+                playerData.setDisableAll(check1 || check2);
+                playerData.updateAll(player);
+            }
         });
     }
 }

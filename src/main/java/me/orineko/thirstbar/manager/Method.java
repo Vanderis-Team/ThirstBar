@@ -4,7 +4,11 @@ import com.cryptomorin.xseries.XPotion;
 import com.cryptomorin.xseries.XSound;
 import com.cryptomorin.xseries.messages.Titles;
 import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.file.ConfigData;
+import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -17,6 +21,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class Method {
+
+    private static int idDelayMessage = 0;
+    private static int idDelayMainTitle = 0;
+    private static int idDelaySubTitle = 0;
+    private static int idDelaySound = 0;
 
     /**
      * Send item to inventory player
@@ -50,7 +59,20 @@ public class Method {
         return format.format(value);
     }
 
-    public static void executeAction(@Nonnull Player player, @Nonnull List<String> textList) {
+    public static void disableGameMode(@Nonnull Player player){
+        GameMode gameMode = player.getGameMode();
+        PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().getData(player.getName());
+        if(playerData == null) return;
+        List<String> gamemodeList = ConfigData.DISABLED_GAMEMODE;
+        try {
+            playerData.setDisableAll(gamemodeList.stream()
+                    .anyMatch(g -> gameMode.equals(GameMode.valueOf(g.toUpperCase()))));
+        } catch (IllegalArgumentException ignore){
+
+        }
+    }
+
+    public static void executeAction(@Nonnull Player player, @Nonnull List<String> textList, boolean stageConfig) {
         List<String> titleMain = new ArrayList<>();
         List<String> titleSub = new ArrayList<>();
         textList.forEach(text -> {
@@ -66,7 +88,10 @@ public class Method {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
-                        Titles.sendTitle(player, main, sub);
+                        if(idDelayMainTitle == 0) Titles.sendTitle(player, main, sub);
+                        if(stageConfig && idDelayMainTitle == 0) idDelayMainTitle =
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                        () -> idDelayMainTitle = 0, 100);
                         titleMain.remove(0);
                         titleSub.remove(0);
                     }
@@ -77,18 +102,27 @@ public class Method {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
-                        Titles.sendTitle(player, main, sub);
+                        if(idDelaySubTitle == 0) Titles.sendTitle(player, main, sub);
+                        if(stageConfig && idDelaySubTitle == 0) idDelaySubTitle =
+                                Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                        () -> idDelaySubTitle = 0, 100);
                         titleMain.remove(0);
                         titleSub.remove(0);
                     }
                     break;
                 case "message":
-                    player.sendMessage(value);
+                    if(idDelayMessage == 0) player.sendMessage(value);
+                    if(stageConfig && idDelayMessage == 0) idDelayMessage =
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                    () -> idDelayMessage = 0, 100);
                     break;
                 case "sound":
                     Optional<XSound> xSound = XSound.matchXSound(value);
                     if (!xSound.isPresent()) break;
-                    xSound.get().play(player);
+                    if(idDelaySound == 0) xSound.get().play(player);
+                    if(stageConfig && idDelaySound == 0) idDelaySound =
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                    () -> idDelaySound = 0, 100);
                     break;
                 case "player":
                     Bukkit.dispatchCommand(player, value);

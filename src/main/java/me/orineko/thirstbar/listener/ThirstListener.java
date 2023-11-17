@@ -8,6 +8,7 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,10 +37,22 @@ public class ThirstListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        double thirstFile = ThirstBar.getInstance().getPlayersFile()
+                .getDouble(playerData.getName()+".Thirst", -1);
+        if(thirstFile >= 0) {
+            playerData.setThirst(thirstFile);
+            ThirstBar.getInstance().getPlayersFile().setAndSave(playerData.getName()+".Thirst", null);
+        }
         playerData.showBossBar(player);
-        boolean check = ConfigData.DISABLE_WORLDS.stream().anyMatch(w ->
+        boolean check1 = false;
+        try {
+            check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                    player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+        } catch (IllegalArgumentException ignore) {
+        }
+        boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                 player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
-        playerData.setDisableAll(check);
+        playerData.setDisableAll(check1 || check2);
         playerData.updateAll(player);
     }
 
@@ -50,11 +63,26 @@ public class ThirstListener implements Listener {
     }
 
     @EventHandler
+    public void onChangeGameMode(PlayerGameModeChangeEvent e){
+        Player player = e.getPlayer();
+        PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().getData(player.getName());
+        if(playerData == null) return;
+        GameMode gameMode = e.getNewGameMode();
+        List<String> gamemodeList = ConfigData.DISABLED_GAMEMODE;
+        try {
+            playerData.setDisableAll(gamemodeList.stream()
+                    .anyMatch(g -> gameMode.equals(GameMode.valueOf(g.toUpperCase()))));
+        } catch (IllegalArgumentException ignore){
+
+        }
+    }
+
+    @EventHandler
     public void onRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         playerData.setThirst(playerData.getThirstMax());
-        boolean check = ConfigData.DISABLE_WORLDS.stream().anyMatch(w ->
+        boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                 player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
         playerData.setDisableAll(check);
         playerData.updateAll(player);
@@ -129,7 +157,7 @@ public class ThirstListener implements Listener {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
 
         if(ThirstBar.getInstance().isWorldGuardApiEnable()){
-            boolean check = ConfigData.DISABLE_WORLDS.stream().anyMatch(w ->
+            boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                     player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             boolean check2 = WorldGuardApi.isPlayerInFlag(player);
             playerData.setDisableAll(check || check2);
@@ -297,9 +325,15 @@ public class ThirstListener implements Listener {
     public void onChangeWorld(PlayerChangedWorldEvent e){
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
-        boolean check = ConfigData.DISABLE_WORLDS.stream().anyMatch(w ->
+        boolean check1 = false;
+        try {
+            check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                    player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+        } catch (IllegalArgumentException ignore) {
+        }
+        boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                 player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
-        playerData.setDisableAll(check);
+        playerData.setDisableAll(check1 || check2);
         playerData.updateAll(player);
     }
 }

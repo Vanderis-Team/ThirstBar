@@ -8,3 +8,7 @@ commands:
     description: This is command main.
   TB:
     description: This is command main.
+  Refresh:
+    description: This is command main.
+  RefreshAll:
+    description: This is command main.

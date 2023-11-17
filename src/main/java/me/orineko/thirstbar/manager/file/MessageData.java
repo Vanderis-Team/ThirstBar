@@ -3,9 +3,12 @@ package me.orineko.thirstbar.manager.file;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,9 +54,12 @@ public class MessageData {
     public MessageData(){
         this.file = ThirstBar.getInstance().getMessageFile();
         HELP = new HashMap<>();
-        ConfigurationSection sectionHelp = file.getConfigurationSection("Help");
-        if(sectionHelp != null) sectionHelp.getKeys(false).forEach(sec ->
-                HELP.put(sec, MethodDefault.formatColor(file.getStringList("Help."+sec))));
+        ConfigurationSection section = file.getConfigurationSection("Help");
+        if(section != null) section.getKeys(false).forEach(sec -> {
+            HELP.put(sec, MethodDefault.formatColor(file.getStringList("Help."+sec)));
+        });
+//        HELP.put("1", MethodDefault.formatColor(help1()));
+//        HELP.put("2", MethodDefault.formatColor(help2()));
         SET_ITEM_SUCCESS = MethodDefault.formatColor(file.getString("SetItemSuccess", ""));
         PLAYER_REFRESH = MethodDefault.formatColor(file.getString("PlayerRefresh", ""));
         PLAYER_REFRESH_OTHER = MethodDefault.formatColor(file.getString("PlayerRefreshOther", ""));
@@ -160,4 +166,45 @@ public class MessageData {
     public static String DELAY_REFRESH(@Nonnull String time) {
         return DELAY_REFRESH.replace("<time>", time);
     }
+
+    private static List<String> help1(){
+        String title;
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        int numVer = (int)MethodDefault.formatNumber(version.split("_")[1], 0.0);
+        if(numVer >= 16) title = "           #0045FF&lT#034AFF&lH#0650FF&lI#0955FF&lR#0C5BFF&lS#1060FF&lT#1366FF&lB#166BFF&lA#1971FF&lR #1C76FF&lC#1F7BFF&lO#2281FF&lM#2586FF&lM#298CFF&lA#2C91FF&lN#2F97FF&lD#329CFF&lS #35A1FF&l[#38A7FF&lP#3BACFF&lA#3EB2FF&lG#42B7FF&lE #45BDFF&l1#48C2FF&l/#4BC8FF&l2#4ECDFF&l]";
+        else title = "           &9&lTHIRSTBAR COMMANDS [PAGE 1/2]";
+        return MethodDefault.formatColor(Arrays.asList(
+                " ",
+                title,
+                "  &9/tb reload&f: Reload plugin.",
+                "  &9/refresh [player]&f: Refresh a player.",
+                "  &9/refreshall&f: Refresh all players.",
+                "  &9/tb set <value> [player]&f: Set thirst value a player.",
+                "  &9/tb add <value> [player]&f: Add thirst value a player.",
+                "  &9/tb reduce <value> [player]&f: Add thirst value a player.",
+                "  &9/tb max set <value> [player]&f: Set thirst max value a player.",
+                " "
+        ));
+    }
+
+    private static List<String> help2(){
+        String title;
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        int numVer = (int)MethodDefault.formatNumber(version.split("_")[1], 0.0);
+        if(numVer >= 16) title = "           #0045FF&lT#034AFF&lH#0650FF&lI#0955FF&lR#0C5BFF&lS#1060FF&lT#1366FF&lB#166BFF&lA#1971FF&lR #1C76FF&lC#1F7BFF&lO#2281FF&lM#2586FF&lM#298CFF&lA#2C91FF&lN#2F97FF&lD#329CFF&lS #35A1FF&l[#38A7FF&lP#3BACFF&lA#3EB2FF&lG#42B7FF&lE #45BDFF&l2#48C2FF&l/#4BC8FF&l2#4ECDFF&l]";
+        else title = "           &9&lTHIRSTBAR COMMANDS [PAGE 2/2]";
+        return MethodDefault.formatColor(Arrays.asList(
+                " ",
+                title,
+                "  &9/tb reset&f: Reset default all player.",
+                "  &9/tb disable [player]&f: Disable thirst a player.",
+                "  &9/tb disableall&f: Disable thirst all player.",
+                "  &9/tb stage <stage> [player]&f: Set stage a player.",
+                "  &9/tb stageall <stage> &f: Set stage all player.",
+                "  &9/tb item save <name> <value>&f: Save item.",
+                "  &9/tb item give <name> [player]&f: Give item.",
+                " "
+        ));
+    }
+
 }

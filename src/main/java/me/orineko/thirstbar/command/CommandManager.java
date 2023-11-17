@@ -159,8 +159,9 @@ public abstract class CommandManager extends BukkitCommand implements CommandExe
     public abstract List<String> executeTabCompleter(@Nonnull CommandSender sender, @Nonnull String label, @Nonnull String[] args);
 
     private List<DataCommand> getDataCommandListInLength(@Nonnull String[] args) {
-        return dataCommandList.stream().filter(d -> d.getLength() >= args.length ||
-                (d.getNameList().size() > 0 && args.length > 0 && d.getNameList().get(0).equalsIgnoreCase(args[0]))
+        return dataCommandList.stream().filter(d -> d.getLength() == args.length ||
+                        (d.getNameList().size() > 0 && args.length > 0 && d.getNameList().get(0).equalsIgnoreCase(args[0])) ||
+                (d.getLength() < args.length && d.getNameList().isEmpty())
         ).collect(Collectors.toList());
     }
 
@@ -172,8 +173,8 @@ public abstract class CommandManager extends BukkitCommand implements CommandExe
         String cmd = (labelArr.length > 1) ? labelArr[1] : label;
         return dataCommandList.stream().filter(d -> {
             if(d.getCommandList().stream().noneMatch(data -> data.equalsIgnoreCase(cmd))) return false;
-            if (d.length == 0 && args.length == 0) return true;
-            if (args.length <= 0) return false;
+            if (d.length == 0) return true;
+            if (args.length == 0) return false;
             for (int i = 0; i < d.getNameList().size(); i++) {
                 if (i >= args.length || i >= d.getNameList().size()) return false;
                 if (!args[i].equalsIgnoreCase(d.getNameList().get(i))) return false;

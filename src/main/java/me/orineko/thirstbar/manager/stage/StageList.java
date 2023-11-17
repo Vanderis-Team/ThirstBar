@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class StageList {
 
     public enum KeyConfig {
-        WATER("DrinkingWater"), RAIN("DrinkingRain");
+        WATER("DrinkingRawWater"), RAIN("DrinkingRain");
         private final String name;
         KeyConfig(@Nonnull String name){
             this.name = name;
@@ -127,9 +127,12 @@ public class StageList {
             } else {
                 if(!MethodDefault.checkFormatNumber(arrRange[0])) return;
                 if(!MethodDefault.checkFormatNumber(arrRange[1])) return;
-                thirstMin = MethodDefault.formatNumber(arrRange[0], 0);
-                thirstMax = MethodDefault.formatNumber(arrRange[1], 0);
+                double arg1 = MethodDefault.formatNumber(arrRange[0], 0);
+                double arg2 = MethodDefault.formatNumber(arrRange[1], 0);
+                thirstMin = Math.min(arg1, arg2);
+                thirstMax = Math.max(arg1, arg2);
             }
+
 
             stageTimeline.setThirstMin(thirstMin);
             stageTimeline.setThirstMax(thirstMax);

@@ -25,7 +25,7 @@ public class PlayerSetting {
     public PlayerSetting(){
         disable = false;
         disableAll = false;
-        enableFood = ConfigData.FOOD;
+        enableFood = ConfigData.REPLACE_HUNGER;
         enableBossBar = ConfigData.BOSS_BAR_ENABLE;
         titleBossBar = "";
         try {colorBossBar = BarColor.valueOf(ConfigData.BOSS_BAR_COLOR);
@@ -76,19 +76,27 @@ public class PlayerSetting {
         this.titleActionBar = titleActionBar;
     }
 
-    public void setTitleBossBar(double value, double max, double reduce, long time) {
+    public void setTitleBossBar(double value, double max, double reduce, double time) {
         setTitleBossBar(ConfigData.BOSS_BAR_TEXT(value, max, reduce, time));
     }
 
-    public void setTitleBossBar(@Nonnull String text, double value, double max, double reduce, long time) {
+    public void setTitleDisableBossBar(double value, double max, double reduce, double time) {
+        setTitleBossBar(ConfigData.BOSS_BAR_DISABLE_TEXT(value, max, reduce, time));
+    }
+
+    public void setTitleBossBar(@Nonnull String text, double value, double max, double reduce, double time) {
         setTitleBossBar(MethodDefault.formatColor(ConfigData.replace(text, value, max, reduce, time)));
     }
 
-    public void setTitleActionBar(double value, double max, double reduce, long time) {
+    public void setTitleActionBar(double value, double max, double reduce, double time) {
         setTitleActionBar(ConfigData.ACTION_BAR_TEXT(value, max, reduce, time));
     }
 
-    public void setTitleActionBar(@Nonnull String text, double value, double max, double reduce, long time) {
+    public void setTitleDisableActionBar(double value, double max, double reduce, double time) {
+        setTitleActionBar(ConfigData.ACTION_BAR_DISABLE_TEXT(value, max, reduce, time));
+    }
+
+    public void setTitleActionBar(@Nonnull String text, double value, double max, double reduce, double time) {
         setTitleActionBar(MethodDefault.formatColor(ConfigData.replace(text, value, max, reduce, time)));
     }
 

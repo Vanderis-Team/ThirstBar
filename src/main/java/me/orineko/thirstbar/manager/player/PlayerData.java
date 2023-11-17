@@ -5,6 +5,7 @@ import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.stage.Stage;
+import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -34,9 +35,13 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
 
     private long delayRefresh;
     private int idRepeating;
+    private int idDamage;
     private int idRefresh;
     private int idDelayRefresh;
     public int idDelayDisable;
+    private int idDelayActionBar;
+    private int idRepeatActionBar;
+    private int idRepeat2ActionBar;
 
     public PlayerData(@Nonnull String name){
         super();
@@ -72,9 +77,14 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
 
     @Override
     public void disableExecuteReduce(){
-        if(this.idRepeating == 0) return;
-        Bukkit.getScheduler().cancelTask(this.idRepeating);
-        this.idRepeating = 0;
+        if(this.idRepeating != 0) {
+            Bukkit.getScheduler().cancelTask(this.idRepeating);
+            this.idRepeating = 0;
+        }
+        if(this.idDamage != 0) {
+            Bukkit.getScheduler().cancelTask(this.idDamage);
+            this.idDamage = 0;
+        }
     }
 
     @Override
@@ -87,16 +97,24 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             if(!isDisableAll() && !isDisable()) {
                 addThirst(- getReduceTotal());
                 if(thirst > thirstMax) setThirst(getThirstMax());
-                if (thirst <= 0) {
-                    setThirst(0);
-                    if(player.getHealth()-thirstDamage < 0) player.setHealth(0);
-                    else player.setHealth(player.getHealth() - thirstDamage);
-                }
             }
             executeStage(player);
             checkAndAddEffect(player);
             updateAll(player);
         }, 0L, thirstTime);
+        this.idDamage = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
+            Player player = Bukkit.getPlayer(name);
+            if(player == null) return;
+            if(player.isDead()) return;
+            if(isDisableAll()) return;
+            if(isDisable()) return;
+            if (thirst <= 0) {
+                setThirst(0);
+                if(player.getHealth()-thirstDamage < 0) player.setHealth(0);
+                else player.setHealth(player.getHealth() - thirstDamage);
+                player.damage(0.000000000001);
+            }
+        }, 0, 30);
     }
 
     @Override
@@ -108,6 +126,18 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         if(idDelayRefresh != 0){
             Bukkit.getScheduler().cancelTask(idDelayRefresh);
             idDelayRefresh = 0;
+        }
+        if(idDelayActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idDelayActionBar);
+            idDelayActionBar = 0;
+        }
+        if(idRepeatActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeatActionBar);
+            idRepeatActionBar = 0;
+        }
+        if(idRepeat2ActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
+            idRepeat2ActionBar = 0;
         }
     }
 
@@ -206,7 +236,8 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     @Override
     public void updateBossBar(@Nonnull Player player) {
         if(isDisableAll()){
-            setDisplayBossBar(false, player);
+            //setDisplayBossBar(false, player);
+            setTitleDisableBossBar(thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
             return;
         } else showBossBar(player);
         if(!isEnableBossBar()) return;
@@ -215,15 +246,15 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                         !stageCurrentList.get(stageCurrentList.size()-1).getTitleBossBar().isEmpty())) {
             Stage stage = stageCurrentList.get(stageCurrentList.size()-1);
             if(stage.getTitleBossBar() != null && !stage.getTitleBossBar().isEmpty())
-                setTitleBossBar(stage.getTitleBossBar(), thirst, thirstMax, getReduceTotal(), thirstTime/20);
+                setTitleBossBar(stage.getTitleBossBar(), thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
             if(stage.getBarColor() != null) getBossBar().setColor(stage.getBarColor());
             if(stage.getBarStyle() != null) getBossBar().setStyle(stage.getBarStyle());
         } else {
-            setTitleBossBar(thirst, thirstMax, getReduceTotal(), thirstTime/20);
+            setTitleBossBar(thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
             getBossBar().setColor(getColorBossBar());
             getBossBar().setStyle(getStyleBossBar());
         }
-        getBossBar().setProgress(thirst/thirstMax);
+        getBossBar().setProgress(Math.max(Math.min(thirst/thirstMax, 1), 0));
     }
 
     @Override
@@ -242,20 +273,51 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
 
     @Override
     public void updateActionBar(@Nonnull Player player) {
-        if(isDisableAll() || !isEnableActionBar()) return;
-        if(stageCurrentList.size() > 0 && (stageCurrentList.get(stageCurrentList.size()-1).getTitleActionBar() != null &&
-                !stageCurrentList.get(stageCurrentList.size()-1).getTitleActionBar().isEmpty())){
-            Stage stage = stageCurrentList.get(stageCurrentList.size()-1);
-            if(stage.getTitleActionBar() != null && !stage.getTitleActionBar().isEmpty())
-                setTitleActionBar(stage.getTitleActionBar(), thirst, thirstMax, getReduceTotal(), thirstTime/20);
-        } else
-            setTitleActionBar(thirst, thirstMax, getReduceTotal(), thirstTime/20);
-        ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), thirstTime/20);
+        if(!isEnableActionBar()) return;
+        if(isDisableAll()){
+            setTitleDisableActionBar(thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
+        } else {
+            if(stageCurrentList.size() > 0 && (stageCurrentList.get(stageCurrentList.size()-1).getTitleActionBar() != null &&
+                    !stageCurrentList.get(stageCurrentList.size()-1).getTitleActionBar().isEmpty())){
+                Stage stage = stageCurrentList.get(stageCurrentList.size()-1);
+                if(stage.getTitleActionBar() != null && !stage.getTitleActionBar().isEmpty())
+                    setTitleActionBar(stage.getTitleActionBar(), thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
+            } else
+                setTitleActionBar(thirst, thirstMax, getReduceTotal(), thirstTime/20.0);
+        }
+        long thirstTimeRemain = thirstTime%20;
+        if(idDelayActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idDelayActionBar);
+            idDelayActionBar = 0;
+        }
+        if(idRepeatActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeatActionBar);
+            idRepeatActionBar = 0;
+        }
+        if(idRepeat2ActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
+            idRepeat2ActionBar = 0;
+        }
+        idRepeatActionBar = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
+            if(idRepeat2ActionBar != 0) {
+                Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
+                idRepeat2ActionBar = 0;
+            }
+            ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), thirstTimeRemain);
+            if((int) thirstTime/20 == 0) return;
+            idDelayActionBar = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> {
+                idRepeat2ActionBar = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
+                    ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), 20);
+                }, 0, 20);
+            }, thirstTimeRemain);
+        }, 0, thirstTime);
+
     }
 
     @Override
     public void updateAll(Player player) {
         updateFood(player);
+        executeStage(player);
         updateBossBar(player);
         updateActionBar(player);
     }
@@ -291,7 +353,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     public void setStage(@Nonnull Player player, @Nonnull Stage stage){
         this.stageCurrentList.add(stage);
         stage.getPotionEffectList().forEach(player::addPotionEffect);
-        Method.executeAction(player, stage.getActionList());
+        Method.executeAction(player, stage.getActionList(), stage instanceof StageConfig);
     }
 
     public void checkAndAddEffect(@Nonnull Player player){

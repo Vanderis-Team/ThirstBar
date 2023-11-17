@@ -1,32 +1,32 @@
 Stage1:
-  Range: 80:90
-  Reduce: 50 #Percent
-  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage1"
-  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage1"
-  Color: GREEN
+  Range: "40:20"
+  Reduce: 50 #This means the thirst speed will be 50% faster than the default
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 1"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 1"
+  Color: YELLOW
   Style: SEGMENTED_10
   Effects:
     - "SLOW:1"
   Actions:
-    - "[title] &cThis is very bad."
-    - "[title-sub] &cDon't drink drity water."
-    - "[message] &cDon't drink drity water."
-    - "[sound] BLOCK_ANVIL_BREAK"
-    - "[player] help"
-    - "[console] msg <player> drinking."
+    - "[title] &6You start to feel thirst"
+    - "[title-sub] &fLook for water sources"
+    # You can also use other actions such as below:
+    # - "[sound] BLOCK_ANVIL_BREAK"
+    # - "[message] &eYou start to feel thirst."
+    # - "[player] idk"
+    # - "[console] msg <player> Admin reminds you to drink water every day"
+    # - "[console] give <player> milk_bucket"
 Stage2:
-  Range: 70:80
-  Reduce: 100 #Percent
+  Range: "19:0"
+  Reduce: 100
   TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
   TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
   Color: RED
   Style: SEGMENTED_10
   Effects:
     - "SLOW:2"
+    - "NAUSEA:1"
+    - "WEAKNESS:1"
   Actions:
-    - "[title] &cThis is very bad."
-    - "[title-sub] &cDon't drink drity water."
-    - "[message] &cDon't drink drity water."
-    - "[sound] BLOCK_ANVIL_BREAK"
-    - "[player] help"
-    - "[console] msg <player> drinking."
+    - "[title] &cExhausted from thirst"
+    - "[title-sub] &fYou need to drink water to survive"

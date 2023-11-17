@@ -1,57 +1,71 @@
 Thirsty:
   Max: 100
   Reduce: 1
-  Time: 20 #Tick
+  Time: 100 #Tick (20 ticks = 1 second)
   Damage: 0.5 #Lost 0.5 hp when thirsty to 0
 CooldownRefresh: 5 #Second
-DisableWorlds:
+DisabledGamemode:
+  - "CREATIVE"
+  - "SPECTATOR"
+DisabledWorlds:
   - "world_nether"
-FlagReduce:
-  - "test:2"
-DrinkingWater:
+DrinkingRawWater:
   Enable: true
   Delay: 10 #Tick
   Value: 5 #Value to increase thirst
-  Reduce: 50 #Percent
+  Reduce: 50
+  #Your thirst speed will increase by 50%
   Duration: 100 #Tick
-  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
-  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAW WATER"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAW WATER"
   Color: BLUE
   Style: SEGMENTED_10
   Effects:
     - "SLOW:1"
   Actions:
-    - "[title] &cThis is very bad."
-    - "[title-sub] &cDon't drink drity water."
-    - "[message] &cDon't drink drity water."
-    - "[sound] BLOCK_ANVIL_BREAK"
-    - "[player] help"
-    - "[console] msg <player> drinking."
+    - "[message] &cYou are drinking raw water!"
+    - "[sound] ENTITY_GENERIC_DRINK"
+    # You can uncomment if you want.
+    # - "[title] &cBe careful"
+    # - "[title-sub] &cYou are drinking raw water!"
+    # - "[player] help"
+    # - "[console] msg <player> You are drinking raw water!."
 DrinkingRain:
   Enable: true
-  Delay: 10 #Tick
-  Value: 5 #Value to increase thirst
-  Reduce: 50 #Percent
-  Duration: 100 #Tick
-  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
-  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- WATER"
+  Delay: 10
+  Value: 5
+  Reduce: 50
+  Duration: 100
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAIN WATER"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAIN WATER"
   Color: BLUE
   Style: SEGMENTED_10
   Effects:
     - "SLOW:1"
   Actions:
-    - "[title] &cThis is very bad."
-    - "[title-sub] &cDon't drink drity water."
-    - "[message] &cDon't drink drity water."
-    - "[sound] BLOCK_ANVIL_BREAK"
-    - "[player] help"
-    - "[console] msg <player> drinking."
-Food: true #Replace food to thirst
+    - "[message] &cYou are drinking rain water!"
+    - "[sound] ENTITY_GENERIC_DRINK"
+    # You can uncomment if you want.
+    # - "[title] &cBe careful"
+    # - "[title-sub] &cYou are drinking rain water!"
+    # - "[sound] BLOCK_ANVIL_BREAK"
+    # - "[player] help"
+    # - "[console] msg <player> You are drinking rain water!."
+ReplaceHunger: false
+# If enabled, the player's hunger bar will be the thirst bar.
 BossBar:
   Enable: true
   Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
+  DisableTitle: "&a<value>&f/&b<max> &f- <reduce>/<time>s - &4DISABLE"
   Color: BLUE #BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
   Style: SEGMENTED_10 #SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
 ActionBar:
   Enable: true
   Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
+  DisableTitle: "&a<value>&f/&b<max> &f- <reduce>/<time>s - &4DISABLE"
+Materials:
+  - "APPLE:20"
+  - "POTATO:20%"
+  - "POTION:30"
+  - "GOLDEN_APPLE:50"
+  - "MILK_BUCKET:75%"
