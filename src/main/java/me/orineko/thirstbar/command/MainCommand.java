@@ -183,8 +183,8 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 2, names = "add", permissions = "thirstbar.add")
-    public void onAdd(CommandSender sender, String[] args) {
+    @CommandSub(length = 2, names = "restore", permissions = "thirstbar.restore")
+    public void onRestore(CommandSender sender, String[] args) {
         if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
         double value = MethodDefault.formatNumber(args[1], 0);
         if (args.length > 2) {

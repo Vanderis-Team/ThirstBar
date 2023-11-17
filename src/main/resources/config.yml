@@ -2,7 +2,7 @@ Thirsty:
   Max: 100
   Reduce: 1
   Time: 100 #Tick (20 ticks = 1 second)
-  Damage: 0.5 #Lost 0.5 hp when thirsty to 0
+  Damage: 1.5 #Lost 1.5 hp when thirsty to 0
 CooldownRefresh: 5 #Second
 DisabledGamemode:
   - "CREATIVE"

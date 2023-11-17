@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +20,8 @@ public class MessageData {
     public static String PLAYER_REFRESH_ALL;
     private static String PLAYER_SET;
     private static String PLAYER_SET_OTHER;
-    private static String PLAYER_ADD;
-    private static String PLAYER_ADD_OTHER;
+    private static String PLAYER_RESTORE;
+    private static String PLAYER_RESTORE_OTHER;
     private static String PLAYER_REDUCE;
     private static String PLAYER_REDUCE_OTHER;
     private static String PLAYER_LOAD;
@@ -54,45 +53,45 @@ public class MessageData {
     public MessageData(){
         this.file = ThirstBar.getInstance().getMessageFile();
         HELP = new HashMap<>();
-        ConfigurationSection section = file.getConfigurationSection("Help");
-        if(section != null) section.getKeys(false).forEach(sec -> {
-            HELP.put(sec, MethodDefault.formatColor(file.getStringList("Help."+sec)));
-        });
-//        HELP.put("1", MethodDefault.formatColor(help1()));
-//        HELP.put("2", MethodDefault.formatColor(help2()));
+//        ConfigurationSection section = file.getConfigurationSection("Help");
+//        if(section != null) section.getKeys(false).forEach(sec -> {
+//            HELP.put(sec, MethodDefault.formatColor(file.getStringList("Help."+sec)));
+//        });
+        HELP.put("1", MethodDefault.formatColor(help1()));
+        HELP.put("2", MethodDefault.formatColor(help2()));
         SET_ITEM_SUCCESS = MethodDefault.formatColor(file.getString("SetItemSuccess", ""));
-        PLAYER_REFRESH = MethodDefault.formatColor(file.getString("PlayerRefresh", ""));
-        PLAYER_REFRESH_OTHER = MethodDefault.formatColor(file.getString("PlayerRefreshOther", ""));
-        PLAYER_REFRESH_ALL = MethodDefault.formatColor(file.getString("PlayerRefreshAll", ""));
-        PLAYER_SET = MethodDefault.formatColor(file.getString("PlayerSet", ""));
-        PLAYER_SET_OTHER = MethodDefault.formatColor(file.getString("PlayerSetOther", ""));
-        PLAYER_ADD = MethodDefault.formatColor(file.getString("PlayerAdd", ""));
-        PLAYER_ADD_OTHER = MethodDefault.formatColor(file.getString("PlayerAddOther", ""));
-        PLAYER_REDUCE = MethodDefault.formatColor(file.getString("PlayerReduce", ""));
-        PLAYER_REDUCE_OTHER = MethodDefault.formatColor(file.getString("PlayerReduceOther", ""));
-        PLAYER_LOAD = MethodDefault.formatColor(file.getString("PlayerLoad", ""));
-        PLAYER_LOAD_OTHER = MethodDefault.formatColor(file.getString("PlayerLoadOther", ""));
-        PLAYER_DISABLE = MethodDefault.formatColor(file.getString("PlayerDisable", ""));
-        PLAYER_DISABLE_OTHER = MethodDefault.formatColor(file.getString("PlayerDisableOther", ""));
-        PLAYER_ENABLE = MethodDefault.formatColor(file.getString("PlayerEnable", ""));
-        PLAYER_ENABLE_OTHER = MethodDefault.formatColor(file.getString("PlayerEnableOther", ""));
-        PLAYER_DISABLE_ALL = MethodDefault.formatColor(file.getString("PlayerDisableAll", ""));
-        PLAYER_MAX_SET = MethodDefault.formatColor(file.getString("PlayerMaxSet", ""));
-        PLAYER_MAX_SET_OTHER = MethodDefault.formatColor(file.getString("PlayerMaxSetOther", ""));
-        PLAYER_SET_STAGE = MethodDefault.formatColor(file.getString("PlayerSetStage", ""));
-        PLAYER_SET_STAGE_OTHER = MethodDefault.formatColor(file.getString("PlayerSetStageOther", ""));
-        PLAYER_SET_STAGE_ALL = MethodDefault.formatColor(file.getString("PlayerSetStageAll", ""));
+        PLAYER_REFRESH = MethodDefault.formatColor(file.getString("Refresh", ""));
+        PLAYER_REFRESH_OTHER = MethodDefault.formatColor(file.getString("RefreshOther", ""));
+        PLAYER_REFRESH_ALL = MethodDefault.formatColor(file.getString("RefreshAll", ""));
+        PLAYER_SET = MethodDefault.formatColor(file.getString("Set", ""));
+        PLAYER_SET_OTHER = MethodDefault.formatColor(file.getString("SetOther", ""));
+        PLAYER_RESTORE = MethodDefault.formatColor(file.getString("Restore", ""));
+        PLAYER_RESTORE_OTHER = MethodDefault.formatColor(file.getString("RestoreOther", ""));
+        PLAYER_REDUCE = MethodDefault.formatColor(file.getString("Reduce", ""));
+        PLAYER_REDUCE_OTHER = MethodDefault.formatColor(file.getString("ReduceOther", ""));
+        PLAYER_LOAD = MethodDefault.formatColor(file.getString("Load", ""));
+        PLAYER_LOAD_OTHER = MethodDefault.formatColor(file.getString("LoadOther", ""));
+        PLAYER_DISABLE = MethodDefault.formatColor(file.getString("Disable", ""));
+        PLAYER_DISABLE_OTHER = MethodDefault.formatColor(file.getString("DisableOther", ""));
+        PLAYER_ENABLE = MethodDefault.formatColor(file.getString("Enable", ""));
+        PLAYER_ENABLE_OTHER = MethodDefault.formatColor(file.getString("EnableOther", ""));
+        PLAYER_DISABLE_ALL = MethodDefault.formatColor(file.getString("DisableAll", ""));
+        PLAYER_MAX_SET = MethodDefault.formatColor(file.getString("MaxSet", ""));
+        PLAYER_MAX_SET_OTHER = MethodDefault.formatColor(file.getString("MaxSetOther", ""));
+        PLAYER_SET_STAGE = MethodDefault.formatColor(file.getString("SetStage", ""));
+        PLAYER_SET_STAGE_OTHER = MethodDefault.formatColor(file.getString("SetStageOther", ""));
+        PLAYER_SET_STAGE_ALL = MethodDefault.formatColor(file.getString("SetStageAll", ""));
         RELOAD = MethodDefault.formatColor(file.getString("Reload", ""));
         RESET = MethodDefault.formatColor(file.getString("Reset", ""));
-        ERROR_COMMAND = MethodDefault.formatColor(file.getString("ErrorCommand", ""));
-        ERROR_ITEM_NOT_FOUND = MethodDefault.formatColor(file.getString("ErrorItemNotFound", ""));
-        ERROR_STAGE_NOT_FOUND = MethodDefault.formatColor(file.getString("ErrorStageNotFound", ""));
-        ERROR_PLAYER_NOT_FOUND = MethodDefault.formatColor(file.getString("ErrorPlayerNotFound", ""));
-        ERROR_NEED_ITEM_IN_HAND = MethodDefault.formatColor(file.getString("ErrorNeedItemInHand", ""));
-        DELAY_REFRESH = MethodDefault.formatColor(file.getString("DelayRefresh", ""));
+        ERROR_COMMAND = MethodDefault.formatColor(file.getString("CommandNotExist", ""));
+        ERROR_ITEM_NOT_FOUND = MethodDefault.formatColor(file.getString("ItemNotFound", ""));
+        ERROR_STAGE_NOT_FOUND = MethodDefault.formatColor(file.getString("StageNotFound", ""));
+        ERROR_PLAYER_NOT_FOUND = MethodDefault.formatColor(file.getString("PlayerNotFound", ""));
+        ERROR_NEED_ITEM_IN_HAND = MethodDefault.formatColor(file.getString("NeedItemInHand", ""));
+        DELAY_REFRESH = MethodDefault.formatColor(file.getString("WaitingRefresh", ""));
         ERROR_FORMAT = MethodDefault.formatColor(file.getString("ErrorFormat", ""));
-        ERROR_CONSOLE_USE_COMMAND = MethodDefault.formatColor(file.getString("ErrorConsoleUseCommand", ""));
-        ERROR_PERMISSION = MethodDefault.formatColor(file.getString("ErrorPermission", ""));
+        ERROR_CONSOLE_USE_COMMAND = MethodDefault.formatColor(file.getString("OnlyPlayerUseCommand", ""));
+        ERROR_PERMISSION = MethodDefault.formatColor(file.getString("DontHavePermission", ""));
     }
 
     public FileManager getFile() {
@@ -112,11 +111,11 @@ public class MessageData {
     }
 
     public static String PLAYER_ADD(@Nonnull String value) {
-        return PLAYER_ADD.replace("<value>", value);
+        return PLAYER_RESTORE.replace("<value>", value);
     }
 
     public static String PLAYER_ADD_OTHER(@Nonnull String player, @Nonnull String value) {
-        return PLAYER_ADD_OTHER.replace("<player>", player).replace("<value>", value);
+        return PLAYER_RESTORE_OTHER.replace("<player>", player).replace("<value>", value);
     }
 
     public static String PLAYER_REDUCE(@Nonnull String value) {
@@ -179,10 +178,10 @@ public class MessageData {
                 "  &9/tb reload&f: Reload plugin.",
                 "  &9/refresh [player]&f: Refresh a player.",
                 "  &9/refreshall&f: Refresh all players.",
-                "  &9/tb set <value> [player]&f: Set thirst value a player.",
-                "  &9/tb add <value> [player]&f: Add thirst value a player.",
-                "  &9/tb reduce <value> [player]&f: Add thirst value a player.",
-                "  &9/tb max set <value> [player]&f: Set thirst max value a player.",
+                "  &9/tb set <value> [player]&f: Set current thirst value for players.",
+                "  &9/tb restore <value> [player]&f: Restores current thirst value for players.",
+                "  &9/tb reduce <value> [player]&f: Reduces current thirst value for players.",
+                "  &9/tb max set <value> [player]&f: Set the maximum thirst value for players.",
                 " "
         ));
     }
@@ -196,13 +195,13 @@ public class MessageData {
         return MethodDefault.formatColor(Arrays.asList(
                 " ",
                 title,
-                "  &9/tb reset&f: Reset default all player.",
-                "  &9/tb disable [player]&f: Disable thirst a player.",
-                "  &9/tb disableall&f: Disable thirst all player.",
-                "  &9/tb stage <stage> [player]&f: Set stage a player.",
-                "  &9/tb stageall <stage> &f: Set stage all player.",
-                "  &9/tb item save <name> <value>&f: Save item.",
-                "  &9/tb item give <name> [player]&f: Give item.",
+                "  &9/tb reset&f: Reset all players' maximum thirst value to default.",
+                "  &9/tb disable [player]&f: Disables thirst bars for yourself or other players.",
+                "  &9/tb disableall&f: Disables thirst bar for all players.",
+                "  &9/tb stage <stage> [player]&f: Set the thirst stage for yourself or other players.",
+                "  &9/tb stageall <stage> &f: Set thirst stage for all players.",
+                "  &9/tb item save <name> <value>&f: Save custom items to restore thirst.",
+                "  &9/tb item give <name> [player]&f: Give custom items to players.",
                 " "
         ));
     }
