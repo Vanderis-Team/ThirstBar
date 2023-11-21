@@ -47,8 +47,8 @@ ___
 ![Commands](https://github.com/L3via/JustTest/assets/98169091/c69574ea-7ead-4a0b-851b-5b3d13161200)
   
 - /tb reload: Reload plugin.
-- /tb refresh [player]: Refresh a player.
-- /tb refreshall: Refresh all players.
+- /refresh [player]: Refresh a player.
+- /refreshall: Refresh all players.
 - /tb set <value> [player]: Set current thirst value for a player.
 - /tb restore <value> [player]: Restores current thirst value for a player.
 - /tb reduce <value> [player]: Reduces current thirst value for a player.
