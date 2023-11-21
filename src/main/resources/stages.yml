@@ -9,7 +9,7 @@ Stage1:
     - "SLOW:1"
   Actions:
     - "[title] &6You start to feel thirst"
-    - "[title-sub] &fLook for water sources"
+    - "[subtitle] &fLook for water sources"
     # You can also use other actions such as below:
     # - "[sound] BLOCK_ANVIL_BREAK"
     # - "[message] &eYou start to feel thirst."
@@ -29,4 +29,4 @@ Stage2:
     - "WEAKNESS:1"
   Actions:
     - "[title] &cExhausted from thirst"
-    - "[title-sub] &fYou need to drink water to survive"
+    - "[subtitle] &fYou need to drink water to survive"

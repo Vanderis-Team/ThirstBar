@@ -36,6 +36,9 @@ public class PlayerDataList extends DataList<PlayerData> {
         getDataList().stream().filter(p -> p.getPlayer() != null)
                 .forEach(playerData -> {
                     ThirstBar.getInstance().getPlayersFile().set(playerData.getName()+".Thirst", playerData.getThirst());
+
+                    playerData.setThirst(playerData.getThirstMax());
+
                     playerData.getBossBar().removePlayer(playerData.getPlayer());
                     playerData.disableExecuteReduce();
                     playerData.disableExecuteRefresh();
@@ -56,6 +59,7 @@ public class PlayerDataList extends DataList<PlayerData> {
                 playerData.setThirstMax(max.doubleValue());
                 playerData.refresh();
             }
+            playerData.setThirst(file.getDouble(name+".Thirst", playerData.getThirstMax()));
             Player player = Bukkit.getPlayer(playerData.getName());
             if(player != null) {
                 boolean disable = file.getBoolean(name + ".Disable", false);
@@ -71,6 +75,7 @@ public class PlayerDataList extends DataList<PlayerData> {
                 playerData.setDisableAll(check1 || check2);
                 playerData.updateAll(player);
             }
+            file.set(name, null);
         });
     }
 }

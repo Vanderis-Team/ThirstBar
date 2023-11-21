@@ -14,6 +14,8 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.player.PlayerDataList;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ThirstBar extends JavaPlugin {
@@ -63,6 +65,14 @@ public final class ThirstBar extends JavaPlugin {
 
     public void renewData(){
         ThirstListener.armorStandMap.forEach((k, v) -> v.remove());
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            ArmorStand armorStand = player.getWorld().spawn(
+                    new Location(player.getWorld(), 0, 0, 0), ArmorStand.class);
+            armorStand.setVisible(false);
+            armorStand.setGravity(false);
+            ThirstListener.armorStandMap.put(player.getUniqueId(), armorStand);
+        });
+
         reloadConfig();
         itemsFile.reloadWithoutCreateFile();
         messageFile.reload();

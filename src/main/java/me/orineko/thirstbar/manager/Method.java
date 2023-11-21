@@ -25,7 +25,6 @@ public class Method {
     private static int idDelayMessage = 0;
     private static int idDelayMainTitle = 0;
     private static int idDelaySubTitle = 0;
-    private static int idDelaySound = 0;
 
     /**
      * Send item to inventory player
@@ -96,7 +95,7 @@ public class Method {
                         titleSub.remove(0);
                     }
                     break;
-                case "title-sub":
+                case "subtitle":
                     titleSub.add(value);
                     if (titleMain.size() > 0) {
                         String main = titleMain.get(0);
@@ -119,10 +118,7 @@ public class Method {
                 case "sound":
                     Optional<XSound> xSound = XSound.matchXSound(value);
                     if (!xSound.isPresent()) break;
-                    if(idDelaySound == 0) xSound.get().play(player);
-                    if(stageConfig && idDelaySound == 0) idDelaySound =
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
-                                    () -> idDelaySound = 0, 100);
+                    xSound.get().play(player);
                     break;
                 case "player":
                     Bukkit.dispatchCommand(player, value);

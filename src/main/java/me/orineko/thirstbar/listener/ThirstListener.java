@@ -54,12 +54,24 @@ public class ThirstListener implements Listener {
                 player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
         playerData.setDisableAll(check1 || check2);
         playerData.updateAll(player);
+
+        if(armorStandMap.containsKey(player.getUniqueId())) return;
+        ArmorStand armorStand = player.getWorld().spawn(
+                new Location(player.getWorld(), 0, 0, 0), ArmorStand.class);
+        armorStand.setVisible(false);
+        armorStand.setGravity(false);
+        armorStandMap.put(player.getUniqueId(), armorStand);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         ThirstBar.getInstance().getPlayerDataList().addData(player).setDisplayBossBar(false, player);
+
+        ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
+        if (armorStand == null) return;
+        armorStand.remove();
+        armorStandMap.remove(player.getUniqueId());
     }
 
     @EventHandler
@@ -111,45 +123,52 @@ public class ThirstListener implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> playerData.updateFood(player));
         playerData.updateAll(player);
     }
+/*
 
     @EventHandler
     public void onPlayerSneak(PlayerToggleSneakEvent e) {
         Player player = e.getPlayer();
-        PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
-        if(playerData.isDisableAll() || playerData.isDisable()) return;
-        ItemStack itemHand = player.getItemInHand();
-        Location location = player.getEyeLocation().clone();
-        Vector vector = location.getDirection();
-        ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
-        if (armorStand != null && (!e.isSneaking() || !itemHand.getType().equals(Material.AIR))) {
-            armorStand.remove();
-            armorStandMap.remove(player.getUniqueId());
-            return;
-        }
-        if (!e.isSneaking() || !itemHand.getType().equals(Material.AIR)) return;
-        Location locationCal = player.getEyeLocation().clone();
-        boolean hasBlock = false;
-        for (int i = 1; i <= 4; i++) {
-            locationCal.add(vector.getX(), vector.getY(), vector.getZ());
-            if (locationCal.getBlock().getType().equals(Material.AIR) ||
-                    locationCal.getBlock().getType().equals(Material.WATER) ||
-                    locationCal.getBlock().getType().name().equals("STATIONARY_WATER")) continue;
-            hasBlock = true;
-            break;
-        }
-        if (armorStand == null && !hasBlock) {
-            armorStand = player.getWorld().spawn(location, ArmorStand.class);
-            armorStandMap.put(player.getUniqueId(), armorStand);
-        }
-        if (armorStand != null && hasBlock) {
-            armorStand.remove();
-            armorStandMap.remove(player.getUniqueId());
-            armorStand = null;
-        }
-        if (armorStand == null) return;
-        armorStand.setVisible(false);
-        armorStand.setGravity(false);
+        new Thread(() -> {
+            PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
+            if(playerData.isDisableAll() || playerData.isDisable()) return;
+            ItemStack itemHand = player.getItemInHand();
+            Location location = player.getEyeLocation().clone();
+            Vector vector = location.getDirection();
+            final ArmorStand[] armorStand = {armorStandMap.getOrDefault(player.getUniqueId(), null)};
+            if (armorStand[0] != null && (!e.isSneaking() || !itemHand.getType().equals(Material.AIR))) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> armorStand[0].remove());
+                armorStandMap.remove(player.getUniqueId());
+                return;
+            }
+            if (!e.isSneaking() || !itemHand.getType().equals(Material.AIR)) return;
+            Location locationCal = player.getEyeLocation().clone();
+            boolean hasBlock = false;
+            for (int i = 1; i <= 4; i++) {
+                locationCal.add(vector.getX(), vector.getY(), vector.getZ());
+                if (locationCal.getBlock().getType().equals(Material.AIR) ||
+                        locationCal.getBlock().getType().equals(Material.WATER) ||
+                        locationCal.getBlock().getType().name().equals("STATIONARY_WATER")) continue;
+                hasBlock = true;
+                break;
+            }
+            if (armorStand[0] == null && !hasBlock) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> {
+                    armorStand[0] = player.getWorld().spawn(location, ArmorStand.class);
+                    armorStand[0].setVisible(false);
+                    armorStandMap.put(player.getUniqueId(), armorStand[0]);
+                });
+            }
+            if (armorStand[0] != null && hasBlock) {
+                armorStand[0].remove();
+                armorStandMap.remove(player.getUniqueId());
+                armorStand[0] = null;
+            }
+            if (armorStand[0] == null) return;
+            armorStand[0].setVisible(false);
+            armorStand[0].setGravity(false);
+        }).start();
     }
+*/
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
@@ -172,12 +191,19 @@ public class ThirstListener implements Listener {
                 playerData.setThirstReduce(ConfigData.THIRSTY_REDUCE);
             }
         }
-        Location location = player.getEyeLocation().clone();
-        Vector vector = location.getDirection();
-        location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
+
         ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
         if (armorStand == null) return;
-        armorStand.teleport(location.subtract(vector.getX() * 0.5, 0, vector.getZ() * 0.5));
+        if(!player.isSneaking()) {
+            if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
+                armorStand.teleport(new Location(player.getWorld(), 0, 0, 0));
+            }
+        } else {
+            Location location = player.getEyeLocation().clone();
+            Vector vector = location.getDirection();
+            location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
+            armorStand.teleport(location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5));
+        }
     }
 
     @EventHandler
@@ -236,13 +262,14 @@ public class ThirstListener implements Listener {
                 if (!delayClickMap.contains(player.getUniqueId())) {
                     if (player.getWorld().hasStorm()) {
                         boolean check = false;
-                        for (int i = player.getLocation().getBlockY() + 1; i <= 320; i++) {
+                        for (int i = player.getLocation().getBlockY() + 1; i < 320; i++) {
                             Block block = player.getWorld().getBlockAt(player.getLocation().getBlockX(), i, player.getLocation().getBlockZ());
                             if (!block.getType().equals(Material.AIR)) {
                                 check = true;
                                 break;
                             }
                         }
+
                         if (!check && player.getEyeLocation().getPitch() <= -45) {
                             delayClickMap.add(player.getUniqueId());
                             if (playerData.idDelayDisable != 0) {

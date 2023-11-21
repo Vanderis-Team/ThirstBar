@@ -27,7 +27,7 @@ DrinkingRawWater:
     - "[sound] ENTITY_GENERIC_DRINK"
     # You can uncomment if you want.
     # - "[title] &cBe careful"
-    # - "[title-sub] &cYou are drinking raw water!"
+    # - "[subtitle] &cYou are drinking raw water!"
     # - "[player] help"
     # - "[console] msg <player> You are drinking raw water!."
 DrinkingRain:
@@ -47,7 +47,7 @@ DrinkingRain:
     - "[sound] ENTITY_GENERIC_DRINK"
     # You can uncomment if you want.
     # - "[title] &cBe careful"
-    # - "[title-sub] &cYou are drinking rain water!"
+    # - "[subtitle] &cYou are drinking rain water!"
     # - "[sound] BLOCK_ANVIL_BREAK"
     # - "[player] help"
     # - "[console] msg <player> You are drinking rain water!."
