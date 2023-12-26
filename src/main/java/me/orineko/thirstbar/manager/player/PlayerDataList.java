@@ -86,21 +86,12 @@ public class PlayerDataList extends DataList<PlayerData> {
                 }
             });
         } else {
-            List<List<HashMap<String, Object>>> list = ThirstBar.getInstance().getSqlManager().runGetPlayer();
+            List<HashMap<String, Object>> list = ThirstBar.getInstance().getSqlManager().runGetPlayer();
             list.forEach(row -> {
-                HashMap<String, Object> nameObj = row.stream().filter(v ->
-                        v.getOrDefault("name", null) != null).findAny().orElse(null);
-                HashMap<String, Object> disableObj = row.stream().filter(v ->
-                        v.getOrDefault("disable", null) != null).findAny().orElse(null);
-                HashMap<String, Object> thirstObj = row.stream().filter(v ->
-                        v.getOrDefault("thirst", null) != null).findAny().orElse(null);
-                HashMap<String, Object> maxObj = row.stream().filter(v ->
-                        v.getOrDefault("max", null) != null).findAny().orElse(null);
-                if(nameObj == null || disableObj == null || thirstObj == null || maxObj == null) return;
-                String name = (String) nameObj.getOrDefault("name", null);
-                boolean disable = (int) nameObj.getOrDefault("disable", 0) == 1;
-                double thirst = (double) thirstObj.getOrDefault("thirst", -1);
-                double max = (double) maxObj.getOrDefault("max", 0);
+                String name = (String) row.getOrDefault("name", null);
+                boolean disable = (int) row.getOrDefault("disable", 0) == 1;
+                double thirst = (double) row.getOrDefault("thirst", -1);
+                double max = (double) row.getOrDefault("max", 0);
                 if(name == null) return;
                 PlayerData playerData = addData(name);
                 if(disable) playerData.setDisable(true);

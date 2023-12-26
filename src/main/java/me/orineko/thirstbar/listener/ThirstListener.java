@@ -1,5 +1,7 @@
 package me.orineko.thirstbar.listener;
 
+import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.NBTTag;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
@@ -114,11 +116,41 @@ public class ThirstListener implements Listener {
         Player player = e.getPlayer();
         ItemStack itemHand = player.getItemInHand();
         if (itemHand.getType().equals(Material.AIR)) return;
-        ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
-        if (itemData == null) return;
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         if (playerData.isDisableAll() || playerData.isDisable()) return;
+
+        String tagRawWater = NBTTag.getKey(itemHand, "RawWater");
+        if(tagRawWater != null && tagRawWater.equals("true")){
+            StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
+            if (stageWater != null) {
+
+                double value = stageWater.getValue();
+                if(playerData.getThirst() + value/2 >= playerData.getThirstMax()) {
+                    e.setCancelled(true);
+                    return;
+                }
+
+                playerData.disableStage(player, StageList.KeyConfig.WATER);
+                playerData.setStage(player, stageWater);
+                playerData.addThirst(stageWater.getValue());
+                if (playerData.getThirst() > playerData.getThirstMax())
+                    playerData.setThirst(playerData.getThirstMax());
+                if (playerData.getThirst() < 0) playerData.setThirst(0);
+                playerData.updateAll(player);
+                playerData.idDelayDisable = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                        () -> playerData.disableStage(player, StageList.KeyConfig.WATER), stageWater.getDuration());
+            }
+            return;
+        }
+
+        ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
+        if (itemData == null) return;
         double value = itemData.getValue();
+        if(playerData.getThirst() + value/2 >= playerData.getThirstMax()
+            || playerData.getThirst() + (playerData.getThirst()*itemData.getValuePercent()/100)/2 >= playerData.getThirstMax()) {
+            e.setCancelled(true);
+            return;
+        }
         if (value <= 0) {
             value = itemData.getValuePercent();
             if (value > 0) {
@@ -127,9 +159,11 @@ public class ThirstListener implements Listener {
         } else {
             playerData.addThirst(itemData.getValue());
         }
+
         if (playerData.getThirst() > playerData.getThirstMax()) playerData.setThirst(playerData.getThirstMax());
         if (playerData.getThirst() < 0) playerData.setThirst(0);
         Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> playerData.updateFood(player));
+
         playerData.updateAll(player);
     }
 /*
@@ -347,13 +381,31 @@ public class ThirstListener implements Listener {
             }
         }
 
-        ItemStack itemHand = player.getItemInHand();
+        if (itemStack.getType().equals(Material.GLASS_BOTTLE)){
+            if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)){
+                Block block = e.getPlayer().getTargetBlock(null, 4);
+                if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
+                    ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
+                    itemBottle = NBTTag.setKey(itemBottle, "RawWater", "true");
+                    e.setCancelled(true);
+                    if (itemStack.getAmount() > 1) {
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
+                    } else {
+                        ItemStack item = itemStack.clone();
+                        item.setAmount(itemStack.getAmount()-1);
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
+                        player.getInventory().addItem(itemBottle);
+                    }
+                }
+            }
+        }
+        /*ItemStack itemHand = player.getItemInHand();
         if (itemHand.getType().equals(Material.AIR)) return;
         ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
         if (itemData == null) return;
         if (player.getFoodLevel() != 20) return;
         player.setFoodLevel(19);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));*/
 
     }
 

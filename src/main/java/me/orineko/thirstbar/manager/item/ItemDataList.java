@@ -4,7 +4,9 @@ import me.orineko.pluginspigottools.DataList;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.api.sql.SqlManager;
 import me.orineko.thirstbar.manager.file.ConfigData;
+import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.sql.Blob;
 import java.util.*;
 
 public class ItemDataList extends DataList<ItemData> {
@@ -51,6 +54,7 @@ public class ItemDataList extends DataList<ItemData> {
     }
 
     public void loadData(){
+        dataList.clear();
         if(ThirstBar.getInstance().getSqlManager().getConnection() == null){
             FileManager file = ThirstBar.getInstance().getItemsFile();
             ConfigurationSection section = file.getConfigurationSection("");
@@ -70,24 +74,15 @@ public class ItemDataList extends DataList<ItemData> {
                 }
             });
         } else {
-            List<List<HashMap<String, Object>>> list = ThirstBar.getInstance().getSqlManager().runGetItems();
+            List<HashMap<String, Object>> list = ThirstBar.getInstance().getSqlManager().runGetItems();
             list.forEach(row -> {
-                HashMap<String, Object> nameObj = row.stream().filter(v ->
-                        v.getOrDefault("name", null) != null).findAny().orElse(null);
-                HashMap<String, Object> itemObj = row.stream().filter(v ->
-                        v.getOrDefault("item", null) != null).findAny().orElse(null);
-                HashMap<String, Object> valueObj = row.stream().filter(v ->
-                        v.getOrDefault("value", null) != null).findAny().orElse(null);
-                HashMap<String, Object> valuePercentObj = row.stream().filter(v ->
-                        v.getOrDefault("value_percent", null) != null).findAny().orElse(null);
-                if(nameObj == null || itemObj == null || valueObj == null || valuePercentObj == null) return;
-                String name = (String) nameObj.get("name");
-                ItemStack item = (ItemStack) valueObj.get("item");
-                double value = (double) valueObj.get("value");
-                double valuePercent = (double) valuePercentObj.get("value_percent");
+                String name = (String) row.getOrDefault("name", null);
+                ItemStack item = SqlManager.ItemSerialization.itemStackArrayFromBase64((String) row.get("item"))[0];
+                double value = (double) row.get("value");
+                double valuePercent = (double) row.get("value_percent");
                 ItemData itemData = addData(name, item);
-                if(value > 0) itemData.setValue(value);
-                if(valuePercent > 0) itemData.setValuePercent(valuePercent);
+                itemData.setValue(value);
+                itemData.setValuePercent(valuePercent);
             });
         }
         dataList.addAll(getItemDataVanilla());

@@ -97,6 +97,7 @@ public class MainCommand extends CommandManager {
     public void onReload(CommandSender sender, String[] args) {
         ThirstBar.getInstance().getPlayerDataList().removeDataPlayersOnline();
         ThirstBar.getInstance().renewData();
+        ThirstBar.getInstance().getItemDataList().loadData();
         sender.sendMessage(MessageData.RELOAD);
     }
 
@@ -332,7 +333,7 @@ public class MainCommand extends CommandManager {
         ItemData itemData = ThirstBar.getInstance().getItemDataList().addData(name, item);
         if (percent) itemData.setValuePercent(value);
         else itemData.setValue(value);
-        itemData.saveData();
+        itemData.saveData(percent);
         player.sendMessage(MessageData.SET_ITEM_SUCCESS);
     }
 
