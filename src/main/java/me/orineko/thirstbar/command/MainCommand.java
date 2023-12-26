@@ -308,7 +308,11 @@ public class MainCommand extends CommandManager {
             data.setThirstMax(value);
             player.sendMessage(MessageData.PLAYER_MAX_SET(data.getName()));
         }
-        ThirstBar.getInstance().getPlayersFile().setAndSave(player.getName() + ".Max", value);
+        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+            ThirstBar.getInstance().getPlayersFile().setAndSave(player.getName() + ".Max", value);
+        } else {
+            ThirstBar.getInstance().getSqlManager().runSetMaxPlayer(player.getName(), value);
+        }
     }
 
     @CommandSub(length = 4, names = {"item", "save"}, justPlayerUseCmd = true, permissions = "thirstbar.item.save")
@@ -363,10 +367,15 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 1, names = "reset", permissions = "thirstbar.reset")
     public void onReset(CommandSender sender, String[] args) {
-        FileManager file = ThirstBar.getInstance().getPlayersFile();
-        ConfigurationSection section = file.getConfigurationSection("");
-        if (section != null) section.getKeys(false).forEach(sec -> file.set(sec, null));
-        file.save();
+        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+            FileManager file = ThirstBar.getInstance().getPlayersFile();
+            ConfigurationSection section = file.getConfigurationSection("");
+            if (section != null) section.getKeys(false).forEach(sec -> file.set(sec, null));
+            file.save();
+        } else {
+            ThirstBar.getInstance().getSqlManager().runRemoveAllPlayer();
+        }
+
         ThirstBar.getInstance().getPlayerDataList().removeDataPlayersOnline();
         ThirstBar.getInstance().renewData();
         sender.sendMessage(MessageData.RESET);

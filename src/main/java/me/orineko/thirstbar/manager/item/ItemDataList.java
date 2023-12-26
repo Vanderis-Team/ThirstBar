@@ -12,10 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ItemDataList extends DataList<ItemData> {
 
@@ -54,23 +51,45 @@ public class ItemDataList extends DataList<ItemData> {
     }
 
     public void loadData(){
-        FileManager file = ThirstBar.getInstance().getItemsFile();
-        ConfigurationSection section = file.getConfigurationSection("");
-        if(section != null) section.getKeys(false).forEach(name -> {
-            ItemStack itemStack = file.getItemStack(name+".Item", null);
-            if(itemStack == null) return;
-            String valueString = file.getString(name+".Value", "");
-            if(valueString.isEmpty()) return;
-            ItemData itemData = addData(name, itemStack);
-            double value;
-            if(valueString.endsWith("%")){
-                value = MethodDefault.formatNumber(valueString.replace("%", ""), 0);
-                itemData.setValuePercent(value);
-            } else {
-                value = MethodDefault.formatNumber(valueString, 0);
-                itemData.setValue(value);
-            }
-        });
+        if(ThirstBar.getInstance().getSqlManager().getConnection() == null){
+            FileManager file = ThirstBar.getInstance().getItemsFile();
+            ConfigurationSection section = file.getConfigurationSection("");
+            if(section != null) section.getKeys(false).forEach(name -> {
+                ItemStack itemStack = file.getItemStack(name+".Item", null);
+                if(itemStack == null) return;
+                String valueString = file.getString(name+".Value", "");
+                if(valueString.isEmpty()) return;
+                ItemData itemData = addData(name, itemStack);
+                double value;
+                if(valueString.endsWith("%")){
+                    value = MethodDefault.formatNumber(valueString.replace("%", ""), 0);
+                    itemData.setValuePercent(value);
+                } else {
+                    value = MethodDefault.formatNumber(valueString, 0);
+                    itemData.setValue(value);
+                }
+            });
+        } else {
+            List<List<HashMap<String, Object>>> list = ThirstBar.getInstance().getSqlManager().runGetItems();
+            list.forEach(row -> {
+                HashMap<String, Object> nameObj = row.stream().filter(v ->
+                        v.getOrDefault("name", null) != null).findAny().orElse(null);
+                HashMap<String, Object> itemObj = row.stream().filter(v ->
+                        v.getOrDefault("item", null) != null).findAny().orElse(null);
+                HashMap<String, Object> valueObj = row.stream().filter(v ->
+                        v.getOrDefault("value", null) != null).findAny().orElse(null);
+                HashMap<String, Object> valuePercentObj = row.stream().filter(v ->
+                        v.getOrDefault("value_percent", null) != null).findAny().orElse(null);
+                if(nameObj == null || itemObj == null || valueObj == null || valuePercentObj == null) return;
+                String name = (String) nameObj.get("name");
+                ItemStack item = (ItemStack) valueObj.get("item");
+                double value = (double) valueObj.get("value");
+                double valuePercent = (double) valuePercentObj.get("value_percent");
+                ItemData itemData = addData(name, item);
+                if(value > 0) itemData.setValue(value);
+                if(valuePercent > 0) itemData.setValuePercent(valuePercent);
+            });
+        }
         dataList.addAll(getItemDataVanilla());
     }
 

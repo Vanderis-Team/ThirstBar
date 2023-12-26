@@ -76,8 +76,8 @@ public class MessageData {
         PLAYER_ENABLE = MethodDefault.formatColor(file.getString("Enable", ""));
         PLAYER_ENABLE_OTHER = MethodDefault.formatColor(file.getString("EnableOther", ""));
         PLAYER_DISABLE_ALL = MethodDefault.formatColor(file.getString("DisableAll", ""));
-        PLAYER_MAX_SET = MethodDefault.formatColor(file.getString("MaxSet", ""));
-        PLAYER_MAX_SET_OTHER = MethodDefault.formatColor(file.getString("MaxSetOther", ""));
+        PLAYER_MAX_SET = MethodDefault.formatColor(file.getString("SetMax", ""));
+        PLAYER_MAX_SET_OTHER = MethodDefault.formatColor(file.getString("SetMaxOther", ""));
         PLAYER_SET_STAGE = MethodDefault.formatColor(file.getString("SetStage", ""));
         PLAYER_SET_STAGE_OTHER = MethodDefault.formatColor(file.getString("SetStageOther", ""));
         PLAYER_SET_STAGE_ALL = MethodDefault.formatColor(file.getString("SetStageAll", ""));

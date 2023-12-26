@@ -6,6 +6,7 @@ import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
 import me.orineko.thirstbar.manager.Method;
 import me.orineko.thirstbar.manager.api.PlaceholderAPI;
+import me.orineko.thirstbar.manager.api.sql.SqlManager;
 import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.file.MessageData;
@@ -31,19 +32,26 @@ public final class ThirstBar extends JavaPlugin {
     private FileManager playersFile;
     private FileManager stageFile;
     private boolean worldGuardApiEnable = false;
+    private SqlManager sqlManager;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         plugin = this;
-        itemsFile = new FileManager("customitems.db", this);
+        sqlManager = new SqlManager();
+
         messageFile = new FileManager("message.yml", this);
-        playersFile = new FileManager("players.db", this);
         stageFile = new FileManager("stages.yml", this);
-        itemsFile.createFile();
         messageFile.copyDefault();
-        playersFile.createFile();
         stageFile.copyDefault();
+
+        if(sqlManager.getConnection() == null) {
+            itemsFile = new FileManager("customitems.db", this);
+            playersFile = new FileManager("players.db", this);
+            itemsFile.createFile();
+            playersFile.createFile();
+        }
+
         renewData();
         Bukkit.getOnlinePlayers().forEach(Method::disableGameMode);
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
@@ -74,9 +82,11 @@ public final class ThirstBar extends JavaPlugin {
         });
 
         reloadConfig();
-        itemsFile.reloadWithoutCreateFile();
+        if(sqlManager.getConnection() == null) {
+            itemsFile.reloadWithoutCreateFile();
+            playersFile.reloadWithoutCreateFile();
+        }
         messageFile.reload();
-        playersFile.reloadWithoutCreateFile();
         stageFile.reload();
         configData = new ConfigData();
         messageData = new MessageData();
@@ -148,5 +158,9 @@ public final class ThirstBar extends JavaPlugin {
 
     public boolean isWorldGuardApiEnable() {
         return worldGuardApiEnable;
+    }
+
+    public SqlManager getSqlManager(){
+        return sqlManager;
     }
 }

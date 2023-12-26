@@ -335,7 +335,11 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     @Override
     public void setDisable(boolean disable) {
         super.setDisable(disable);
-        ThirstBar.getInstance().getPlayersFile().setAndSave(name+".Disable", (disable) ? true : null);
+        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+            ThirstBar.getInstance().getPlayersFile().setAndSave(name+".Disable", (disable) ? true : null);
+        } else {
+            ThirstBar.getInstance().getSqlManager().runSetDisablePlayer(name, (disable) ? 1 : 0);
+        }
     }
 
     public void disableStage(@Nonnull Player player, StageList.KeyConfig keyConfig){

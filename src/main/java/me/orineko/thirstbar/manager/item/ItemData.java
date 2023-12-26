@@ -64,8 +64,15 @@ public class ItemData {
     }
 
     public void saveData(){
-        file.setAndSave(name+".Item", itemStack);
-        if(value > 0) file.setAndSave(name+".Value", value);
-        else file.setAndSave(name+".Value", valuePercent+"%");
+        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+            file.setAndSave(name+".Item", itemStack);
+            if(value > 0) file.setAndSave(name+".Value", value);
+            else file.setAndSave(name+".Value", valuePercent+"%");
+        } else {
+            if(value > 0)
+                ThirstBar.getInstance().getSqlManager().runAddItems(name, itemStack, value, 0);
+            else
+                ThirstBar.getInstance().getSqlManager().runAddItems(name, itemStack, 0, valuePercent);
+        }
     }
 }

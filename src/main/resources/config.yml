@@ -1,3 +1,10 @@
+Sql:
+  Enable: false
+  Host: 'localhost'
+  Port: '3306'
+  Username: 'root'
+  Password: '123456'
+  Database: 'ThirstBar'
 Thirsty:
   Max: 100
   Reduce: 1
