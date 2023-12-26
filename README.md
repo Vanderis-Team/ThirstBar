@@ -1,4 +1,4 @@
-# ThirstBar v2.0 - PlaceholderAPI and WorldGuard support!
+# ThirstBar v2.0a - PlaceholderAPI and WorldGuard support!
   
 ![Thirst_Bar_3](https://github.com/L3via/JustTest/assets/98169091/c521cf3a-f81b-40da-afe7-09f8faeccc76)
 
