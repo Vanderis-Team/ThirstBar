@@ -2,6 +2,7 @@ package me.orineko.thirstbar;
 
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.NBTTag;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
@@ -18,9 +19,16 @@ import me.orineko.thirstbar.manager.player.PlayerDataList;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +73,17 @@ public final class ThirstBar extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ThirstListener(), this);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new PlaceholderAPI().register();
         checkForUpdate();
+
+        ItemStack bottle = new ItemStack(Material.POTION, 1);
+        ItemMeta meta = bottle.getItemMeta();
+        PotionMeta pmeta = (PotionMeta) meta;
+        PotionData pdata = new PotionData(PotionType.WATER);
+        if(pmeta != null) pmeta.setBasePotionData(pdata);
+        bottle.setItemMeta(meta);
+        ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
+        potionRawItem = NBTTag.setKey(potionRawItem, "RawWater", "true");
+        FurnaceRecipe furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
+        Bukkit.addRecipe(furnaceRecipe);
     }
 
     @Override

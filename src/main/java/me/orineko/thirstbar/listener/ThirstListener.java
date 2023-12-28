@@ -21,14 +21,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public class ThirstListener implements Listener {
 
@@ -146,10 +146,12 @@ public class ThirstListener implements Listener {
         ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
         if (itemData == null) return;
         double value = itemData.getValue();
-        if(playerData.getThirst() + value/2 >= playerData.getThirstMax()
-            || playerData.getThirst() + (playerData.getThirst()*itemData.getValuePercent()/100)/2 >= playerData.getThirstMax()) {
-            e.setCancelled(true);
-            return;
+        if(!(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand))){
+            if(playerData.getThirst() + value/2 >= playerData.getThirstMax()
+                    || playerData.getThirst() + (playerData.getThirst()*itemData.getValuePercent()/100)/2 >= playerData.getThirstMax()) {
+                e.setCancelled(true);
+                return;
+            }
         }
         if (value <= 0) {
             value = itemData.getValuePercent();
@@ -238,9 +240,11 @@ public class ThirstListener implements Listener {
         ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
         if (armorStand == null) return;
         if(!player.isSneaking()) {
-            if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
+            /*if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
                 armorStand.teleport(new Location(player.getWorld(), 0, 0, 0));
-            }
+            }*/
+            Location playerLocation = player.getLocation();
+            armorStand.teleport(new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ()));
         } else {
             Location location = player.getEyeLocation().clone();
             Vector vector = location.getDirection();
@@ -349,31 +353,33 @@ public class ThirstListener implements Listener {
         ItemStack itemStack = player.getItemInHand();
         if (itemStack.getType().equals(Material.AIR)) {
             if (player.isSneaking()) {
-                StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
-                if (stageWater != null) {
-                    if (!delayClickMap.contains(player.getUniqueId())) {
-                        if (stageWater.isEnable()) {
-                            Block block = e.getPlayer().getTargetBlock(null, 4);
-                            if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
-                                delayClickMap.add(player.getUniqueId());
-                                if (playerData.idDelayDisable != 0) {
-                                    Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
-                                    playerData.idDelayDisable = 0;
+                if(ConfigData.STOP_DRINKING && playerData.getThirst() >= playerData.getThirstMax()) {
+                    StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
+                    if (stageWater != null) {
+                        if (!delayClickMap.contains(player.getUniqueId())) {
+                            if (stageWater.isEnable()) {
+                                Block block = e.getPlayer().getTargetBlock(null, 4);
+                                if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
+                                    delayClickMap.add(player.getUniqueId());
+                                    if (playerData.idDelayDisable != 0) {
+                                        Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
+                                        playerData.idDelayDisable = 0;
+                                    }
+                                    playerData.disableStage(player, StageList.KeyConfig.WATER);
+                                    playerData.setStage(player, stageWater);
+                                    playerData.addThirst(stageWater.getValue());
+                                    if (playerData.getThirst() > playerData.getThirstMax())
+                                        playerData.setThirst(playerData.getThirstMax());
+                                    if (playerData.getThirst() < 0) playerData.setThirst(0);
+                                    playerData.updateAll(player);
+                                    playerData.idDelayDisable = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                            () -> {
+                                                playerData.disableStage(player, StageList.KeyConfig.WATER);
+                                                playerData.idDelayDisable = 0;
+                                            }, stageWater.getDuration());
+                                    Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                                            () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());
                                 }
-                                playerData.disableStage(player, StageList.KeyConfig.WATER);
-                                playerData.setStage(player, stageWater);
-                                playerData.addThirst(stageWater.getValue());
-                                if (playerData.getThirst() > playerData.getThirstMax())
-                                    playerData.setThirst(playerData.getThirstMax());
-                                if (playerData.getThirst() < 0) playerData.setThirst(0);
-                                playerData.updateAll(player);
-                                playerData.idDelayDisable = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
-                                        () -> {
-                                            playerData.disableStage(player, StageList.KeyConfig.WATER);
-                                            playerData.idDelayDisable = 0;
-                                        }, stageWater.getDuration());
-                                Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
-                                        () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());
                             }
                         }
                     }
@@ -399,14 +405,16 @@ public class ThirstListener implements Listener {
                 }
             }
         }
-        /*ItemStack itemHand = player.getItemInHand();
-        if (itemHand.getType().equals(Material.AIR)) return;
-        ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
-        if (itemData == null) return;
-        if (player.getFoodLevel() != 20) return;
-        player.setFoodLevel(19);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));*/
 
+        ItemStack itemHand = player.getItemInHand();
+        if(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand)){
+            if (itemHand.getType().equals(Material.AIR)) return;
+            ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
+            if (itemData == null) return;
+            if (player.getFoodLevel() != 20) return;
+            player.setFoodLevel(19);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));
+        }
     }
 
     @EventHandler
@@ -423,5 +431,24 @@ public class ThirstListener implements Listener {
                 player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
         playerData.setDisableAll(check1 || check2);
         playerData.updateAll(player);
+    }
+
+    /*public void onFurnace(FurnaceSmeltEvent e){
+        Bukkit.add
+        ItemStack source = e.getSource();
+        if()
+    }*/
+
+    private boolean checkFoodHaveEffect(@Nonnull ItemStack itemStack){
+        List<String> list = Arrays.asList("GOLDEN_APPLE", "ENCHANTED_GOLDEN_APPLE",
+                "PUFFERFISH", "MILK_BUCKET", "CHORUS_FRUIT", "POISONOUS_POTATO");
+        for (String value : list) {
+            if(itemStack.getType().equals(MethodDefault.getItemAllVersion(value).getType())) return true;
+        }
+        if(itemStack.getType().equals(Material.POTION)){
+            PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
+            return potionMeta != null && !potionMeta.getCustomEffects().isEmpty();
+        }
+        return false;
     }
 }

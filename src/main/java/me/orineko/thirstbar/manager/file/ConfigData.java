@@ -13,6 +13,7 @@ import java.util.List;
 
 public class ConfigData {
 
+    public static boolean STOP_DRINKING;
     public static double THIRSTY_MAX;
     public static double THIRSTY_REDUCE;
     public static long THIRSTY_TIME;
@@ -36,6 +37,7 @@ public class ConfigData {
 
     public ConfigData(){
         this.configFile = ThirstBar.getInstance().getConfig();
+        STOP_DRINKING = configFile.getBoolean("StopDrinking", false);
         THIRSTY_MAX = Math.max(1, configFile.getDouble("Thirsty.Max", 1));
         THIRSTY_REDUCE = Math.max(1, configFile.getDouble("Thirsty.Reduce", 1));
         THIRSTY_TIME = Math.max(1, configFile.getLong("Thirsty.Time", 1));

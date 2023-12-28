@@ -5,6 +5,7 @@ Sql:
   Username: 'root'
   Password: '123456'
   Database: 'ThirstBar'
+StopDrinking: true # Prevents players from drinking water when their thirst bar is full
 Thirsty:
   Max: 100
   Reduce: 1
