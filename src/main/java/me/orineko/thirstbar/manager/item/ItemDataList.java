@@ -36,7 +36,9 @@ public class ItemDataList extends DataList<ItemData> {
 
     @Nullable
     public ItemData getData(@Nonnull ItemStack itemStack) {
-        ItemData itemDataVanilla = super.getData(d -> {
+        ItemData itemDataCustom = super.getData(d -> d.getItemStack() != null && d.getItemStack().isSimilar(itemStack));
+        if(itemDataCustom != null) return itemDataCustom;
+        return super.getData(d -> {
             ItemStack finalItemStack = itemStack;
             if(d.getItemStack() != null && d.getItemStack().getType().equals(Material.POTION)){
                 finalItemStack = finalItemStack.clone();
@@ -45,8 +47,6 @@ public class ItemDataList extends DataList<ItemData> {
             return d.getItemStack() != null
                     && d.getItemStack().isSimilar(finalItemStack) && d.isVanilla();
         });
-        if(itemDataVanilla != null) return itemDataVanilla;
-        return super.getData(d -> d.getItemStack() != null && d.getItemStack().isSimilar(itemStack));
     }
 
     public void removeData(@Nonnull String name){
@@ -77,7 +77,9 @@ public class ItemDataList extends DataList<ItemData> {
             List<HashMap<String, Object>> list = ThirstBar.getInstance().getSqlManager().runGetItems();
             list.forEach(row -> {
                 String name = (String) row.getOrDefault("name", null);
-                ItemStack item = SqlManager.ItemSerialization.itemStackArrayFromBase64((String) row.get("item"))[0];
+                ItemStack[] itemList = SqlManager.ItemSerialization.itemStackArrayFromBase64((String) row.get("item"));
+                if(itemList == null) return;
+                ItemStack item = itemList[0];
                 double value = (double) row.get("value");
                 double valuePercent = (double) row.get("value_percent");
                 ItemData itemData = addData(name, item);

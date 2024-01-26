@@ -23,7 +23,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.util.Vector;
 
@@ -34,6 +36,7 @@ public class ThirstListener implements Listener {
 
     public static final HashMap<UUID, ArmorStand> armorStandMap = new HashMap<>();
     private final List<UUID> delayClickMap = new ArrayList<>();
+    private final String keyPotionRaw = "RawWater";
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
@@ -119,7 +122,7 @@ public class ThirstListener implements Listener {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         if (playerData.isDisableAll() || playerData.isDisable()) return;
 
-        String tagRawWater = NBTTag.getKey(itemHand, "RawWater");
+        String tagRawWater = NBTTag.getKey(itemHand, keyPotionRaw);
         if(tagRawWater != null && tagRawWater.equals("true")){
             StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
             if (stageWater != null) {
@@ -392,9 +395,16 @@ public class ThirstListener implements Listener {
                 Block block = e.getPlayer().getTargetBlock(null, 4);
                 if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
                     ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
-                    itemBottle = NBTTag.setKey(itemBottle, "RawWater", "true");
+                    itemBottle = NBTTag.setKey(itemBottle, keyPotionRaw, "true");
+                    ItemMeta meta = itemBottle.getItemMeta();
+                    if(meta != null){
+                        meta.setDisplayName(ConfigData.NAME_RAW_POTION);
+                        meta.setLore(ConfigData.LORE_RAW_POTION);
+                        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                        itemBottle.setItemMeta(meta);
+                    }
                     e.setCancelled(true);
-                    if (itemStack.getAmount() > 1) {
+                    if (itemStack.getAmount() == 1) {
                         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
                     } else {
                         ItemStack item = itemStack.clone();

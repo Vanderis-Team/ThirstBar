@@ -6,7 +6,7 @@
 
     <groupId>me.orineko</groupId>
     <artifactId>ThirstBar</artifactId>
-    <version>2.1a</version>
+    <version>2.2</version>
     <packaging>jar</packaging>
 
     <name>ThirstBar</name>

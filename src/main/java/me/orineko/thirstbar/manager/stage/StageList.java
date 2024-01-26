@@ -3,7 +3,6 @@ package me.orineko.thirstbar.manager.stage;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
-import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -70,8 +69,10 @@ public class StageList {
         double value = Math.max(0, file.getLong(name+".Value", 0));
         double reduce = Math.max(0, file.getDouble(name+".Reduce", 0));
         long duration = Math.max(1, file.getLong(name+".Duration", 1));
+
         String titleActionBar = MethodDefault.formatColor(file.getString(name+".TitleActionBar", ""));
         String titleBossBar = MethodDefault.formatColor(file.getString(name+".TitleBossBar", ""));
+
         BarColor color = null;
         try {color = BarColor.valueOf(file.getString(name+".Color", ""));
         } catch (IllegalArgumentException ignore){}
@@ -105,8 +106,10 @@ public class StageList {
 
             String range = file.getString(name+".Range", "");
             double reduce = Math.max(0, file.getDouble(name+".Reduce", 0));
+
             String titleActionBar = MethodDefault.formatColor(file.getString(name+".TitleActionBar", ""));
             String titleBossBar = MethodDefault.formatColor(file.getString(name+".TitleBossBar", ""));
+
             BarColor color = null;
             try {color = BarColor.valueOf(file.getString(name+".Color", ""));
             } catch (IllegalArgumentException ignore){}
@@ -132,7 +135,6 @@ public class StageList {
                 thirstMin = Math.min(arg1, arg2);
                 thirstMax = Math.max(arg1, arg2);
             }
-
 
             stageTimeline.setThirstMin(thirstMin);
             stageTimeline.setThirstMax(thirstMax);

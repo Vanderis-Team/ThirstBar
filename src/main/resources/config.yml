@@ -6,6 +6,7 @@ Sql:
   Password: '123456'
   Database: 'ThirstBar'
 StopDrinking: true # Prevents players from drinking water when their thirst bar is full
+ResourcePackThirst: false
 Thirsty:
   Max: 100
   Reduce: 1
@@ -77,3 +78,8 @@ Materials:
   - "POTION:30"
   - "GOLDEN_APPLE:50"
   - "MILK_BUCKET:75%"
+RawPotion:
+  Name: "&cA dirty potion bottle"
+  Lore:
+    - "&f- When consumed, it will cause illness."
+    - "&e&oPlease heat it before drinking."
