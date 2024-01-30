@@ -249,10 +249,14 @@ public class ThirstListener implements Listener {
             Location location = player.getEyeLocation().clone();
             Vector vector = location.getDirection();
             location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
-            armorStand.teleport(location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5));
+            location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
+            if(!location.getChunk().isLoaded()) location.getChunk().load();
+            armorStand.teleport(location);
         } else {
             Location playerLocation = player.getLocation();
-            armorStand.teleport(new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ()));
+            Location location = new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ());
+            if(!location.getChunk().isLoaded()) location.getChunk().load();
+            armorStand.teleport(location);
         }
     }
 
