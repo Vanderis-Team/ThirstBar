@@ -278,8 +278,14 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             if (stageCurrentList.size() > 0) {
                 Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
                 if (ConfigData.RESOURCE_PACK_THIRST) {
-                    String text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
+                    String text;
+                    if(stage instanceof StageConfig) {
+                        text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
                             thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
+                    } else {
+                        text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
+                                thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
+                    }
                     setTitleActionBar((text != null) ? text : "None");
                 } else {
                     if (stage.getTitleActionBar() != null && !stage.getTitleActionBar().isEmpty())

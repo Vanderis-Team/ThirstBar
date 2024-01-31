@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class ConfigData {
 
     public enum TypeResourceThirst{
-        NORMAL, DEBUFF
+        NORMAL, DEBUFF, RAW_WATTER
     }
 
     public static boolean STOP_DRINKING;
@@ -54,6 +54,7 @@ public class ConfigData {
         if(RESOURCE_PACK_THIRST){
             setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eea3");
             setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eea6");
+            setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eea9");
         } else {
             resourcePackThirstMap.clear();
         }
