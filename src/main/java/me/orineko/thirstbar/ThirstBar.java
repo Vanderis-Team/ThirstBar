@@ -59,6 +59,7 @@ public final class ThirstBar extends JavaPlugin {
         stageFile = new FileManager("stages.yml", this);
         messageFile.copyDefault();
         stageFile.copyDefault();
+        loadResourcePackFile();
 
         if (sqlManager.getConnection() == null) {
             itemsFile = new FileManager("customitems.db", this);
@@ -128,6 +129,13 @@ public final class ThirstBar extends JavaPlugin {
             playerData.setDisableAll(check);
         });
         playerDataList.loadData();
+    }
+
+    private void loadResourcePackFile(){
+        try {
+            FileManager tutorialFile = new FileManager("tutorial.yml", this);
+            tutorialFile.copyDefault();
+        } catch (Exception ignore) {}
     }
 
     private void registerFlag() {

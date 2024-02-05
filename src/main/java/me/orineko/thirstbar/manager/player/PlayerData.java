@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class PlayerData extends PlayerSetting implements PlayerThirstValue, PlayerThirstyDisplay, PlayerThirstScheduler {
 
@@ -277,7 +276,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         } else {
             if (stageCurrentList.size() > 0) {
                 Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
-                if (ConfigData.RESOURCE_PACK_THIRST) {
+                if (ConfigData.CUSTOM_ACTION_BAR) {
                     String text;
                     if(stage instanceof StageConfig) {
                         text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,

@@ -6,7 +6,7 @@ Sql:
   Password: '123456'
   Database: 'ThirstBar'
 StopDrinking: true # Prevents players from drinking water when their thirst bar is full
-ResourcePackThirst: false
+CustomActionBar: false
 Thirsty:
   Max: 100
   Reduce: 1

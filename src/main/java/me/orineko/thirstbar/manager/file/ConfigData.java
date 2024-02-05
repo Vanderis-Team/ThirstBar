@@ -3,10 +3,7 @@ package me.orineko.thirstbar.manager.file;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -21,7 +18,7 @@ public class ConfigData {
     }
 
     public static boolean STOP_DRINKING;
-    public static boolean RESOURCE_PACK_THIRST;
+    public static boolean CUSTOM_ACTION_BAR;
     public static double THIRSTY_MAX;
     public static double THIRSTY_REDUCE;
     public static long THIRSTY_TIME;
@@ -50,8 +47,8 @@ public class ConfigData {
     public ConfigData(){
         this.configFile = ThirstBar.getInstance().getConfig();
 
-        RESOURCE_PACK_THIRST = configFile.getBoolean("ResourcePackThirst", false);
-        if(RESOURCE_PACK_THIRST){
+        CUSTOM_ACTION_BAR = configFile.getBoolean("CustomActionBar", false);
+        if(CUSTOM_ACTION_BAR){
             setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eea3");
             setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eea6");
             setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eea9");

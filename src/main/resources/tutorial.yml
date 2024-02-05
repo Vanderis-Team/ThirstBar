@@ -1,0 +1,10 @@
+# If you want to use our default resource pack
+# Change these values in your server.properties file
+
+# resource-pack=https://download.mc-packs.net/pack/ee578bd03e72505e2ad6851957c442e859132b8c.zip
+# resource-pack-sha1=ee578bd03e72505e2ad6851957c442e859132b8c
+
+# If you want to use your own resourcepack
+# You can post the file to mc-packs.net to get the value "resource-pack" and "resource-pack-shal1" and change it in your server.properties
+# You can refer to our sample resource pack:
+# https://drive.google.com/file/d/1zwBxWQ8eYi18PgWn1MJbADgJ6CGD52mO/view?usp=sharing
