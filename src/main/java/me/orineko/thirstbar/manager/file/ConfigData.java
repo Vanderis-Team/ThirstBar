@@ -119,7 +119,7 @@ public class ConfigData {
         int numberOfItems = 20;
         List<String> stringList = new ArrayList<>();
 
-        String shiftRightChar = convertUnicodeEscape("\\uf82a\\uf82b");
+        String shiftRightChar = convertUnicodeEscape("\\uf82a\\uf82b\\uf824");
         String waterChar = convertUnicodeEscape("\\u"+thirstChar);
         String waterHalfChar = convertUnicodeEscape("\\u"+thirstHalfChar);
         String waterEmptyChar = convertUnicodeEscape("\\u"+thirstEmptyChar);

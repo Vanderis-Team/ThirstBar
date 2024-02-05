@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PlayerData extends PlayerSetting implements PlayerThirstValue, PlayerThirstyDisplay, PlayerThirstScheduler {
 
@@ -98,8 +99,6 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                 addThirst(-getReduceTotal());
                 if (thirst > thirstMax) setThirst(getThirstMax());
             }
-            executeStage(player);
-            checkAndAddEffect(player);
             updateAll(player);
         }, 0L, thirstTime);
         this.idDamage = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
@@ -171,6 +170,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     @Override
     public void addThirst(double value) {
         this.thirst += value;
+        if(this.thirst < 0) this.thirst = 0;
     }
 
     @Override
@@ -329,6 +329,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         executeStage(player);
         updateBossBar(player);
         updateActionBar(player);
+        checkAndAddEffect(player);
     }
 
     @Override
@@ -379,12 +380,11 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         List<PotionEffect> potionEffectList = new ArrayList<>();
         stageCurrentList.stream().map(Stage::getPotionEffectList).forEach(eList -> {
             eList.forEach(e -> {
-                if (potionEffectList.stream().noneMatch(p -> p.getType().equals(e.getType())))
+                PotionEffect potionEffect = potionEffectList.stream()
+                        .filter(p -> p.getType().equals(e.getType())).findAny().orElse(null);
+                if (potionEffect == null)
                     potionEffectList.add(e);
                 else {
-                    PotionEffect potionEffect = potionEffectList.stream()
-                            .filter(p -> p.getType().equals(e.getType())).findAny().orElse(null);
-                    if (potionEffect == null) return;
                     if (potionEffect.getAmplifier() > e.getAmplifier()) return;
                     potionEffectList.remove(potionEffect);
                     potionEffectList.add(e);
@@ -392,6 +392,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             });
         });
         potionEffectList.forEach(pe -> {
+            if(player.getActivePotionEffects().stream().anyMatch(v -> v.getType().equals(pe.getType()) && v.getAmplifier() == pe.getAmplifier())) return;
             PotionEffect potionEffect = player.getPotionEffect(pe.getType());
             if (potionEffect == null)
                 player.addPotionEffect(pe);

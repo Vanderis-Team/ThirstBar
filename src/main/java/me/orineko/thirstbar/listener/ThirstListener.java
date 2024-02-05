@@ -101,6 +101,7 @@ public class ThirstListener implements Listener {
         } catch (IllegalArgumentException ignore){
 
         }
+        playerData.updateAll(player);
     }
 
     @EventHandler
@@ -303,6 +304,7 @@ public class ThirstListener implements Listener {
                                 () -> {
                                     playerData.disableStage(player, StageList.KeyConfig.WATER);
                                     playerData.idDelayDisable = 0;
+                                    playerData.updateAll(player);
                                 }, stageWater.getDuration());
                         Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
                                 () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());
@@ -341,6 +343,7 @@ public class ThirstListener implements Listener {
                                     () -> {
                                         playerData.disableStage(player, StageList.KeyConfig.RAIN);
                                         playerData.idDelayDisable = 0;
+                                        playerData.updateAll(player);
                                     }, stageRain.getDuration());
                             Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
                                     () -> delayClickMap.remove(player.getUniqueId()), stageRain.getDelay());
@@ -383,6 +386,7 @@ public class ThirstListener implements Listener {
                                             () -> {
                                                 playerData.disableStage(player, StageList.KeyConfig.WATER);
                                                 playerData.idDelayDisable = 0;
+                                                playerData.updateAll(player);
                                             }, stageWater.getDuration());
                                     Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
                                             () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());

@@ -66,13 +66,13 @@ public class PlayerDataList extends DataList<PlayerData> {
                 if(max.compareTo(BigDecimal.valueOf(1)) > 0) {
                     max = max.min(BigDecimal.valueOf(Double.MAX_VALUE));
                     playerData.setThirstMax(max.doubleValue());
-//                    playerData.refresh();
                 }
                 playerData.setThirst(file.getDouble(name+".Thirst", playerData.getThirstMax()));
+                boolean disable = file.getBoolean(name + ".Disable", false);
+                if (disable) playerData.setDisable(true);
                 Player player = Bukkit.getPlayer(playerData.getName());
                 if(player != null) {
-                    boolean disable = file.getBoolean(name + ".Disable", false);
-                    if (disable) playerData.setDisable(true);
+                    playerData.updateAll(player);
                     boolean check1 = false;
                     try {
                         check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
@@ -82,7 +82,6 @@ public class PlayerDataList extends DataList<PlayerData> {
                     boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                             player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
                     playerData.setDisableAll(check1 || check2);
-                    playerData.updateAll(player);
                 }
             });
         } else {
@@ -98,7 +97,19 @@ public class PlayerDataList extends DataList<PlayerData> {
                 if(thirst > 0) playerData.setThirst(thirst);
                 if(max > 0){
                     playerData.setThirstMax(max);
-//                    playerData.refresh();
+                }
+                Player player = Bukkit.getPlayer(playerData.getName());
+                if(player != null) {
+                    playerData.updateAll(player);
+                    boolean check1 = false;
+                    try {
+                        check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                                player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+                    } catch (IllegalArgumentException ignore) {
+                    }
+                    boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
+                            player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
+                    playerData.setDisableAll(check1 || check2);
                 }
             });
         }

@@ -126,7 +126,6 @@ public final class ThirstBar extends JavaPlugin {
             boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                     p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             playerData.setDisableAll(check);
-            playerData.updateAll(p);
         });
         playerDataList.loadData();
     }
