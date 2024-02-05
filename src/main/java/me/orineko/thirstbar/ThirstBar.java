@@ -133,7 +133,7 @@ public final class ThirstBar extends JavaPlugin {
 
     private void loadResourcePackFile(){
         try {
-            FileManager tutorialFile = new FileManager("tutorial.yml", this);
+            FileManager tutorialFile = new FileManager("tutorial.txt", this);
             tutorialFile.copyDefault();
         } catch (Exception ignore) {}
     }
