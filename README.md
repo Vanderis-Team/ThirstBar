@@ -1,4 +1,4 @@
-# ThirstBar v2.1a - PlaceholderAPI and WorldGuard support!
+# ThirstBar v2.2 - PlaceholderAPI and WorldGuard support!
   
 ![Thirst_Bar_3](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Thirst_Bar.png)
 
