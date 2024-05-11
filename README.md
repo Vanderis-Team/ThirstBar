@@ -44,7 +44,7 @@ ___
   
 ![ezgif com-optimize (14)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/6.gif)
 ___
-![Commands](https://github.com/L3via/JustTest/assets/98169091/c69574ea-7ead-4a0b-851b-5b3d13161200)
+![Commands](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Commands.png)
   
 - /tb reload: Reload plugin.
 - /refresh [player]: Refresh a player.
@@ -61,7 +61,7 @@ ___
 - /tb item save <name> <value>: Save custom items to restore thirst.
 - /tb item give <name> [player]: Give custom items to a player
 ___
-![permission](https://github.com/L3via/JustTest/assets/98169091/63bf50c1-210d-4610-a261-8fb61c713a9b) 
+![permission](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/permission.png) 
   
 - thirstbar.help: permission to use command /tb [page] & /tb help [page]
 - thirstbar.reload: permission to use /tb reload command
@@ -80,7 +80,7 @@ ___
 - thirstbar.item.save: permission to use the command /tb item save…
 - thirstbar.item.give: permission to use the command /tb item give…
 ___
-![Placeholder](https://github.com/L3via/JustTest/assets/98169091/824c9c47-f3b1-45dc-9850-85b306788859)
+![Placeholder](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Placeholder.png)
   
 - %thirstbar_current_int%: Current thirst value (integer).
 - %thirstbar_current_float%: Current thirst value (float).
@@ -94,7 +94,7 @@ ___
 - %thirstbar_reducePerSec_float%: The player’s thirst value is reduced per time (float).
 - %thirstbar_isDisabled%: Player’s thirst status (whether disabled or not).
 ___
-![configuration](https://github.com/L3via/JustTest/assets/98169091/beebe670-24c3-4362-b251-71d6691a9510)
+![configuration](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/configuration.png)
 ## config.yml
 ```yaml
 Thirsty:
