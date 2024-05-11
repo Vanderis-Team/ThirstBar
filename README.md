@@ -1,6 +1,6 @@
-# ThirstBar v2.1a - PlaceholderAPI and WorldGuard support!
+# ThirstBar v2.2 - PlaceholderAPI and WorldGuard support!
   
-![Thirst_Bar_3](https://github.com/L3via/JustTest/assets/98169091/c521cf3a-f81b-40da-afe7-09f8faeccc76)
+![Thirst_Bar_3](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Thirst_Bar.png)
 
 Are you looking for something new in your Minecraft server? What are your thoughts on the idea of players having to balance something other than their own hunger bar?  
 Thirst Bar brings to your server a thirst mechanism as well as additional mechanisms surrounding it, just like Minecraft's inherent hunger bar.
@@ -10,7 +10,7 @@ This can make the gameplay on your server more lively and realistic.
   - PlaceholderAPI
   - WorldGuard
 ___
-![Features](https://github.com/L3via/JustTest/assets/98169091/7f498dee-ca7a-43e1-8c38-3be0dfa8c159)
+![Features](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Features.png)
   
 - One of the most important features is that each player has a thirst point, a unit like a hunger bar, which can be displayed in two main ways: Bossbar and Action Bar.
     - Another unique method of displaying Thirst Bars is the bar from hunger to bar.
@@ -23,28 +23,28 @@ ___
 - Players can restore thirst value by eating or drinking (consuming items), these items can be vanilla items, items with custom names, and lore, or items with custom model data, custom textures.
     - By shifting + right-clicking on the air or water source, players can now directly drink rainwater or raw water. However, these methods frequently have accompanying effects that the administrator can customize in the configuration.
   
-![ezgif com-optimize (11)](https://github.com/L3via/JustTest/assets/98169091/69c6e39e-62b0-4309-8b1e-d8a58bab11da)
+![ezgif com-optimize (11)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/1.gif)
   
-![ezgif com-optimize (15)](https://github.com/L3via/JustTest/assets/98169091/e3824181-6239-4b18-b2db-d92ddf9c8f76)
+![ezgif com-optimize (15)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/2.gif)
 
-![ezgif com-optimize (13)](https://github.com/L3via/JustTest/assets/98169091/46b514cf-3d59-4e5e-ac4b-d90f9c7fb402)
+![ezgif com-optimize (13)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/3.gif)
 
 - When the thirst bar reaches a certain threshold, it can change color, bossbar title, or action bar title. At the same time, it gives the player certain effects (Potion Effects).
     
     For example, at 100%, the player's thirst bar is green and has speed effect 1, whereas at 25%, it is red and has a slow effect 1. Change the display state of the action bar/boss bar, and we can also add actions like [title], [message], [sound], or [player]/[console] - these actions will be performed when the player has just reached that thirst threshold.
     
-![ezgif com-optimize (10)](https://github.com/L3via/JustTest/assets/98169091/8706456b-ebec-4e5e-9b89-0614d59104da)
+![ezgif com-optimize (10)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/4.gif)
   
 - Disable the thirst bar in specific worlds (DisabledWorld) or regions (Region - WorldGuard flag).
     - We can still adjust the thirst speed in each world/region in addition to completely disabling the thirst bar.
 
-![ezgif com-optimize (16)](https://github.com/L3via/JustTest/assets/98169091/fd2c69c3-8f65-4b9a-82fa-0eb862420270)
+![ezgif com-optimize (16)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/5.gif)
   
 - The thirst bar can also be disabled when in specific game modes that can be customized by the administrator, such as: creative, spectator,...
   
-![ezgif com-optimize (14)](https://github.com/L3via/JustTest/assets/98169091/3b38c6c0-82f1-4985-9c1d-b2e28b66a398)
+![ezgif com-optimize (14)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/6.gif)
 ___
-![Commands](https://github.com/L3via/JustTest/assets/98169091/c69574ea-7ead-4a0b-851b-5b3d13161200)
+![Commands](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Commands.png)
   
 - /tb reload: Reload plugin.
 - /refresh [player]: Refresh a player.
@@ -61,7 +61,7 @@ ___
 - /tb item save <name> <value>: Save custom items to restore thirst.
 - /tb item give <name> [player]: Give custom items to a player
 ___
-![permission](https://github.com/L3via/JustTest/assets/98169091/63bf50c1-210d-4610-a261-8fb61c713a9b) 
+![permission](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/permission.png) 
   
 - thirstbar.help: permission to use command /tb [page] & /tb help [page]
 - thirstbar.reload: permission to use /tb reload command
@@ -80,7 +80,7 @@ ___
 - thirstbar.item.save: permission to use the command /tb item save…
 - thirstbar.item.give: permission to use the command /tb item give…
 ___
-![Placeholder](https://github.com/L3via/JustTest/assets/98169091/824c9c47-f3b1-45dc-9850-85b306788859)
+![Placeholder](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Placeholder.png)
   
 - %thirstbar_current_int%: Current thirst value (integer).
 - %thirstbar_current_float%: Current thirst value (float).
@@ -94,7 +94,7 @@ ___
 - %thirstbar_reducePerSec_float%: The player’s thirst value is reduced per time (float).
 - %thirstbar_isDisabled%: Player’s thirst status (whether disabled or not).
 ___
-![configuration](https://github.com/L3via/JustTest/assets/98169091/beebe670-24c3-4362-b251-71d6691a9510)
+![configuration](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/configuration.png)
 ## config.yml
 ```yaml
 Thirsty:
