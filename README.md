@@ -23,26 +23,26 @@ ___
 - Players can restore thirst value by eating or drinking (consuming items), these items can be vanilla items, items with custom names, and lore, or items with custom model data, custom textures.
     - By shifting + right-clicking on the air or water source, players can now directly drink rainwater or raw water. However, these methods frequently have accompanying effects that the administrator can customize in the configuration.
   
-![ezgif com-optimize (11)](https://github.com/L3via/JustTest/assets/98169091/69c6e39e-62b0-4309-8b1e-d8a58bab11da)
+![ezgif com-optimize (11)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/1.gif)
   
-![ezgif com-optimize (15)](https://github.com/L3via/JustTest/assets/98169091/e3824181-6239-4b18-b2db-d92ddf9c8f76)
+![ezgif com-optimize (15)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/2.gif)
 
-![ezgif com-optimize (13)](https://github.com/L3via/JustTest/assets/98169091/46b514cf-3d59-4e5e-ac4b-d90f9c7fb402)
+![ezgif com-optimize (13)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/3.gif)
 
 - When the thirst bar reaches a certain threshold, it can change color, bossbar title, or action bar title. At the same time, it gives the player certain effects (Potion Effects).
     
     For example, at 100%, the player's thirst bar is green and has speed effect 1, whereas at 25%, it is red and has a slow effect 1. Change the display state of the action bar/boss bar, and we can also add actions like [title], [message], [sound], or [player]/[console] - these actions will be performed when the player has just reached that thirst threshold.
     
-![ezgif com-optimize (10)](https://github.com/L3via/JustTest/assets/98169091/8706456b-ebec-4e5e-9b89-0614d59104da)
+![ezgif com-optimize (10)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/4.gif)
   
 - Disable the thirst bar in specific worlds (DisabledWorld) or regions (Region - WorldGuard flag).
     - We can still adjust the thirst speed in each world/region in addition to completely disabling the thirst bar.
 
-![ezgif com-optimize (16)](https://github.com/L3via/JustTest/assets/98169091/fd2c69c3-8f65-4b9a-82fa-0eb862420270)
+![ezgif com-optimize (16)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/5.gif)
   
 - The thirst bar can also be disabled when in specific game modes that can be customized by the administrator, such as: creative, spectator,...
   
-![ezgif com-optimize (14)](https://github.com/L3via/JustTest/assets/98169091/3b38c6c0-82f1-4985-9c1d-b2e28b66a398)
+![ezgif com-optimize (14)](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Gifs/6.gif)
 ___
 ![Commands](https://github.com/L3via/JustTest/assets/98169091/c69574ea-7ead-4a0b-851b-5b3d13161200)
   
