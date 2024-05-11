@@ -6,7 +6,9 @@ Sql:
   Password: '123456'
   Database: 'ThirstBar'
 StopDrinking: true # Prevents players from drinking water when their thirst bar is full
-CustomActionBar: false
+CustomActionBar:
+  Enable: false
+  Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
 Thirsty:
   Max: 100
   Reduce: 1

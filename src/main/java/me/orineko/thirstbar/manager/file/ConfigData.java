@@ -18,7 +18,8 @@ public class ConfigData {
     }
 
     public static boolean STOP_DRINKING;
-    public static boolean CUSTOM_ACTION_BAR;
+    public static boolean CUSTOM_ACTION_BAR_ENABLE;
+    public static String CUSTOM_ACTION_BAR_ORIENTATION;
     public static double THIRSTY_MAX;
     public static double THIRSTY_REDUCE;
     public static long THIRSTY_TIME;
@@ -47,8 +48,9 @@ public class ConfigData {
     public ConfigData(){
         this.configFile = ThirstBar.getInstance().getConfig();
 
-        CUSTOM_ACTION_BAR = configFile.getBoolean("CustomActionBar", false);
-        if(CUSTOM_ACTION_BAR){
+        CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
+        CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
+        if(CUSTOM_ACTION_BAR_ENABLE){
             setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eea3");
             setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eea6");
             setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eea9");
@@ -140,7 +142,12 @@ public class ConfigData {
             }
             String part3 = part3Builder.toString();
 
-            String result = percentage + part1 + part2 + part3;
+            String result;
+            if(CUSTOM_ACTION_BAR_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")){
+                result = percentage + part3 + part2 + part1;
+            } else {
+                result = percentage + part1 + part2 + part3;
+            }
             stringList.add(result);
         }
 

@@ -55,6 +55,7 @@ public class PlayerSetting {
 
     public void setEnableActionBar(boolean enableActionBar){
         this.enableActionBar = enableActionBar;
+        if(!enableActionBar) setTitleActionBar("");
     }
 
     public void setColorBossBar(@Nonnull BarColor colorBossBar) {

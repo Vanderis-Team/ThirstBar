@@ -1,0 +1,25 @@
+enable: true
+# if false, this feature will not be enabled
+standing:
+  enable: true
+  multiply: 1
+  hideActionBar: false
+sprinting:
+  enable: true
+  multiply: 1.2
+  # For example, if the default thirst rate is 5 thirst value per second,
+  # then when the player sprints, it will cost 5*1.2 = 6 thirst value per second.
+  hideActionBar: false
+  # If true, the action bar will be hidden when the player is sprinting.
+underwater:
+  enable: true
+  multiply: 0.85
+  hideActionBar: true
+sneaking:
+  enable: true
+  multiply: 0.8
+  hideActionBar: true
+fighting:
+  enable: true
+  multiply: 1.3
+  hideActionBar: false

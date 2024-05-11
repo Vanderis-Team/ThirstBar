@@ -7,6 +7,7 @@ import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
 import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.action.ActionManager;
 import me.orineko.thirstbar.manager.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.api.UpdateChecker;
 import me.orineko.thirstbar.manager.api.sql.SqlManager;
@@ -46,8 +47,10 @@ public final class ThirstBar extends JavaPlugin {
     private FileManager messageFile;
     private FileManager playersFile;
     private FileManager stageFile;
+    private FileManager actionsFile;
     private boolean worldGuardApiEnable = false;
     private SqlManager sqlManager;
+    private ActionManager actionManager;
 
     @Override
     public void onEnable() {
@@ -57,8 +60,10 @@ public final class ThirstBar extends JavaPlugin {
 
         messageFile = new FileManager("message.yml", this);
         stageFile = new FileManager("stages.yml", this);
+        actionsFile = new FileManager("actions.yml", this);
         messageFile.copyDefault();
         stageFile.copyDefault();
+        actionsFile.copyDefault();
         loadResourcePackFile();
 
         if (sqlManager.getConnection() == null) {
@@ -70,8 +75,11 @@ public final class ThirstBar extends JavaPlugin {
 
         renewData();
         Bukkit.getOnlinePlayers().forEach(Method::disableGameMode);
+
+
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
         getServer().getPluginManager().registerEvents(new ThirstListener(), this);
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new PlaceholderAPI().register();
         checkForUpdate();
 
@@ -96,6 +104,7 @@ public final class ThirstBar extends JavaPlugin {
     @Override
     public void onDisable() {
         ThirstListener.armorStandMap.forEach((k, v) -> v.remove());
+        if(actionManager != null) actionManager.removeRegister();
         getPlayerDataList().removeDataPlayersOnline();
     }
 
@@ -116,6 +125,7 @@ public final class ThirstBar extends JavaPlugin {
         }
         messageFile.reload();
         stageFile.reload();
+        actionsFile.reload();
         configData = new ConfigData();
         messageData = new MessageData();
         itemDataList = new ItemDataList();
@@ -128,6 +138,8 @@ public final class ThirstBar extends JavaPlugin {
                     p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             playerData.setDisableAll(check);
         });
+        if(actionManager != null) actionManager.removeRegister();
+        actionManager = new ActionManager();
         playerDataList.loadData();
     }
 
@@ -233,11 +245,19 @@ public final class ThirstBar extends JavaPlugin {
         return stageFile;
     }
 
+    public FileManager getActionsFile() {
+        return actionsFile;
+    }
+
     public boolean isWorldGuardApiEnable() {
         return worldGuardApiEnable;
     }
 
     public SqlManager getSqlManager() {
         return sqlManager;
+    }
+
+    public ActionManager getActionManager() {
+        return actionManager;
     }
 }

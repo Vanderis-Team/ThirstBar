@@ -19,12 +19,12 @@ public class PlaceholderAPI extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "OriNeko";
+        return "Vanderis";
     }
 
     @Override
     public @NotNull String getVersion() {
-        return "2.1";
+        return ThirstBar.getInstance().getDescription().getVersion();
     }
 
     @Override

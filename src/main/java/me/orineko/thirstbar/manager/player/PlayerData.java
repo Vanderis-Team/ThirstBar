@@ -3,6 +3,7 @@ package me.orineko.thirstbar.manager.player;
 import com.cryptomorin.xseries.messages.ActionBar;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.action.ActionRegister;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.stage.Stage;
 import me.orineko.thirstbar.manager.stage.StageConfig;
@@ -32,6 +33,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     private long cooldownRefresh;
 
     private final List<Stage> stageCurrentList;
+    private final List<ActionRegister> actionRegisterList;
 
     private long delayRefresh;
     private int idRepeating;
@@ -54,6 +56,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         this.cooldownRefresh = ConfigData.COOLDOWN_REFRESH;
         this.delayRefresh = 0;
         this.stageCurrentList = new ArrayList<>();
+        this.actionRegisterList = new ArrayList<>();
         executeReduce();
         Player player = getPlayer();
         if (player != null) {
@@ -227,6 +230,10 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         return stageCurrentList;
     }
 
+    public List<ActionRegister> getActionRegisterList() {
+        return actionRegisterList;
+    }
+
     @Override
     public void showBossBar(@Nonnull Player player) {
         setDisplayBossBar(isEnableBossBar(), player);
@@ -276,7 +283,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         } else {
             if (stageCurrentList.size() > 0) {
                 Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
-                if (ConfigData.CUSTOM_ACTION_BAR) {
+                if (ConfigData.CUSTOM_ACTION_BAR_ENABLE) {
                     String text;
                     if(stage instanceof StageConfig) {
                         text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
@@ -311,6 +318,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                 Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
                 idRepeat2ActionBar = 0;
             }
+            if(!isEnableActionBar()) return;
             ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), thirstTimeRemain);
             if ((int) thirstTime / 20 == 0) return;
             idDelayActionBar = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> {
@@ -419,6 +427,10 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
 
     public double getReduceTotal() {
         double percent = this.stageCurrentList.stream().mapToDouble(Stage::getReducePercent).sum();
+        double thirstReduce = this.thirstReduce;
+        for (ActionRegister actionRegister : actionRegisterList) {
+            thirstReduce += thirstReduce*(actionRegister.getMultiple()-1);
+        }
         return thirstReduce + thirstReduce * percent / 100;
     }
 }
