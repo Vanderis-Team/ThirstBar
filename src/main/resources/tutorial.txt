@@ -1,3 +1,5 @@
+# First of all, you need to enable Custom Action Bar in config.yml
+
 # If you want to use our default resource pack
 # Change these values in your server.properties file
 
