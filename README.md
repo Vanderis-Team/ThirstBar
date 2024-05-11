@@ -10,7 +10,7 @@ This can make the gameplay on your server more lively and realistic.
   - PlaceholderAPI
   - WorldGuard
 ___
-![Features](https://github.com/L3via/JustTest/assets/98169091/7f498dee-ca7a-43e1-8c38-3be0dfa8c159)
+![Features](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Features.png)
   
 - One of the most important features is that each player has a thirst point, a unit like a hunger bar, which can be displayed in two main ways: Bossbar and Action Bar.
     - Another unique method of displaying Thirst Bars is the bar from hunger to bar.
