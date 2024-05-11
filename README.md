@@ -1,6 +1,6 @@
 # ThirstBar v2.1a - PlaceholderAPI and WorldGuard support!
   
-![Thirst_Bar_3](https://github.com/L3via/JustTest/assets/98169091/c521cf3a-f81b-40da-afe7-09f8faeccc76)
+![Thirst_Bar_3]([https://github.com/L3via/JustTest/assets/98169091/c521cf3a-f81b-40da-afe7-09f8faeccc76](https://raw.githubusercontent.com/Vanderis-Team/ThirstBar/main/Media%20FIles/Designs/Thirst_Bar.png))
 
 Are you looking for something new in your Minecraft server? What are your thoughts on the idea of players having to balance something other than their own hunger bar?  
 Thirst Bar brings to your server a thirst mechanism as well as additional mechanisms surrounding it, just like Minecraft's inherent hunger bar.
