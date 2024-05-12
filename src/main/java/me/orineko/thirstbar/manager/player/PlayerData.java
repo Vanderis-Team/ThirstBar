@@ -175,7 +175,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     @Override
     public void addThirst(double value) {
         this.thirst += value;
-        if(this.thirst < 0) this.thirst = 0;
+        if (this.thirst < 0) this.thirst = 0;
     }
 
     @Override
@@ -280,6 +280,18 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
 
     @Override
     public void updateActionBar(@Nonnull Player player) {
+        if (idDelayActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idDelayActionBar);
+            idDelayActionBar = 0;
+        }
+        if (idRepeatActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeatActionBar);
+            idRepeatActionBar = 0;
+        }
+        if (idRepeat2ActionBar != 0) {
+            Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
+            idRepeat2ActionBar = 0;
+        }
         if (!isEnableActionBar()) return;
         if (isDisableAll()) {
             setTitleDisableActionBar(thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
@@ -288,9 +300,9 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                 Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
                 if (ConfigData.CUSTOM_ACTION_BAR_ENABLE) {
                     String text;
-                    if(stage instanceof StageConfig) {
+                    if (stage instanceof StageConfig) {
                         text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
-                            thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
+                                thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
                     } else {
                         text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
                                 thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
@@ -304,18 +316,6 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                 setTitleActionBar(thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
         }
         long thirstTimeRemain = thirstTime % 20;
-        if (idDelayActionBar != 0) {
-            Bukkit.getScheduler().cancelTask(idDelayActionBar);
-            idDelayActionBar = 0;
-        }
-        if (idRepeatActionBar != 0) {
-            Bukkit.getScheduler().cancelTask(idRepeatActionBar);
-            idRepeatActionBar = 0;
-        }
-        if (idRepeat2ActionBar != 0) {
-            Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
-            idRepeat2ActionBar = 0;
-        }
         idRepeatActionBar = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
             if (idRepeat2ActionBar != 0) {
                 Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
@@ -326,11 +326,11 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             if ((int) thirstTime / 20 == 0) return;
             idDelayActionBar = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> {
                 idRepeat2ActionBar = Bukkit.getScheduler().scheduleSyncRepeatingTask(ThirstBar.getInstance(), () -> {
+                    if(!isEnableActionBar()) return;
                     ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), 20);
                 }, 0, 20);
             }, thirstTimeRemain);
         }, 0, thirstTime);
-
     }
 
     @Override
@@ -402,7 +402,8 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             });
         });
         potionEffectList.forEach(pe -> {
-            if(player.getActivePotionEffects().stream().anyMatch(v -> v.getType().equals(pe.getType()) && v.getAmplifier() == pe.getAmplifier())) return;
+            if (player.getActivePotionEffects().stream().anyMatch(v -> v.getType().equals(pe.getType()) && v.getAmplifier() == pe.getAmplifier()))
+                return;
             PotionEffect potionEffect = player.getPotionEffect(pe.getType());
             if (potionEffect == null)
                 player.addPotionEffect(pe);
@@ -432,7 +433,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         double percent = this.stageCurrentList.stream().mapToDouble(Stage::getReducePercent).sum();
         double thirstReduce = this.thirstReduce;
         for (ActionRegister actionRegister : actionRegisterList) {
-            thirstReduce += thirstReduce*(actionRegister.getMultiple()-1);
+            thirstReduce += thirstReduce * (actionRegister.getMultiple() - 1);
         }
         return thirstReduce + thirstReduce * percent / 100;
     }
