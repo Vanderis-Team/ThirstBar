@@ -9,6 +9,7 @@ import me.orineko.thirstbar.manager.stage.Stage;
 import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -109,6 +110,8 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             if (player.isDead()) return;
             if (isDisableAll()) return;
             if (isDisable()) return;
+            if (player.getGameMode().equals(GameMode.CREATIVE) ||
+                    player.getGameMode().equals(GameMode.SPECTATOR)) return;
             if (thirst <= 0) {
                 setThirst(0);
                 if (player.getHealth() - thirstDamage < 0) player.setHealth(0);

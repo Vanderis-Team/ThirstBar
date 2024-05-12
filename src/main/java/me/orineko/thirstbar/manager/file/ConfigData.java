@@ -3,7 +3,9 @@ package me.orineko.thirstbar.manager.file;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -51,9 +53,9 @@ public class ConfigData {
         CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
         CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
         if(CUSTOM_ACTION_BAR_ENABLE){
-            setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eea3");
-            setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eea6");
-            setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eea9");
+            setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eeb1", "eea3");
+            setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eeb2", "eea6");
+            setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eeb3", "eea9");
         } else {
             resourcePackThirstMap.clear();
         }
@@ -114,25 +116,24 @@ public class ConfigData {
     }
 
     private static void setResourceThirst(@Nonnull TypeResourceThirst typeResourceThirst, @Nonnull String thirstChar,
-                                          @Nonnull String thirstHalfChar, @Nonnull String thirstEmptyChar){
+                                          @Nonnull String thirstHalfLeftChar, @Nonnull String thirstHalfRightChar, @Nonnull String thirstEmptyChar){
         int numberOfItems = 20;
         List<String> stringList = new ArrayList<>();
 
         String shiftRightChar = convertUnicodeEscape("\\uf82a\\uf82b\\uf824");
         String waterChar = convertUnicodeEscape("\\u"+thirstChar);
-        String waterHalfChar = convertUnicodeEscape("\\u"+thirstHalfChar);
+        String waterHalfLeftChar = convertUnicodeEscape("\\u"+thirstHalfLeftChar);
+        String waterHalfRightChar = convertUnicodeEscape("\\u"+thirstHalfRightChar);
         String waterEmptyChar = convertUnicodeEscape("\\u"+thirstEmptyChar);
 
         for (int i = numberOfItems; i >= 0; i--) {
-            String percentage = "[" + (i * 5) + "%]";
+            String percentage = "[" + (i * 5) + "%]"+shiftRightChar;
 
-            StringBuilder part1Builder = new StringBuilder(shiftRightChar);
+            StringBuilder part1Builder = new StringBuilder();
             for (int j = 0; j < i / 2; j++) {
                 part1Builder.append(waterChar);
             }
             String part1 = part1Builder.toString();
-
-            String part2 = (i % 2 == 1) ? waterHalfChar : "";
 
             StringBuilder part3Builder = new StringBuilder();
             if (i != numberOfItems) {
@@ -144,8 +145,10 @@ public class ConfigData {
 
             String result;
             if(CUSTOM_ACTION_BAR_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")){
+                String part2 = (i % 2 == 1) ? waterHalfRightChar : "";
                 result = percentage + part3 + part2 + part1;
             } else {
+                String part2 = (i % 2 == 1) ? waterHalfLeftChar : "";
                 result = percentage + part1 + part2 + part3;
             }
             stringList.add(result);

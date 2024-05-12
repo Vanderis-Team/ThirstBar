@@ -36,22 +36,23 @@ public class ThirstListener implements Listener {
 
     public static final HashMap<UUID, ArmorStand> armorStandMap = new HashMap<>();
     private final List<UUID> delayClickMap = new ArrayList<>();
+    private final List<UUID> delayMoveMap = new ArrayList<>();
     private final String keyPotionRaw = "RawWater";
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
-        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+        if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             double thirstFile = ThirstBar.getInstance().getPlayersFile()
-                    .getDouble(playerData.getName()+".Thirst", -1);
-            if(thirstFile >= 0) {
+                    .getDouble(playerData.getName() + ".Thirst", -1);
+            if (thirstFile >= 0) {
                 playerData.setThirst(thirstFile);
-                ThirstBar.getInstance().getPlayersFile().setAndSave(playerData.getName()+".Thirst", null);
+                ThirstBar.getInstance().getPlayersFile().setAndSave(playerData.getName() + ".Thirst", null);
             }
         } else {
             double thirstFile = ThirstBar.getInstance().getSqlManager().runGetThirstCurrentPlayer(playerData.getName());
-            if(thirstFile >= 0){
+            if (thirstFile >= 0) {
                 playerData.setThirst(thirstFile);
                 ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), -1);
             }
@@ -69,7 +70,7 @@ public class ThirstListener implements Listener {
         playerData.setDisableAll(check1 || check2);
         playerData.updateAll(player);
 
-        if(armorStandMap.containsKey(player.getUniqueId())) return;
+        if (armorStandMap.containsKey(player.getUniqueId())) return;
         ArmorStand armorStand = player.getWorld().spawn(
                 new Location(player.getWorld(), 0, 0, 0), ArmorStand.class);
         armorStand.setVisible(false);
@@ -89,16 +90,16 @@ public class ThirstListener implements Listener {
     }
 
     @EventHandler
-    public void onChangeGameMode(PlayerGameModeChangeEvent e){
+    public void onChangeGameMode(PlayerGameModeChangeEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().getData(player.getName());
-        if(playerData == null) return;
+        if (playerData == null) return;
         GameMode gameMode = e.getNewGameMode();
         List<String> gamemodeList = ConfigData.DISABLED_GAMEMODE;
         try {
             playerData.setDisableAll(gamemodeList.stream()
                     .anyMatch(g -> gameMode.equals(GameMode.valueOf(g.toUpperCase()))));
-        } catch (IllegalArgumentException ignore){
+        } catch (IllegalArgumentException ignore) {
 
         }
         playerData.updateAll(player);
@@ -124,12 +125,12 @@ public class ThirstListener implements Listener {
         if (playerData.isDisableAll() || playerData.isDisable()) return;
 
         String tagRawWater = NBTTag.getKey(itemHand, keyPotionRaw);
-        if(tagRawWater != null && tagRawWater.equals("true")){
+        if (tagRawWater != null && tagRawWater.equals("true")) {
             StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
             if (stageWater != null) {
 
                 double value = stageWater.getValue();
-                if(playerData.getThirst() + value/2 >= playerData.getThirstMax()) {
+                if (playerData.getThirst() + value / 2 >= playerData.getThirstMax()) {
                     e.setCancelled(true);
                     return;
                 }
@@ -150,9 +151,9 @@ public class ThirstListener implements Listener {
         ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
         if (itemData == null) return;
         double value = itemData.getValue();
-        if(!(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand))){
-            if(playerData.getThirst() + value/2 >= playerData.getThirstMax()
-                    || playerData.getThirst() + (playerData.getThirst()*itemData.getValuePercent()/100)/2 >= playerData.getThirstMax()) {
+        if (!(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand))) {
+            if (playerData.getThirst() + value / 2 >= playerData.getThirstMax()
+                    || playerData.getThirst() + (playerData.getThirst() * itemData.getValuePercent() / 100) / 2 >= playerData.getThirstMax()) {
                 e.setCancelled(true);
                 return;
             }
@@ -224,40 +225,54 @@ public class ThirstListener implements Listener {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
 
-        if(ThirstBar.getInstance().isWorldGuardApiEnable()){
-            boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
-                    player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
-            boolean check2 = WorldGuardApi.isPlayerInFlag(player);
-            playerData.setDisableAll(check || check2);
-            playerData.updateAll(player);
-        }
-        if(playerData.isDisableAll() || playerData.isDisable()) return;
-        if(ThirstBar.getInstance().isWorldGuardApiEnable()){
-            double reduce = WorldGuardApi.getReduceValueLocationPlayer(player);
-            if(reduce > 0){
-                playerData.setThirstReduce(reduce);
-            } else {
-                playerData.setThirstReduce(ConfigData.THIRSTY_REDUCE);
-            }
-        }
+        if (!delayMoveMap.contains(player.getUniqueId())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> {
+                delayMoveMap.remove(player.getUniqueId());
+            }, 20);
+            delayMoveMap.add(player.getUniqueId());
 
-        ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
-        if (armorStand == null) return;
-        if(player.isSneaking() && player.getItemInHand().getType().equals(Material.AIR)) {
-            /*if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
-                armorStand.teleport(new Location(player.getWorld(), 0, 0, 0));
-            }*/
-            Location location = player.getEyeLocation().clone();
-            Vector vector = location.getDirection();
-            location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
-            location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
-            if(!location.getChunk().isLoaded()) location.getChunk().load();
-            armorStand.teleport(location);
-        } else {
-            Location playerLocation = player.getLocation();
-            Location location = new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ());
-            if(!location.getChunk().isLoaded()) location.getChunk().load();
-            armorStand.teleport(location);
+            if (ThirstBar.getInstance().isWorldGuardApiEnable()) {
+                boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
+                        player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
+                boolean check1 = false;
+                try {
+                    check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                            player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+                } catch (IllegalArgumentException ignore) {
+                }
+                boolean check2 = WorldGuardApi.isPlayerInFlag(player);
+                playerData.setDisableAll(check || check1 || check2);
+                playerData.updateAll(player);
+            }
+            if (!playerData.isDisableAll() && !playerData.isDisable()) {
+                if (ThirstBar.getInstance().isWorldGuardApiEnable()) {
+                    double reduce = WorldGuardApi.getReduceValueLocationPlayer(player);
+                    if (reduce > 0) {
+                        playerData.setThirstReduce(reduce);
+                    } else {
+                        playerData.setThirstReduce(ConfigData.THIRSTY_REDUCE);
+                    }
+                }
+
+                ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
+                if (armorStand == null) return;
+                if (player.isSneaking() && player.getItemInHand().getType().equals(Material.AIR)) {
+                    /*if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
+                        armorStand.teleport(new Location(player.getWorld(), 0, 0, 0));
+                    }*/
+                    Location location = player.getEyeLocation().clone();
+                    Vector vector = location.getDirection();
+                    location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
+                    location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
+                    if (!location.getChunk().isLoaded()) location.getChunk().load();
+                    armorStand.teleport(location);
+                } else {
+                    Location playerLocation = player.getLocation();
+                    Location location = new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ());
+                    if (!location.getChunk().isLoaded()) location.getChunk().load();
+                    armorStand.teleport(location);
+                }
+            }
         }
     }
 
@@ -363,7 +378,7 @@ public class ThirstListener implements Listener {
         ItemStack itemStack = player.getItemInHand();
         if (itemStack.getType().equals(Material.AIR)) {
             if (player.isSneaking()) {
-                if(ConfigData.STOP_DRINKING && playerData.getThirst() >= playerData.getThirstMax()) {
+                if (ConfigData.STOP_DRINKING && playerData.getThirst() >= playerData.getThirstMax()) {
                     StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
                     if (stageWater != null) {
                         if (!delayClickMap.contains(player.getUniqueId())) {
@@ -398,14 +413,14 @@ public class ThirstListener implements Listener {
             }
         }
 
-        if (itemStack.getType().equals(Material.GLASS_BOTTLE)){
-            if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)){
+        if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
+            if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 Block block = e.getPlayer().getTargetBlock(null, 4);
                 if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
                     ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
                     itemBottle = NBTTag.setKey(itemBottle, keyPotionRaw, "true");
                     ItemMeta meta = itemBottle.getItemMeta();
-                    if(meta != null){
+                    if (meta != null) {
                         meta.setDisplayName(ConfigData.NAME_RAW_POTION);
                         meta.setLore(ConfigData.LORE_RAW_POTION);
                         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
@@ -416,7 +431,7 @@ public class ThirstListener implements Listener {
                         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
                     } else {
                         ItemStack item = itemStack.clone();
-                        item.setAmount(itemStack.getAmount()-1);
+                        item.setAmount(itemStack.getAmount() - 1);
                         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
                         player.getInventory().addItem(itemBottle);
                     }
@@ -425,7 +440,7 @@ public class ThirstListener implements Listener {
         }
 
         ItemStack itemHand = player.getItemInHand();
-        if(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand)){
+        if (ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand)) {
             if (itemHand.getType().equals(Material.AIR)) return;
             ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
             if (itemData == null) return;
@@ -436,7 +451,7 @@ public class ThirstListener implements Listener {
     }
 
     @EventHandler
-    public void onChangeWorld(PlayerChangedWorldEvent e){
+    public void onChangeWorld(PlayerChangedWorldEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
         boolean check1 = false;
@@ -457,13 +472,13 @@ public class ThirstListener implements Listener {
         if()
     }*/
 
-    private boolean checkFoodHaveEffect(@Nonnull ItemStack itemStack){
+    private boolean checkFoodHaveEffect(@Nonnull ItemStack itemStack) {
         List<String> list = Arrays.asList("GOLDEN_APPLE", "ENCHANTED_GOLDEN_APPLE",
                 "PUFFERFISH", "MILK_BUCKET", "CHORUS_FRUIT", "POISONOUS_POTATO");
         for (String value : list) {
-            if(itemStack.getType().equals(MethodDefault.getItemAllVersion(value).getType())) return true;
+            if (itemStack.getType().equals(MethodDefault.getItemAllVersion(value).getType())) return true;
         }
-        if(itemStack.getType().equals(Material.POTION)){
+        if (itemStack.getType().equals(Material.POTION)) {
             PotionMeta potionMeta = (PotionMeta) itemStack.getItemMeta();
             return potionMeta != null && !potionMeta.getCustomEffects().isEmpty();
         }
