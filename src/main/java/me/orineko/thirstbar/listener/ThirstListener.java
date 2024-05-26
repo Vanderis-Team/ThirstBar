@@ -253,26 +253,26 @@ public class ThirstListener implements Listener {
                         playerData.setThirstReduce(ConfigData.THIRSTY_REDUCE);
                     }
                 }
+            }
+        }
 
-                ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
-                if (armorStand == null) return;
-                if (player.isSneaking() && player.getItemInHand().getType().equals(Material.AIR)) {
+        ArmorStand armorStand = armorStandMap.getOrDefault(player.getUniqueId(), null);
+        if (armorStand == null) return;
+        if (player.isSneaking() && player.getItemInHand().getType().equals(Material.AIR)) {
                     /*if (!armorStand.getLocation().equals(new Location(player.getWorld(), 0, 0, 0))){
                         armorStand.teleport(new Location(player.getWorld(), 0, 0, 0));
                     }*/
-                    Location location = player.getEyeLocation().clone();
-                    Vector vector = location.getDirection();
-                    location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
-                    location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
-                    if (!location.getChunk().isLoaded()) location.getChunk().load();
-                    armorStand.teleport(location);
-                } else {
-                    Location playerLocation = player.getLocation();
-                    Location location = new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ());
-                    if (!location.getChunk().isLoaded()) location.getChunk().load();
-                    armorStand.teleport(location);
-                }
-            }
+            Location location = player.getEyeLocation().clone();
+            Vector vector = location.getDirection();
+            location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
+            location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
+            if (!location.getChunk().isLoaded()) location.getChunk().load();
+            armorStand.teleport(location);
+        } else {
+            Location playerLocation = player.getLocation();
+            Location location = new Location(player.getWorld(), playerLocation.getX(), 1, playerLocation.getZ());
+            if (!location.getChunk().isLoaded()) location.getChunk().load();
+            armorStand.teleport(location);
         }
     }
 
