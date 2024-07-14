@@ -98,6 +98,7 @@ public abstract class ActionRegister {
 
     public void executeAction(@Nonnull Player player){
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
+        if(playerData.getActionRegisterList().stream().anyMatch(v -> v.getName().equals(this.getName()))) return;
         playerData.getActionRegisterList().add(this);
         if(isHideActionBar()) playerData.setEnableActionBar(false);
         playerData.updateAll(player);

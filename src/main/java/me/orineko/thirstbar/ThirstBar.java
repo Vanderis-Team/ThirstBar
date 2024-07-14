@@ -2,11 +2,11 @@ package me.orineko.thirstbar;
 
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
-import me.orineko.pluginspigottools.NBTTag;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
 import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.NBTTag;
 import me.orineko.thirstbar.manager.action.ActionManager;
 import me.orineko.thirstbar.manager.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.api.UpdateChecker;

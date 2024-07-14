@@ -39,6 +39,12 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.spigotmc.v1_20_4</pattern>
+                                    <shadedPattern>com.mineahihi.treomay.shaded.v1_20_4</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -79,9 +85,17 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.2-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!--<dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-1.20.4-R0.1-SNAPSHOT</artifactId>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <classifier>v1_20_4</classifier>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/spigot-1.20.4-R0.1-SNAPSHOT.jar</systemPath>
+        </dependency>-->
         <dependency>
             <groupId>com.github.huynhphap100</groupId>
             <artifactId>PluginSpigotTools</artifactId>

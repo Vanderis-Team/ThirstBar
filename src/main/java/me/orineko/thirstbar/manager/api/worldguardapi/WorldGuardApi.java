@@ -62,6 +62,7 @@ public class WorldGuardApi {
     }
 
     public static boolean isPlayerInFlag(Player player) {
+        if(getStateFlag() == null) return false;
         try {
             Location location = BukkitAdapter.adapt(player.getLocation());
             RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -95,7 +96,8 @@ public class WorldGuardApi {
             return 0;
         }
     }
-
+    
+    @Nullable
     public static StateFlag getStateFlag() {
         return stateFlag;
     }
