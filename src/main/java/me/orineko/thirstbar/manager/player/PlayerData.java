@@ -1,9 +1,11 @@
 package me.orineko.thirstbar.manager.player;
 
 import com.cryptomorin.xseries.messages.ActionBar;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.Method;
 import me.orineko.thirstbar.manager.action.ActionRegister;
+import me.orineko.thirstbar.manager.action.Condition;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.stage.Stage;
 import me.orineko.thirstbar.manager.stage.StageConfig;
@@ -13,11 +15,11 @@ import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.joml.RoundingMode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +31,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     private double thirst;
     private double thirstMax;
     private double thirstReduce;
+    private double thirstReduceOrigin;
     private long thirstTime;
     private double thirstDamage;
     private long cooldownRefresh;
@@ -51,6 +54,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         this.name = name;
         this.thirstMax = ConfigData.THIRSTY_MAX;
         this.thirstReduce = ConfigData.THIRSTY_REDUCE;
+        this.thirstReduceOrigin = ConfigData.THIRSTY_REDUCE;
         this.thirstTime = ConfigData.THIRSTY_TIME;
         this.thirstDamage = ConfigData.THIRSTY_DAMAGE;
         this.thirst = this.thirstMax;
@@ -430,11 +434,22 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
     }
 
     public double getReduceTotal() {
+        Player player = getPlayer();
         double percent = this.stageCurrentList.stream().mapToDouble(Stage::getReducePercent).sum();
-        double thirstReduce = this.thirstReduce;
+        double thirstReduce = this.thirstReduceOrigin + this.thirstReduceOrigin * percent / 100;
         for (ActionRegister actionRegister : actionRegisterList) {
-            thirstReduce += thirstReduce * (actionRegister.getMultiple() - 1);
+            if(player != null && player.isOnline()) {
+                Condition condition = actionRegister.getCondition(player);
+                if (condition != null) {
+                    thirstReduce += thirstReduce * (condition.getMultiply() - 1);
+                } else {
+                    thirstReduce += thirstReduce * (actionRegister.getMultiple() - 1);
+                }
+            } else {
+                thirstReduce += thirstReduce * (actionRegister.getMultiple() - 1);
+            }
         }
-        return thirstReduce + thirstReduce * percent / 100;
+        return thirstReduce;
     }
+
 }

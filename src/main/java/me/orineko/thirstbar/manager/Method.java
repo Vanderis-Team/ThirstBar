@@ -9,10 +9,14 @@ import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
@@ -87,7 +91,15 @@ public class Method {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
-                        if(idDelayMainTitle == 0) Titles.sendTitle(player, main, sub);
+
+                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+                        if (versionNumber <= 19) {
+                            if(idDelayMainTitle == 0) Titles.sendTitle(player, main, sub);
+                        } else {
+                            if(idDelayMainTitle == 0) {
+                                player.sendTitle(main, sub, 10, 20, 10);
+                            }
+                        }
                         if(stageConfig && idDelayMainTitle == 0) idDelayMainTitle =
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
                                         () -> idDelayMainTitle = 0, 100);
@@ -101,7 +113,12 @@ public class Method {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
-                        if(idDelaySubTitle == 0) Titles.sendTitle(player, main, sub);
+                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+                        if (versionNumber <= 19) {
+                            if(idDelaySubTitle == 0) Titles.sendTitle(player, main, sub);
+                        } else {
+                            if(idDelaySubTitle == 0) player.sendTitle(main, sub, 10, 20, 10);
+                        }
                         if(stageConfig && idDelaySubTitle == 0) idDelaySubTitle =
                                 Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
                                         () -> idDelaySubTitle = 0, 100);
@@ -129,9 +146,32 @@ public class Method {
             }
             String titleMainRemain = (titleMain.size() > 0) ? titleMain.get(0) : null;
             String titleSubRemain = (titleSub.size() > 0) ? titleSub.get(0) : null;
-            if (titleMainRemain != null) Titles.sendTitle(player, titleMainRemain, "");
-            if (titleSubRemain != null) Titles.sendTitle(player, "", titleSubRemain);
+            int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+            if(versionNumber <= 19) {
+                if (titleMainRemain != null) Titles.sendTitle(player, titleMainRemain, "");
+                if (titleSubRemain != null) Titles.sendTitle(player, "", titleSubRemain);
+            } else {
+                player.sendTitle(titleMainRemain, titleSubRemain, 10, 20, 10);
+            }
         });
+    }
+
+    public static boolean checkSightIsWater(@Nonnull Player player){
+        Location locOrigin = player.getLocation();
+        Location loc = player.getLocation().clone().add(0, 1.5, 0);
+        Vector vector = player.getLocation().getDirection();
+        double x = vector.getX()/5;
+        double y = vector.getY()/5;
+        double z = vector.getZ()/5;
+//        player.sendMessage("test: "+loc+", "+vector);
+        int i = 0;
+        do {
+            i++;
+            loc = loc.add(x, y, z);
+            Block block = loc.getBlock();
+            if(block.getType().name().contains("WATER")) return true;
+        } while (locOrigin.distance(loc) < 4);
+        return false;
     }
 
 }

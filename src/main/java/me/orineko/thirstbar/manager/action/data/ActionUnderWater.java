@@ -40,9 +40,6 @@ public class ActionUnderWater extends ActionRegister{
         int y = location.getBlockY()+1;
         int z = location.getBlockZ();
         Block block = world.getBlockAt(x, y, z);
-
-        ItemStack water1 = MethodDefault.getItemAllVersion("STATIONARY_WATER");
-        ItemStack water2 = MethodDefault.getItemAllVersion("WATER");
-        return block.getType().equals(water1.getType()) || block.getType().equals(water2.getType());
+        return block.getType().name().contains("WATER");
     }
 }

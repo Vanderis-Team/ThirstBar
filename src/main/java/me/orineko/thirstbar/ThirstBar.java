@@ -1,14 +1,15 @@
 package me.orineko.thirstbar;
 
+import de.tr7zw.nbtapi.NBT;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
 import me.orineko.thirstbar.manager.Method;
-import me.orineko.thirstbar.manager.NBTTag;
 import me.orineko.thirstbar.manager.action.ActionManager;
 import me.orineko.thirstbar.manager.api.PlaceholderAPI;
+import me.orineko.thirstbar.manager.api.ThirstBarExpansion;
 import me.orineko.thirstbar.manager.api.UpdateChecker;
 import me.orineko.thirstbar.manager.api.sql.SqlManager;
 import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
@@ -21,6 +22,7 @@ import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.FurnaceRecipe;
@@ -31,6 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,9 +54,15 @@ public final class ThirstBar extends JavaPlugin {
     private boolean worldGuardApiEnable = false;
     private SqlManager sqlManager;
     private ActionManager actionManager;
+    private PlaceholderAPI placeholderAPI;
 
     @Override
     public void onEnable() {
+        if (!NBT.preloadApi()) {
+            getLogger().warning("NBT-API wasn't initialized properly, disabling the plugin");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         saveDefaultConfig();
         plugin = this;
         sqlManager = new SqlManager();
@@ -80,7 +89,10 @@ public final class ThirstBar extends JavaPlugin {
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
         getServer().getPluginManager().registerEvents(new ThirstListener(), this);
 
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) new PlaceholderAPI().register();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            placeholderAPI = new PlaceholderAPI();
+            new ThirstBarExpansion().register();
+        }
         checkForUpdate();
 
         ItemStack bottle = new ItemStack(Material.POTION, 1);
@@ -90,8 +102,13 @@ public final class ThirstBar extends JavaPlugin {
         if(pmeta != null) pmeta.setBasePotionData(pdata);
         bottle.setItemMeta(meta);
         ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
-        potionRawItem = NBTTag.setKey(potionRawItem, "RawWater", "true");
-        FurnaceRecipe furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
+        FurnaceRecipe furnaceRecipe;
+        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+        if(versionNumber < 16) {
+            furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
+        } else {
+            furnaceRecipe = new FurnaceRecipe(NamespacedKey.randomKey(), bottle, potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
+        }
         Bukkit.addRecipe(furnaceRecipe);
     }
 
@@ -166,41 +183,32 @@ public final class ThirstBar extends JavaPlugin {
     private void checkForUpdate() {
         List<String> textList = new ArrayList<>();
         new UpdateChecker(113587).getVersion(version -> {
-            String versions = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+//            String versions = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
             List<Player> playerList = Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.isOp() || p.hasPermission("thirstbar.admin"))
                     .collect(Collectors.toList());
-            switch (versions) {
-                case "v1_9_R1":
-                case "v1_9_R2":
-                case "v1_10_R1":
-                case "v1_11_R1":
-                case "v1_12_R1":
-                case "v1_13_R1":
-                case "v1_13_R2":
-                case "v1_14_R1":
-                case "v1_15_R1":
-                    if (this.getDescription().getVersion().equals(version)) {
-                        textList.add("§b[ThirstBar] §aThere is not a new update available.");
-                    } else {
-                        textList.add("§b[ThirstBar] §7The plugin version you are using is §4out of date§7!");
-                        textList.add("§b[ThirstBar] §7There is a new update available.");
-                        textList.add("§b[ThirstBar] §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
-                    }
-                    textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
-                    playerList.forEach(p -> textList.forEach(p::sendMessage));
-                    break;
-                default:
-                    String textTitle = MethodDefault.formatColor("§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
-                    if (this.getDescription().getVersion().equals(version)) {
-                        textList.add(textTitle + " §aThere is not a new update available.");
-                    } else {
-                        textList.add(textTitle + " §7The plugin version you are using is §4out of date§7!");
-                        textList.add(textTitle + " §7There is a new update available.");
-                        textList.add(textTitle + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
-                    }
-                    textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
-                    playerList.forEach(p -> textList.forEach(p::sendMessage));
+            if(versionNumber < 16) {
+                if (this.getDescription().getVersion().equals(version)) {
+                    textList.add("§b[ThirstBar] §aThere is not a new update available.");
+                } else {
+                    textList.add("§b[ThirstBar] §7The plugin version you are using is §4out of date§7!");
+                    textList.add("§b[ThirstBar] §7There is a new update available.");
+                    textList.add("§b[ThirstBar] §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
+                }
+                textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
+                playerList.forEach(p -> textList.forEach(p::sendMessage));
+            } else {
+                String textTitle = MethodDefault.formatColor("§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
+                if (this.getDescription().getVersion().equals(version)) {
+                    textList.add(textTitle + " §aThere is not a new update available.");
+                } else {
+                    textList.add(textTitle + " §7The plugin version you are using is §4out of date§7!");
+                    textList.add(textTitle + " §7There is a new update available.");
+                    textList.add(textTitle + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
+                }
+                textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
+                playerList.forEach(p -> textList.forEach(p::sendMessage));
             }
         });
     }
@@ -259,5 +267,10 @@ public final class ThirstBar extends JavaPlugin {
 
     public ActionManager getActionManager() {
         return actionManager;
+    }
+
+    @Nullable
+    public PlaceholderAPI getPlaceholderAPI() {
+        return placeholderAPI;
     }
 }

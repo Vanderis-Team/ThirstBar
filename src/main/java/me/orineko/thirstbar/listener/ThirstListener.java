@@ -1,18 +1,16 @@
 package me.orineko.thirstbar.listener;
 
+import de.tr7zw.nbtapi.NBTItem;
 import me.orineko.pluginspigottools.MethodDefault;
-import me.orineko.pluginspigottools.NBTTag;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.Method;
 import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.item.ItemData;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -21,7 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -124,13 +121,13 @@ public class ThirstListener implements Listener {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         if (playerData.isDisableAll() || playerData.isDisable()) return;
 
-        String tagRawWater = NBTTag.getKey(itemHand, keyPotionRaw);
+        NBTItem nbtItem = new NBTItem(itemHand);
+        String tagRawWater = nbtItem.getString(keyPotionRaw);
         if (tagRawWater != null && tagRawWater.equals("true")) {
             StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
             if (stageWater != null) {
 
-                double value = stageWater.getValue();
-                if (playerData.getThirst() + value / 2 >= playerData.getThirstMax()) {
+                if (ConfigData.STOP_DRINKING && playerData.getThirst() >= playerData.getThirstMax()) {
                     e.setCancelled(true);
                     return;
                 }
@@ -151,12 +148,10 @@ public class ThirstListener implements Listener {
         ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
         if (itemData == null) return;
         double value = itemData.getValue();
-        if (!(ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand))) {
-            if (playerData.getThirst() + value / 2 >= playerData.getThirstMax()
-                    || playerData.getThirst() + (playerData.getThirst() * itemData.getValuePercent() / 100) / 2 >= playerData.getThirstMax()) {
-                e.setCancelled(true);
-                return;
-            }
+        if ((ConfigData.STOP_DRINKING && !checkFoodHaveEffect(itemHand)) &&
+                playerData.getThirst() >= playerData.getThirstMax()) {
+            e.setCancelled(true);
+            return;
         }
         if (value <= 0) {
             value = itemData.getValuePercent();
@@ -301,8 +296,7 @@ public class ThirstListener implements Listener {
         if (stageWater != null) {
             if (!delayClickMap.contains(player.getUniqueId())) {
                 if (stageWater.isEnable()) {
-                    Block block = e.getPlayer().getTargetBlock(null, 4);
-                    if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
+                    if (Method.checkSightIsWater(player)) {
                         delayClickMap.add(player.getUniqueId());
                         if (playerData.idDelayDisable != 0) {
                             Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
@@ -378,13 +372,12 @@ public class ThirstListener implements Listener {
         ItemStack itemStack = player.getItemInHand();
         if (itemStack.getType().equals(Material.AIR)) {
             if (player.isSneaking()) {
-                if (ConfigData.STOP_DRINKING && playerData.getThirst() >= playerData.getThirstMax()) {
+                if (!ConfigData.STOP_DRINKING || playerData.getThirst() >= playerData.getThirstMax()) {
                     StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
                     if (stageWater != null) {
                         if (!delayClickMap.contains(player.getUniqueId())) {
                             if (stageWater.isEnable()) {
-                                Block block = e.getPlayer().getTargetBlock(null, 4);
-                                if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
+                                if (Method.checkSightIsWater(player)) {
                                     delayClickMap.add(player.getUniqueId());
                                     if (playerData.idDelayDisable != 0) {
                                         Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
@@ -415,16 +408,26 @@ public class ThirstListener implements Listener {
 
         if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
             if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                Block block = e.getPlayer().getTargetBlock(null, 4);
-                if (block.getType().equals(Material.WATER) || block.getType().name().equals("STATIONARY_WATER")) {
+                if (Method.checkSightIsWater(player)) {
                     ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
-                    itemBottle = NBTTag.setKey(itemBottle, keyPotionRaw, "true");
+                    NBTItem nbtItem = new NBTItem(itemBottle);
+                    nbtItem.setString(keyPotionRaw, "true");
+                    itemBottle = nbtItem.getItem();
                     ItemMeta meta = itemBottle.getItemMeta();
                     if (meta != null) {
                         meta.setDisplayName(ConfigData.NAME_RAW_POTION);
                         meta.setLore(ConfigData.LORE_RAW_POTION);
                         meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
                         itemBottle.setItemMeta(meta);
+                    }
+
+                    int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+                    if(versionNumber > 16) {
+                        PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
+                        if(potionMeta != null) {
+                            potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));
+                            itemBottle.setItemMeta(potionMeta);
+                        }
                     }
                     e.setCancelled(true);
                     if (itemStack.getAmount() == 1) {
@@ -440,14 +443,12 @@ public class ThirstListener implements Listener {
         }
 
         ItemStack itemHand = player.getItemInHand();
-        if (ConfigData.STOP_DRINKING && checkFoodHaveEffect(itemHand)) {
-            if (itemHand.getType().equals(Material.AIR)) return;
-            ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
-            if (itemData == null) return;
-            if (player.getFoodLevel() != 20) return;
-            player.setFoodLevel(19);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));
-        }
+        if (itemHand.getType().equals(Material.AIR)) return;
+        ItemData itemData = ThirstBar.getInstance().getItemDataList().getData(itemHand);
+        if (itemData == null) return;
+        if (player.getFoodLevel() != 20) return;
+        player.setFoodLevel(19);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(), () -> player.setFoodLevel(20));
     }
 
     @EventHandler

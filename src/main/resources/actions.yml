@@ -3,6 +3,13 @@ enable: true
 standing:
   enable: true
   multiply: 1
+  conditions:
+    1:
+      condition: "%rs_temperature_int% > 30"
+      multiply: 1.5
+    2:
+      condition: "%rs_temperature_int% < -5"
+      multiply: 0.8
   hideActionBar: false
 sprinting:
   enable: true

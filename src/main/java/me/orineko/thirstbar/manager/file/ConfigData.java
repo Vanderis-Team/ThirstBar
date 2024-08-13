@@ -22,6 +22,8 @@ public class ConfigData {
     public static boolean STOP_DRINKING;
     public static boolean CUSTOM_ACTION_BAR_ENABLE;
     public static String CUSTOM_ACTION_BAR_ORIENTATION;
+    public static float CUSTOM_FURNACE_EXP;
+    public static int CUSTOM_FURNACE_COOKING_TIME;
     public static double THIRSTY_MAX;
     public static double THIRSTY_REDUCE;
     public static long THIRSTY_TIME;
@@ -42,6 +44,9 @@ public class ConfigData {
     public static List<String> MATERIALS;
     public static String NAME_RAW_POTION;
     public static List<String> LORE_RAW_POTION;
+    public static int RED_COLOR_RAW_POTION;
+    public static int GREEN_COLOR_RAW_POTION;
+    public static int BLUE_COLOR_RAW_POTION;
 
     private final FileConfiguration configFile;
 
@@ -59,6 +64,8 @@ public class ConfigData {
         } else {
             resourcePackThirstMap.clear();
         }
+        CUSTOM_FURNACE_EXP = (float) configFile.getDouble("CustomFurnace.Exp", 0);
+        CUSTOM_FURNACE_COOKING_TIME = configFile.getInt("CustomFurnace.CookingTime", 1);
 
         STOP_DRINKING = configFile.getBoolean("StopDrinking", false);
         THIRSTY_MAX = Math.max(1, configFile.getDouble("Thirsty.Max", 1));
@@ -89,6 +96,9 @@ public class ConfigData {
         MATERIALS = configFile.getStringList("Materials");
         NAME_RAW_POTION = MethodDefault.formatColor(configFile.getString("RawPotion.Name", ""));
         LORE_RAW_POTION = MethodDefault.formatColor(configFile.getStringList("RawPotion.Lore"));
+        RED_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Red", 0);
+        GREEN_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Green", 0);
+        BLUE_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Blue", 0);
     }
 
     public FileConfiguration getConfigFile() {

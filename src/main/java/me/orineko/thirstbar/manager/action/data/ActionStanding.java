@@ -36,13 +36,13 @@ public class ActionStanding extends ActionRegister{
         Location locationNew = player.getLocation();
         if(locationOld == null) return false;
         World worldOld = locationOld.getWorld();
-        double xOld = locationOld.getX();
-        double yOld = locationOld.getY();
-        double zOld = locationOld.getZ();
+        int xOld = locationOld.getBlockX();
+        int yOld = locationOld.getBlockY();
+        int zOld = locationOld.getBlockZ();
         World worldNew = locationNew.getWorld();
-        double xNew = locationNew.getX();
-        double yNew = locationNew.getY();
-        double zNew = locationNew.getZ();
+        int xNew = locationNew.getBlockX();
+        int yNew = locationNew.getBlockY();
+        int zNew = locationNew.getBlockZ();
         return xOld == xNew && yOld == yNew && zOld == zNew &&
                 (worldOld != null && worldOld.equals(worldNew));
     }

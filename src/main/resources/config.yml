@@ -9,6 +9,10 @@ StopDrinking: true # Prevents players from drinking water when their thirst bar 
 CustomActionBar:
   Enable: false
   Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
+#CustomFurnace apply for 1.16 above
+CustomFurnace:
+  Exp: 10.0
+  CookingTime: 10
 Thirsty:
   Max: 100
   Reduce: 1
@@ -85,3 +89,8 @@ RawPotion:
   Lore:
     - "&f- When consumed, it will cause illness."
     - "&e&oPlease heat it before drinking."
+  #Color apply for 1.16 above
+  Color:
+    Red: 120
+    Green: 130
+    Blue: 100

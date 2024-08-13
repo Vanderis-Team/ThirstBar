@@ -1,12 +1,18 @@
 package me.orineko.thirstbar.manager.action;
 
+import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ActionRegister {
 
@@ -16,13 +22,15 @@ public abstract class ActionRegister {
     private boolean hideActionBar;
     private boolean executing;
     private int idRepeat;
+    private final List<Condition> conditionList;
 
     public ActionRegister(@Nonnull String name){
         this.name = name;
+        this.conditionList = new ArrayList<>();
     }
 
     public ActionRegister(@Nonnull ActionType actionType){
-        this.name = actionType.name();
+        this(actionType.name());
     }
 
     public String getName() {
@@ -71,6 +79,10 @@ public abstract class ActionRegister {
         return idRepeat;
     }
 
+    public List<Condition> getConditionList() {
+        return conditionList;
+    }
+
     public void removeScheduleRepeat(){
         if(getIdRepeat() != 0) {
             Bukkit.getScheduler().cancelTask(getIdRepeat());
@@ -82,6 +94,15 @@ public abstract class ActionRegister {
         if(file.getConfigurationSection(name.toLowerCase()) != null) {
             setEnable(file.getBoolean(name.toLowerCase()+".enable", false));
             setMultiple(file.getDouble(name.toLowerCase()+".multiply", 0));
+
+            ConfigurationSection section = file.getConfigurationSection(name.toLowerCase()+".conditions");
+            if(section != null) section.getKeys(false).forEach(v -> {
+                String conditionString = file.getString(name.toLowerCase()+".conditions."+v+".condition", "");
+                double multiply = file.getDouble(name.toLowerCase()+".conditions."+v+".multiply", 1);
+                Condition condition = new Condition(conditionString, multiply);
+                getConditionList().add(condition);
+            });
+
             setHideActionBar(file.getBoolean(name.toLowerCase()+".hideActionBar", false));
             Bukkit.getConsoleSender().sendMessage("§b[ThirstBar] §fLoaded action "+name.toLowerCase());
         }
@@ -111,5 +132,48 @@ public abstract class ActionRegister {
         if(isHideActionBar()) playerData.setEnableActionBar(true);
         playerData.updateAll(player);
         setExecuting(false);
+    }
+
+    @Nullable
+    public Condition getCondition(@Nonnull Player player) {
+        PlaceholderAPI placeholderAPI = ThirstBar.getInstance().getPlaceholderAPI();
+        if(placeholderAPI == null) return null;
+        return getConditionList().stream().filter(v -> {
+            double valueA;
+            double valueB;
+            String[] arr;
+            if(v.getCondition().contains(">")) {
+                arr = v.getCondition().split(">");
+                if(arr.length < 2) return false;
+                valueA = placeholderAPI.getValuePlaceholder(player, arr[0].trim());
+                valueB = placeholderAPI.getValuePlaceholder(player, arr[1].trim());
+                return valueA > valueB;
+            } else if(v.getCondition().contains(">=")) {
+                arr = v.getCondition().split(">=");
+                if(arr.length < 2) return false;
+                valueA = placeholderAPI.getValuePlaceholder(player, arr[0].trim());
+                valueB = placeholderAPI.getValuePlaceholder(player, arr[1].trim());
+                return valueA >= valueB;
+            } else if(v.getCondition().contains("<")) {
+                arr = v.getCondition().split("<");
+                if(arr.length < 2) return false;
+                valueA = placeholderAPI.getValuePlaceholder(player, arr[0].trim());
+                valueB = placeholderAPI.getValuePlaceholder(player, arr[1].trim());
+                return valueA < valueB;
+            } else if(v.getCondition().contains("==")) {
+                arr = v.getCondition().split("==");
+                if(arr.length < 2) return false;
+                valueA = placeholderAPI.getValuePlaceholder(player, arr[0].trim());
+                valueB = placeholderAPI.getValuePlaceholder(player, arr[1].trim());
+                return valueA == valueB;
+            } else if(v.getCondition().contains("<=")) {
+                arr = v.getCondition().split("<=");
+                if(arr.length < 2) return false;
+                valueA = placeholderAPI.getValuePlaceholder(player, arr[0].trim());
+                valueB = placeholderAPI.getValuePlaceholder(player, arr[1].trim());
+                return valueA <= valueB;
+            }
+            return false;
+        }).findAny().orElse(null);
     }
 }
