@@ -10,6 +10,7 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -168,7 +169,8 @@ public class ThirstBarMethod {
             i++;
             loc = loc.add(x, y, z);
             Block block = loc.getBlock();
-            if(block.getType().name().contains("WATER")) return true;
+            if(block.getType().equals(Material.AIR)) continue;
+            return block.getType().name().contains("WATER");
         } while (locOrigin.distance(loc) < 4);
         return false;
     }

@@ -444,6 +444,8 @@ public class ThirstListener implements Listener {
                         player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
                         player.getInventory().addItem(itemBottle);
                     }
+                } else {
+                    e.setCancelled(true);
                 }
             }
         }
