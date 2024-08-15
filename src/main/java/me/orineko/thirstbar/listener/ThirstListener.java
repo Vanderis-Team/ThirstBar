@@ -412,40 +412,44 @@ public class ThirstListener implements Listener {
             }
         }
 
-        if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
-            if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                if (ThirstBarMethod.checkSightIsWater(player)) {
-                    ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
-                    NBTItem nbtItem = new NBTItem(itemBottle);
-                    nbtItem.setString(keyPotionRaw, "true");
-                    itemBottle = nbtItem.getItem();
-                    ItemMeta meta = itemBottle.getItemMeta();
-                    if (meta != null) {
-                        meta.setDisplayName(ConfigData.NAME_RAW_POTION);
-                        meta.setLore(ConfigData.LORE_RAW_POTION);
-                        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-                        itemBottle.setItemMeta(meta);
-                    }
-
-                    int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-                    if(versionNumber > 16) {
-                        PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
-                        if(potionMeta != null) {
-                            potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));
-                            itemBottle.setItemMeta(potionMeta);
+        if(player.getInventory().getItemInOffHand().getType().equals(Material.GLASS_BOTTLE)) {
+            e.setCancelled(true);
+        } else {
+            if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
+                if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                    if (ThirstBarMethod.checkSightIsWater(player)) {
+                        ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
+                        NBTItem nbtItem = new NBTItem(itemBottle);
+                        nbtItem.setString(keyPotionRaw, "true");
+                        itemBottle = nbtItem.getItem();
+                        ItemMeta meta = itemBottle.getItemMeta();
+                        if (meta != null) {
+                            meta.setDisplayName(ConfigData.NAME_RAW_POTION);
+                            meta.setLore(ConfigData.LORE_RAW_POTION);
+                            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                            itemBottle.setItemMeta(meta);
                         }
-                    }
-                    e.setCancelled(true);
-                    if (itemStack.getAmount() == 1) {
-                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
+
+                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
+                        if(versionNumber > 16) {
+                            PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
+                            if(potionMeta != null) {
+                                potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));
+                                itemBottle.setItemMeta(potionMeta);
+                            }
+                        }
+                        e.setCancelled(true);
+                        if (itemStack.getAmount() == 1) {
+                            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
+                        } else {
+                            ItemStack item = itemStack.clone();
+                            item.setAmount(itemStack.getAmount() - 1);
+                            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
+                            player.getInventory().addItem(itemBottle);
+                        }
                     } else {
-                        ItemStack item = itemStack.clone();
-                        item.setAmount(itemStack.getAmount() - 1);
-                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
-                        player.getInventory().addItem(itemBottle);
+                        e.setCancelled(true);
                     }
-                } else {
-                    e.setCancelled(true);
                 }
             }
         }
