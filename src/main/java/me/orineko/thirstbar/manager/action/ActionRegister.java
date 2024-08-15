@@ -1,8 +1,7 @@
 package me.orineko.thirstbar.manager.action;
 
-import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.api.PlaceholderAPI;
+import me.orineko.thirstbar.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -95,10 +94,10 @@ public abstract class ActionRegister {
             setEnable(file.getBoolean(name.toLowerCase()+".enable", false));
             setMultiple(file.getDouble(name.toLowerCase()+".multiply", 0));
 
-            ConfigurationSection section = file.getConfigurationSection(name.toLowerCase()+".conditions");
+            ConfigurationSection section = file.getConfigurationSection(name.toLowerCase()+".cases");
             if(section != null) section.getKeys(false).forEach(v -> {
-                String conditionString = file.getString(name.toLowerCase()+".conditions."+v+".condition", "");
-                double multiply = file.getDouble(name.toLowerCase()+".conditions."+v+".multiply", 1);
+                String conditionString = file.getString(name.toLowerCase()+".cases."+v+".condition", "");
+                double multiply = file.getDouble(name.toLowerCase()+".cases."+v+".multiply", 1);
                 Condition condition = new Condition(conditionString, multiply);
                 getConditionList().add(condition);
             });

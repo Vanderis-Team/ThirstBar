@@ -1,18 +1,19 @@
 package me.orineko.thirstbar;
 
 import de.tr7zw.nbtapi.NBT;
+import lombok.Getter;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
-import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.action.ActionManager;
-import me.orineko.thirstbar.manager.api.PlaceholderAPI;
-import me.orineko.thirstbar.manager.api.ThirstBarExpansion;
-import me.orineko.thirstbar.manager.api.UpdateChecker;
-import me.orineko.thirstbar.manager.api.sql.SqlManager;
-import me.orineko.thirstbar.manager.api.worldguardapi.WorldGuardApi;
+import me.orineko.thirstbar.api.PlaceholderAPI;
+import me.orineko.thirstbar.api.ThirstBarExpansion;
+import me.orineko.thirstbar.api.UpdateChecker;
+import me.orineko.thirstbar.api.sql.SqlManager;
+import me.orineko.thirstbar.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.file.MessageData;
 import me.orineko.thirstbar.manager.item.ItemDataList;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 public final class ThirstBar extends JavaPlugin {
 
     private static ThirstBar plugin;
@@ -54,7 +56,14 @@ public final class ThirstBar extends JavaPlugin {
     private boolean worldGuardApiEnable = false;
     private SqlManager sqlManager;
     private ActionManager actionManager;
+    @Nullable
     private PlaceholderAPI placeholderAPI;
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        registerFlag();
+    }
 
     @Override
     public void onEnable() {
@@ -83,7 +92,7 @@ public final class ThirstBar extends JavaPlugin {
         }
 
         renewData();
-        Bukkit.getOnlinePlayers().forEach(Method::disableGameMode);
+        Bukkit.getOnlinePlayers().forEach(ThirstBarMethod::disableGameMode);
 
 
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
@@ -113,28 +122,12 @@ public final class ThirstBar extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        registerFlag();
-    }
-
-    @Override
     public void onDisable() {
-        ThirstListener.armorStandMap.forEach((k, v) -> v.remove());
         if(actionManager != null) actionManager.removeRegister();
-        getPlayerDataList().removeDataPlayersOnline();
+        getPlayerDataList().removeDataPlayers();
     }
 
     public void renewData() {
-        ThirstListener.armorStandMap.forEach((k, v) -> v.remove());
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            ArmorStand armorStand = player.getWorld().spawn(
-                    new Location(player.getWorld(), 0, 0, 0), ArmorStand.class);
-            armorStand.setVisible(false);
-            armorStand.setGravity(false);
-            ThirstListener.armorStandMap.put(player.getUniqueId(), armorStand);
-        });
-
         reloadConfig();
         if (sqlManager.getConnection() == null) {
             itemsFile.reloadWithoutCreateFile();
@@ -154,6 +147,7 @@ public final class ThirstBar extends JavaPlugin {
             boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
                     p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             playerData.setDisableAll(check);
+            playerData.createArmorStand(p);
         });
         if(actionManager != null) actionManager.removeRegister();
         actionManager = new ActionManager();
@@ -215,62 +209,5 @@ public final class ThirstBar extends JavaPlugin {
 
     public static ThirstBar getInstance() {
         return plugin;
-    }
-
-    public PlayerDataList getPlayerDataList() {
-        return playerDataList;
-    }
-
-    public StageList getStageList() {
-        return stageList;
-    }
-
-    public ItemDataList getItemDataList() {
-        return itemDataList;
-    }
-
-    public ConfigData getConfigData() {
-        return configData;
-    }
-
-    public MessageData getMessageData() {
-        return messageData;
-    }
-
-    public FileManager getItemsFile() {
-        return itemsFile;
-    }
-
-    public FileManager getMessageFile() {
-        return messageFile;
-    }
-
-    public FileManager getPlayersFile() {
-        return playersFile;
-    }
-
-    public FileManager getStageFile() {
-        return stageFile;
-    }
-
-    public FileManager getActionsFile() {
-        return actionsFile;
-    }
-
-    public boolean isWorldGuardApiEnable() {
-        return worldGuardApiEnable;
-    }
-
-    public SqlManager getSqlManager() {
-        return sqlManager;
-    }
-
-    public ActionManager getActionManager() {
-        return actionManager;
-    }
-
-    @Nullable
-    public PlaceholderAPI getPlaceholderAPI() {
-        return placeholderAPI;
     }
 }

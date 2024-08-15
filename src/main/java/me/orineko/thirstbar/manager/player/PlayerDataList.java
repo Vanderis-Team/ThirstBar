@@ -19,7 +19,7 @@ public class PlayerDataList extends DataList<PlayerData> {
 
     public PlayerData addData(@Nonnull String name) {
         PlayerData playerData = getData(name);
-        if(playerData != null) return playerData;
+        if (playerData != null) return playerData;
         playerData = new PlayerData(name);
         getDataList().add(playerData);
         return playerData;
@@ -34,44 +34,50 @@ public class PlayerDataList extends DataList<PlayerData> {
         return super.getData(d -> d.getName().equals(name));
     }
 
-    public void removeDataPlayersOnline(){
-        getDataList().stream().filter(p -> p.getPlayer() != null)
-                .forEach(playerData -> {
-                    if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
-                        ThirstBar.getInstance().getPlayersFile().set(playerData.getName()+".Thirst", playerData.getThirst());
-                    } else {
-                        ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), playerData.getThirst());
-                    }
-
-                    playerData.setThirst(playerData.getThirstMax());
-
-                    playerData.getBossBar().removePlayer(playerData.getPlayer());
-                    playerData.disableExecuteReduce();
-                    playerData.disableExecuteRefresh();
-                    Player player = playerData.getPlayer();
-                    if(player != null) playerData.disableStage(player, null);
+    public void removeDataPlayers() {
+        Bukkit.getScheduler().cancelTasks(ThirstBar.getInstance());
+        getDataList().forEach(playerData -> {
+            if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+                ThirstBar.getInstance().getPlayersFile().set(playerData.getName() + ".Thirst", playerData.getThirst());
+            } else {
+                ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), playerData.getThirst());
+            }
+            if(playerData.getArmorStandFrontPlayer() != null) {
+                playerData.getArmorStandFrontPlayer().remove();
+                playerData.setArmorStandFrontPlayer(null);
+            }
+            playerData.setThirst(playerData.getThirstMax());
+            Player player = playerData.getPlayer();
+            if (player != null){
+                playerData.disableStage(player, null);
+                player.getActivePotionEffects().forEach(v -> {
+                    player.removePotionEffect(v.getType());
                 });
-        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+            }
+            playerData.getBossBar().removeAll();
+        });
+        if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             ThirstBar.getInstance().getPlayersFile().save();
         }
+        getDataList().clear();
     }
 
-    public void loadData(){
+    public void loadData() {
         FileManager file = ThirstBar.getInstance().getPlayersFile();
-        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
+        if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             ConfigurationSection section = file.getConfigurationSection("");
-            if(section != null) section.getKeys(false).forEach(name -> {
+            if (section != null) section.getKeys(false).forEach(name -> {
                 PlayerData playerData = addData(name);
-                BigDecimal max = new BigDecimal(file.getString(name+".Max", "0"));
-                if(max.compareTo(BigDecimal.valueOf(1)) > 0) {
+                BigDecimal max = new BigDecimal(file.getString(name + ".Max", "0"));
+                if (max.compareTo(BigDecimal.valueOf(1)) > 0) {
                     max = max.min(BigDecimal.valueOf(Double.MAX_VALUE));
                     playerData.setThirstMax(max.doubleValue());
                 }
-                playerData.setThirst(file.getDouble(name+".Thirst", playerData.getThirstMax()));
+                playerData.setThirst(file.getDouble(name + ".Thirst", playerData.getThirstMax()));
                 boolean disable = file.getBoolean(name + ".Disable", false);
                 if (disable) playerData.setDisable(true);
                 Player player = Bukkit.getPlayer(playerData.getName());
-                if(player != null) {
+                if (player != null) {
                     playerData.updateAll(player);
                     boolean check1 = false;
                     try {
@@ -91,15 +97,15 @@ public class PlayerDataList extends DataList<PlayerData> {
                 boolean disable = (int) row.getOrDefault("disable", 0) == 1;
                 double thirst = (double) row.getOrDefault("thirst", -1);
                 double max = (double) row.getOrDefault("max", 0);
-                if(name == null) return;
+                if (name == null) return;
                 PlayerData playerData = addData(name);
-                if(disable) playerData.setDisable(true);
-                if(thirst > 0) playerData.setThirst(thirst);
-                if(max > 0){
+                if (disable) playerData.setDisable(true);
+                if (thirst > 0) playerData.setThirst(thirst);
+                if (max > 0) {
                     playerData.setThirstMax(max);
                 }
                 Player player = Bukkit.getPlayer(playerData.getName());
-                if(player != null) {
+                if (player != null) {
                     playerData.updateAll(player);
                     boolean check1 = false;
                     try {

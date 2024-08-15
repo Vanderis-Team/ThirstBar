@@ -1,4 +1,4 @@
-package me.orineko.thirstbar.manager.api;
+package me.orineko.thirstbar.api;
 
 
 import me.orineko.thirstbar.ThirstBar;

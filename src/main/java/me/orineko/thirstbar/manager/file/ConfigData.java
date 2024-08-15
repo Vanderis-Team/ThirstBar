@@ -2,10 +2,8 @@ package me.orineko.thirstbar.manager.file;
 
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.Method;
-import org.bukkit.Bukkit;
+import me.orineko.thirstbar.manager.ThirstBarMethod;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -191,9 +189,9 @@ public class ConfigData {
         String timeChange;
         if(time == (long) time) timeChange = String.valueOf((long) time);
         else timeChange = String.format("%.2f", time).replaceAll("0*$", "").replaceAll("\\.$", "");
-        return text.replace("<value>", Method.changeDoubleToInt(Math.max(value, 0)))
-                .replace("<max>", Method.changeDoubleToInt(max))
-                .replace("<reduce>", Method.changeDoubleToInt(reduce))
+        return text.replace("<value>", ThirstBarMethod.changeDoubleToInt(Math.max(value, 0)))
+                .replace("<max>", ThirstBarMethod.changeDoubleToInt(max))
+                .replace("<reduce>", ThirstBarMethod.changeDoubleToInt(reduce))
                 .replace("<time>", timeChange);
     }
 

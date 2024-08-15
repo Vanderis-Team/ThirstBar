@@ -4,17 +4,14 @@ import me.orineko.pluginspigottools.DataList;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.api.sql.SqlManager;
+import me.orineko.thirstbar.api.sql.SqlManager;
 import me.orineko.thirstbar.manager.file.ConfigData;
-import me.orineko.thirstbar.manager.stage.StageList;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.sql.Blob;
 import java.util.*;
 
 public class ItemDataList extends DataList<ItemData> {

@@ -1,7 +1,5 @@
-package me.orineko.thirstbar.manager.api.sql;
+package me.orineko.thirstbar.api.sql;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import me.orineko.thirstbar.ThirstBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +12,6 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.sql.*;
 import java.util.*;
 

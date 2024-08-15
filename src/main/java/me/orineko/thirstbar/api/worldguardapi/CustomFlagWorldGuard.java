@@ -1,4 +1,4 @@
-package me.orineko.thirstbar.manager.api.worldguardapi;
+package me.orineko.thirstbar.api.worldguardapi;
 
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;

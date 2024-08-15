@@ -10,7 +10,6 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Method {
+public class ThirstBarMethod {
 
     private static int idDelayMessage = 0;
     private static int idDelayMainTitle = 0;

@@ -2,7 +2,7 @@ package me.orineko.thirstbar.manager.stage;
 
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.ThirstBarMethod;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,7 +80,7 @@ public class StageList {
         try {style = BarStyle.valueOf(file.getString(name+".Style", ""));
         } catch (IllegalArgumentException ignore){}
         List<PotionEffect> potionEffectList = file.getStringList(name+".Effects").stream()
-                .map(Method::getPotionEffect).filter(Objects::nonNull).collect(Collectors.toList());
+                .map(ThirstBarMethod::getPotionEffect).filter(Objects::nonNull).collect(Collectors.toList());
         List<String> actionList = file.getStringList(name+".Actions");
 
         stageConfig.setEnable(enable);
@@ -117,7 +117,7 @@ public class StageList {
             try {style = BarStyle.valueOf(file.getString(name+".Style", ""));
             } catch (IllegalArgumentException ignore){}
             List<PotionEffect> potionEffectList = file.getStringList(name+".Effects").stream()
-                    .map(Method::getPotionEffect).filter(Objects::nonNull).collect(Collectors.toList());
+                    .map(ThirstBarMethod::getPotionEffect).filter(Objects::nonNull).collect(Collectors.toList());
             List<String> actionList = file.getStringList(name+".Actions");
 
             String[] arrRange = range.split(":");

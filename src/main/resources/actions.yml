@@ -3,7 +3,7 @@ enable: true
 standing:
   enable: true
   multiply: 1
-  conditions:
+  cases:
     1:
       condition: "%rs_temperature_int% > 30"
       multiply: 1.5

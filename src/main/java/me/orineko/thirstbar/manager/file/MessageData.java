@@ -199,7 +199,7 @@ public class MessageData {
             if(numVer >= 16) title = "           #0045FF&lT#034AFF&lH#0650FF&lI#0955FF&lR#0C5BFF&lS#1060FF&lT#1366FF&lB#166BFF&lA#1971FF&lR #1C76FF&lC#1F7BFF&lO#2281FF&lM#2586FF&lM#298CFF&lA#2C91FF&lN#2F97FF&lD#329CFF&lS #35A1FF&l[#38A7FF&lP#3BACFF&lA#3EB2FF&lG#42B7FF&lE #45BDFF&l2#48C2FF&l/#4BC8FF&l2#4ECDFF&l]";
             else title = "           &9&lTHIRSTBAR COMMANDS [PAGE 2/2]";
         } catch (ArrayIndexOutOfBoundsException ignore) {
-            title = "           #0045FF&lT#034AFF&lH#0650FF&lI#0955FF&lR#0C5BFF&lS#1060FF&lT#1366FF&lB#166BFF&lA#1971FF&lR #1C76FF&lC#1F7BFF&lO#2281FF&lM#2586FF&lM#298CFF&lA#2C91FF&lN#2F97FF&lD#329CFF&lS #35A1FF&l[#38A7FF&lP#3BACFF&lA#3EB2FF&lG#42B7FF&lE #45BDFF&l1#48C2FF&l/#4BC8FF&l2#4ECDFF&l]";
+            title = "           #0045FF&lT#034AFF&lH#0650FF&lI#0955FF&lR#0C5BFF&lS#1060FF&lT#1366FF&lB#166BFF&lA#1971FF&lR #1C76FF&lC#1F7BFF&lO#2281FF&lM#2586FF&lM#298CFF&lA#2C91FF&lN#2F97FF&lD#329CFF&lS #35A1FF&l[#38A7FF&lP#3BACFF&lA#3EB2FF&lG#42B7FF&lE #45BDFF&l2#48C2FF&l/#4BC8FF&l2#4ECDFF&l]";
         }
         return MethodDefault.formatColor(Arrays.asList(
                 " ",

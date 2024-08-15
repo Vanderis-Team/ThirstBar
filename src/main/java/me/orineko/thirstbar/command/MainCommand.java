@@ -3,7 +3,7 @@ package me.orineko.thirstbar.command;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.file.MessageData;
 import me.orineko.thirstbar.manager.item.ItemData;
 import me.orineko.thirstbar.manager.player.PlayerData;
@@ -49,7 +49,7 @@ public class MainCommand extends CommandManager {
         return null;
     }
 
-    @CommandSub(length = 0, names = "help", permissions = "thirstbar.help")
+    @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "help", permissions = "thirstbar.help")
     public void onHelp(CommandSender sender, String[] args) {
         if (MessageData.HELP.isEmpty()) return;
 
@@ -75,7 +75,7 @@ public class MainCommand extends CommandManager {
         list.forEach(sender::sendMessage);
     }
 
-    @CommandSub(length = 0, names = "1", permissions = "thirstbar.help")
+    @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "1", permissions = "thirstbar.help")
     public void onHelp1(CommandSender sender, String[] args) {
         if (MessageData.HELP.isEmpty()) return;
 
@@ -84,7 +84,7 @@ public class MainCommand extends CommandManager {
         list.forEach(sender::sendMessage);
     }
 
-    @CommandSub(length = 0, names = "2", permissions = "thirstbar.help")
+    @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "2", permissions = "thirstbar.help")
     public void onHelp2(CommandSender sender, String[] args) {
         if (MessageData.HELP.isEmpty()) return;
 
@@ -93,11 +93,10 @@ public class MainCommand extends CommandManager {
         list.forEach(sender::sendMessage);
     }
 
-    @CommandSub(length = 1, names = "reload", permissions = "thirstbar.reload")
+    @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "reload", permissions = "thirstbar.reload")
     public void onReload(CommandSender sender, String[] args) {
-        ThirstBar.getInstance().getPlayerDataList().removeDataPlayersOnline();
+        ThirstBar.getInstance().getPlayerDataList().removeDataPlayers();
         ThirstBar.getInstance().renewData();
-        ThirstBar.getInstance().getItemDataList().loadData();
         sender.sendMessage(MessageData.RELOAD);
     }
 
@@ -157,7 +156,7 @@ public class MainCommand extends CommandManager {
         sender.sendMessage(MessageData.PLAYER_REFRESH_ALL);
     }
 
-    @CommandSub(length = 2, names = "set", permissions = "thirstbar.set.current")
+    @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "set", permissions = "thirstbar.set.current")
     public void onSet(CommandSender sender, String[] args) {
         if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
         double value = MethodDefault.formatNumber(args[1], 0);
@@ -184,7 +183,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 2, names = "restore", permissions = "thirstbar.restore")
+    @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "restore", permissions = "thirstbar.restore")
     public void onRestore(CommandSender sender, String[] args) {
         if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
         double value = MethodDefault.formatNumber(args[1], 0);
@@ -212,7 +211,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 2, names = "reduce", permissions = "thirstbar.reduce")
+    @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "reduce", permissions = "thirstbar.reduce")
     public void onReduce(CommandSender sender, String[] args) {
         if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
         double value = -MethodDefault.formatNumber(args[1], 0);
@@ -242,7 +241,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 1, names = "disable", permissions = "thirstbar.disable")
+    @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "disable", permissions = "thirstbar.disable")
     public void onDisable(CommandSender sender, String[] args) {
         if (args.length > 1) {
             Player player = Bukkit.getPlayer(args[1]);
@@ -274,7 +273,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 1, names = "disableall", permissions = "thirstbar.disableall")
+    @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "disableall", permissions = "thirstbar.disableall")
     public void onDisableAll(CommandSender sender, String[] args) {
         ThirstBar.getInstance().getPlayerDataList().getDataList().forEach(playerData -> {
             playerData.setDisable(true);
@@ -286,7 +285,7 @@ public class MainCommand extends CommandManager {
         sender.sendMessage(MessageData.PLAYER_DISABLE_ALL);
     }
 
-    @CommandSub(length = 3, names = {"max", "set"}, permissions = "thirstbar.set.max")
+    @CommandSub(length = 3, command = {"thirstbar", "tb"}, names = {"max", "set"}, permissions = "thirstbar.set.max")
     public void onMaxSet(CommandSender sender, String[] args) {
         if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
         double value = MethodDefault.formatNumber(args[2], 0);
@@ -316,7 +315,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 4, names = {"item", "save"}, justPlayerUseCmd = true, permissions = "thirstbar.item.save")
+    @CommandSub(length = 4, command = {"thirstbar", "tb"}, names = {"item", "save"}, justPlayerUseCmd = true, permissions = "thirstbar.item.save")
     public void onItemSave(Player player, String[] args) {
         ItemStack item = player.getItemInHand();
         if (checkObjectIsFalse(!item.getType().equals(Material.AIR), player, MessageData.ERROR_NEED_ITEM_IN_HAND))
@@ -337,7 +336,7 @@ public class MainCommand extends CommandManager {
         player.sendMessage(MessageData.SET_ITEM_SUCCESS);
     }
 
-    @CommandSub(length = 3, names = {"item", "give"}, permissions = "thirstbar.item.give")
+    @CommandSub(length = 3, command = {"thirstbar", "tb"}, names = {"item", "give"}, permissions = "thirstbar.item.give")
     public void onItemGive(CommandSender sender, String[] args) {
         String name = args[2];
         ItemData data = ThirstBar.getInstance().getItemDataList().getData(name);
@@ -352,7 +351,7 @@ public class MainCommand extends CommandManager {
                 if(checkObjectIsFalse(MethodDefault.checkFormatNumber(args[4]), sender, MessageData.ERROR_FORMAT)) return;
                 item.setAmount((int) MethodDefault.formatNumber(args[4], 1));
             }
-            Method.sendItemToInv(player, item);
+            ThirstBarMethod.sendItemToInv(player, item);
 
             player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
             if (!sender.getName().equals(player.getName()))
@@ -361,12 +360,12 @@ public class MainCommand extends CommandManager {
             if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
                 return;
             Player player = (Player) sender;
-            Method.sendItemToInv(player, data.getItemStack());
+            ThirstBarMethod.sendItemToInv(player, data.getItemStack());
             player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
         }
     }
 
-    @CommandSub(length = 1, names = "reset", permissions = "thirstbar.reset")
+    @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "reset", permissions = "thirstbar.reset")
     public void onReset(CommandSender sender, String[] args) {
         if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             FileManager file = ThirstBar.getInstance().getPlayersFile();
@@ -377,12 +376,12 @@ public class MainCommand extends CommandManager {
             ThirstBar.getInstance().getSqlManager().runRemoveAllPlayer();
         }
 
-        ThirstBar.getInstance().getPlayerDataList().removeDataPlayersOnline();
+        ThirstBar.getInstance().getPlayerDataList().removeDataPlayers();
         ThirstBar.getInstance().renewData();
         sender.sendMessage(MessageData.RESET);
     }
 
-    @CommandSub(length = 2, names = "stage", permissions = "thirstbar.stage")
+    @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "stage", permissions = "thirstbar.stage")
     public void onStage(CommandSender sender, String[] args) {
         String stageString = args[1];
         StageTimeline stageTimeline = ThirstBar.getInstance().getStageList().getStageTimeline(stageString);
@@ -408,7 +407,7 @@ public class MainCommand extends CommandManager {
         }
     }
 
-    @CommandSub(length = 2, names = "stageall", permissions = "thirstbar.stageall")
+    @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "stageall", permissions = "thirstbar.stageall")
     public void onStageAll(CommandSender sender, String[] args) {
         String stageString = args[1];
         StageTimeline stageTimeline = ThirstBar.getInstance().getStageList().getStageTimeline(stageString);

@@ -1,9 +1,10 @@
 package me.orineko.thirstbar.manager.player;
 
 import com.cryptomorin.xseries.messages.ActionBar;
-import me.clip.placeholderapi.PlaceholderAPI;
+import lombok.Getter;
+import lombok.Setter;
 import me.orineko.thirstbar.ThirstBar;
-import me.orineko.thirstbar.manager.Method;
+import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.action.ActionRegister;
 import me.orineko.thirstbar.manager.action.Condition;
 import me.orineko.thirstbar.manager.file.ConfigData;
@@ -12,7 +13,9 @@ import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.joml.RoundingMode;
@@ -25,16 +28,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class PlayerData extends PlayerSetting implements PlayerThirstValue, PlayerThirstyDisplay, PlayerThirstScheduler {
 
     private final String name;
+    @Setter
     private double thirst;
+    @Setter
     private double thirstMax;
+    @Setter
     private double thirstReduce;
+    @Setter
     private double thirstReduceOrigin;
     private long thirstTime;
+    @Setter
     private double thirstDamage;
     private long cooldownRefresh;
+    @Nullable
+    @Setter
+    private ArmorStand armorStandFrontPlayer;
+    @Setter
+    private boolean armorStandBehindPlayer;
 
     private final List<Stage> stageCurrentList;
     private final List<ActionRegister> actionRegisterList;
@@ -182,63 +196,11 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         if (this.thirst < 0) this.thirst = 0;
     }
 
-    @Override
-    public void setThirst(double value) {
-        this.thirst = value;
-    }
-
-    @Override
-    public double getThirst() {
-        return thirst;
-    }
-
-    @Override
-    public void setThirstMax(double value) {
-        this.thirstMax = value;
-    }
-
-    @Override
-    public double getThirstMax() {
-        return thirstMax;
-    }
-
-    @Override
-    public void setThirstReduce(double value) {
-        thirstReduce = value;
-    }
-
-    @Override
-    public double getThirstReduce() {
-        return thirstReduce;
-    }
 
     @Override
     public void setThirstTime(long value) {
         thirstTime = value;
         executeReduce();
-    }
-
-    @Override
-    public long getThirstTime() {
-        return thirstTime;
-    }
-
-    @Override
-    public void setThirstDamage(double value) {
-        thirstDamage = value;
-    }
-
-    @Override
-    public double getThirstDamage() {
-        return thirstDamage;
-    }
-
-    public List<Stage> getStageCurrentList() {
-        return stageCurrentList;
-    }
-
-    public List<ActionRegister> getActionRegisterList() {
-        return actionRegisterList;
     }
 
     @Override
@@ -374,14 +336,14 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
                 .filter(s -> Arrays.stream(StageList.KeyConfig.values()).noneMatch(k -> s.getName().equals(k.getName())))
                 .findAny().orElse(null);
         if (stage == null) return;
-        stage.getPotionEffectList().forEach(s -> player.removePotionEffect(s.getType()));
+        stage.getPotionEffectList().forEach(s -> player. removePotionEffect(s.getType()));
         this.stageCurrentList.remove(stage);
     }
 
     public void setStage(@Nonnull Player player, @Nonnull Stage stage) {
         this.stageCurrentList.add(stage);
         stage.getPotionEffectList().forEach(player::addPotionEffect);
-        Method.executeAction(player, stage.getActionList(), stage instanceof StageConfig);
+        ThirstBarMethod.executeAction(player, stage.getActionList(), stage instanceof StageConfig);
     }
 
     public void checkAndAddEffect(@Nonnull Player player) {
@@ -450,6 +412,16 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             }
         }
         return thirstReduce;
+    }
+
+    public void createArmorStand(@Nonnull Player player){
+        if(getArmorStandFrontPlayer()!= null) return;
+        Location location = new Location(player.getWorld(), 0, 255, 0);
+        if(!location.getChunk().isLoaded()) location.getChunk().load();
+        ArmorStand armorStand = player.getWorld().spawn(location, ArmorStand.class);
+        armorStand.setVisible(false);
+        armorStand.setGravity(false);
+        setArmorStandFrontPlayer(armorStand);
     }
 
 }
