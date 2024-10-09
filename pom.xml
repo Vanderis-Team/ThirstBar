@@ -41,7 +41,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
-                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <pattern>de.tr7zw.nbtapi</pattern>
                                     <shadedPattern>me.orineko.thirstbar.nbtapi</shadedPattern>
                                 </relocation>
                                 <relocation>
