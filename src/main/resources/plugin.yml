@@ -4,7 +4,7 @@ main: me.orineko.thirstbar.ThirstBar
 api-version: 1.13
 softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard]
 commands:
-  ThisrtBar:
+  ThirstBar:
     description: This is command main.
   TB:
     description: This is command main.
