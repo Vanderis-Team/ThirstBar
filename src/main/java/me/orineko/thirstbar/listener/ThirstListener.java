@@ -426,7 +426,7 @@ public class ThirstListener implements Listener {
                         if (meta != null) {
                             meta.setDisplayName(ConfigData.NAME_RAW_POTION);
                             meta.setLore(ConfigData.LORE_RAW_POTION);
-                            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                            meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
                             itemBottle.setItemMeta(meta);
                         }
 
