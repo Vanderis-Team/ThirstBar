@@ -1,5 +1,6 @@
 package me.orineko.thirstbar.manager.file;
 
+import lombok.Getter;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
@@ -56,9 +57,24 @@ public class ConfigData {
         CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
         CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
         if(CUSTOM_ACTION_BAR_ENABLE){
-            setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eeb1", "eea3");
-            setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eeb2", "eea6");
-            setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eeb3", "eea9");
+            setResourceThirst(TypeResourceThirst.NORMAL,
+                    configFile.getString("CustomActionBar.Characters.Normal.ThirstChar", "eea1"),
+                    configFile.getString("CustomActionBar.Characters.Normal.ThirstHalfLeftChar", "eea2"),
+                    configFile.getString("CustomActionBar.Characters.Normal.ThirstHalfRightChar", "eeb1"),
+                    configFile.getString("CustomActionBar.Characters.Normal.ThirstEmptyChar", "eea3")
+            );
+            setResourceThirst(TypeResourceThirst.DEBUFF,
+                    configFile.getString("CustomActionBar.Characters.Debuff.ThirstChar", "eea4"),
+                    configFile.getString("CustomActionBar.Characters.Debuff.ThirstHalfLeftChar", "eea5"),
+                    configFile.getString("CustomActionBar.Characters.Debuff.ThirstHalfRightChar", "eeb2"),
+                    configFile.getString("CustomActionBar.Characters.Debuff.ThirstEmptyChar", "eea6")
+            );
+            setResourceThirst(TypeResourceThirst.RAW_WATTER,
+                    configFile.getString("CustomActionBar.Characters.Raw.ThirstChar", "eea7"),
+                    configFile.getString("CustomActionBar.Characters.Raw.ThirstHalfLeftChar", "eea8"),
+                    configFile.getString("CustomActionBar.Characters.Raw.ThirstHalfRightChar", "eeb3"),
+                    configFile.getString("CustomActionBar.Characters.Raw.ThirstEmptyChar", "eea9")
+            );
         } else {
             resourcePackThirstMap.clear();
         }
@@ -214,6 +230,7 @@ public class ConfigData {
         return builder.toString();
     }
 
+    @Getter
     public static class ThirstCustomText {
         private double value;
         private boolean percent;
@@ -234,16 +251,5 @@ public class ConfigData {
             this.text = MethodDefault.formatColor(text.replaceAll(regex, ""));
         }
 
-        public double getValue() {
-            return value;
-        }
-
-        public boolean isPercent() {
-            return percent;
-        }
-
-        public String getText() {
-            return text;
-        }
     }
 }

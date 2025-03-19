@@ -9,6 +9,22 @@ StopDrinking: true # Prevents players from drinking water when their thirst bar 
 CustomActionBar:
   Enable: false
   Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
+  Characters:
+    Normal:
+      ThirstChar: "eea1"
+      ThirstHalfLeftChar: "eea2"
+      ThirstHalfRightChar: "eeb1"
+      ThirstEmptyChar: "eea3"
+    Debuff:
+      ThirstChar: "eea4"
+      ThirstHalfLeftChar: "eea5"
+      ThirstHalfRightChar: "eeb2"
+      ThirstEmptyChar: "eea6"
+    Raw:
+      ThirstChar: "eea7"
+      ThirstHalfLeftChar: "eea8"
+      ThirstHalfRightChar: "eeb3"
+      ThirstEmptyChar: "eea9"
 #CustomFurnace apply for 1.16 above
 CustomFurnace:
   Exp: 10.0
