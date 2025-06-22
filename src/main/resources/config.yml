@@ -8,7 +8,22 @@ Sql:
 StopDrinking: true # Prevents players from drinking water when their thirst bar is full
 CustomActionBar:
   Enable: false
+  Space: 3
   Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
+  ItemsAdder:
+    Enable: false
+    Normal_Thirst: "normal_thirst"
+    Normal_ThirstHalfLeft: "normal_thirst_half_left"
+    Normal_ThirstHalfRight: "normal_thirst_half_right"
+    Normal_ThirstEmpty: "normal_thirst_empty"
+    Debuff_Thirst: "debuff_thirst"
+    Debuff_ThirstHalfLeft: "debuff_thirst_half_left"
+    Debuff_ThirstHalfRight: "debuff_thirst_half_right"
+    Debuff_ThirstEmpty: "debuff_thirst_empty"
+    RawWater_Thirst: "raw_water_thirst"
+    RawWater_ThirstHalfLeft: "raw_water_thirst_half_left"
+    RawWater_ThirstHalfRight: "raw_water_thirst_half_right"
+    RawWater_ThirstEmpty: "raw_water_thirst_empty"
 #CustomFurnace apply for 1.16 above
 CustomFurnace:
   Exp: 10.0

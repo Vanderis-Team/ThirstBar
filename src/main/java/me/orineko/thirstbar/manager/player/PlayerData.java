@@ -18,36 +18,30 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.joml.RoundingMode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
+@Setter
 public class PlayerData extends PlayerSetting implements PlayerThirstValue, PlayerThirstyDisplay, PlayerThirstScheduler {
 
     private final String name;
-    @Setter
     private double thirst;
-    @Setter
     private double thirstMax;
-    @Setter
     private double thirstReduce;
-    @Setter
     private double thirstReduceOrigin;
     private long thirstTime;
-    @Setter
     private double thirstDamage;
     private long cooldownRefresh;
     @Nullable
-    @Setter
     private ArmorStand armorStandFrontPlayer;
-    @Setter
     private boolean armorStandBehindPlayer;
 
     private final List<Stage> stageCurrentList;
@@ -178,10 +172,6 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         return delayRefresh;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Nullable
     public Player getPlayer() {
         Player player = Bukkit.getPlayer(name);
@@ -216,7 +206,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             return;
         } else showBossBar(player);
         if (!isEnableBossBar()) return;
-        if (stageCurrentList.size() > 0) {
+        if (!stageCurrentList.isEmpty()) {
             Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
             if (stage.getTitleBossBar() != null && !stage.getTitleBossBar().isEmpty())
                 setTitleBossBar(stage.getTitleBossBar(), thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
@@ -236,7 +226,7 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         BigDecimal a = BigDecimal.valueOf(thirst);
         BigDecimal b = BigDecimal.valueOf(20);
         BigDecimal c = BigDecimal.valueOf(thirstMax);
-        BigDecimal d = a.multiply(b).divide(c, 2, RoundingMode.HALF_DOWN);
+        BigDecimal d = a.multiply(b).divide(c, 2, RoundingMode.HALF_UP);
         int value = d.intValue();
         if (value == 0 && thirst > 0)
             player.setFoodLevel(1);
@@ -262,19 +252,12 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
         if (isDisableAll()) {
             setTitleDisableActionBar(thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
         } else {
-            if (stageCurrentList.size() > 0) {
-                Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
-                if (ConfigData.CUSTOM_ACTION_BAR_ENABLE) {
-                    String text;
-                    if (stage instanceof StageConfig) {
-                        text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
-                                thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
-                    } else {
-                        text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
-                                thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
-                    }
-                    setTitleActionBar((text != null) ? text : "None");
+            if (!stageCurrentList.isEmpty()) {
+                String actionBar = ConfigData.getThirstCustomText(player, this);
+                if (actionBar != null) {
+                    setTitleActionBar(actionBar);
                 } else {
+                    Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
                     if (stage.getTitleActionBar() != null && !stage.getTitleActionBar().isEmpty())
                         setTitleActionBar(stage.getTitleActionBar(), thirst, thirstMax, getReduceTotal(), thirstTime / 20.0);
                 }

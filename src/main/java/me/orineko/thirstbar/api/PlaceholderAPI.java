@@ -12,4 +12,9 @@ public class PlaceholderAPI {
         return MethodDefault.formatNumber(value, 0);
     }
 
+    public String parse(@Nonnull Player player, String text){
+        if(text == null) return null;
+        return me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, text);
+    }
+
 }

@@ -1,16 +1,26 @@
 package me.orineko.thirstbar.manager.file;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
+import me.orineko.thirstbar.manager.player.PlayerData;
+import me.orineko.thirstbar.manager.stage.Stage;
+import me.orineko.thirstbar.manager.stage.StageConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Getter
 public class ConfigData {
 
     public enum TypeResourceThirst{
@@ -19,6 +29,8 @@ public class ConfigData {
 
     public static boolean STOP_DRINKING;
     public static boolean CUSTOM_ACTION_BAR_ENABLE;
+    public static boolean CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE;
+    public static int CUSTOM_ACTION_BAR_SPACE;
     public static String CUSTOM_ACTION_BAR_ORIENTATION;
     public static float CUSTOM_FURNACE_EXP;
     public static int CUSTOM_FURNACE_COOKING_TIME;
@@ -54,11 +66,28 @@ public class ConfigData {
         this.configFile = ThirstBar.getInstance().getConfig();
 
         CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
+        CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE = configFile.getBoolean("CustomActionBar.ItemsAdder.Enable", false);
+        CUSTOM_ACTION_BAR_SPACE = configFile.getInt("CustomActionBar.Space", 0);
         CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
         if(CUSTOM_ACTION_BAR_ENABLE){
-            setResourceThirst(TypeResourceThirst.NORMAL, "eea1", "eea2", "eeb1", "eea3");
-            setResourceThirst(TypeResourceThirst.DEBUFF, "eea4", "eea5", "eeb2", "eea6");
-            setResourceThirst(TypeResourceThirst.RAW_WATTER, "eea7", "eea8", "eeb3", "eea9");
+            String thirst_normal = formatItemsAdder(this.configFile, "Normal_Thirst", "\\ueea1");
+            String thirstHalfLeft_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfLeft", "\\ueea2");
+            String thirstHalfRight_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfRight", "\\ueeb1");
+            String thirstEmpty_normal = formatItemsAdder(this.configFile, "Normal_ThirstEmpty", "\\eea3");
+
+            String thirst_debuff = formatItemsAdder(this.configFile, "Debuff_Thirst", "\\ueea4");
+            String thirstHalfLeft_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstHalfLeft", "\\ueea5");
+            String thirstHalfRight_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstHalfRight", "\\ueeb2");
+            String thirstEmpty_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstEmpty", "\\ueea6");
+
+            String thirst_raw = formatItemsAdder(this.configFile, "RawWater_Thirst", "\\ueea7");
+            String thirstHalfLeft_raw = formatItemsAdder(this.configFile, "RawWater_ThirstHalfLeft", "\\ueea8");
+            String thirstHalfRight_raw = formatItemsAdder(this.configFile, "RawWater_ThirstHalfRight", "\\ueeb3");
+            String thirstEmpty_raw = formatItemsAdder(this.configFile, "RawWater_ThirstEmpty", "\\ueea9");
+
+            setResourceThirst(TypeResourceThirst.NORMAL, thirst_normal, thirstHalfLeft_normal, thirstHalfRight_normal, thirstEmpty_normal);
+            setResourceThirst(TypeResourceThirst.DEBUFF, thirst_debuff, thirstHalfLeft_debuff, thirstHalfRight_debuff, thirstEmpty_debuff);
+            setResourceThirst(TypeResourceThirst.RAW_WATTER, thirst_raw, thirstHalfLeft_raw, thirstHalfRight_raw, thirstEmpty_raw);
         } else {
             resourcePackThirstMap.clear();
         }
@@ -99,10 +128,6 @@ public class ConfigData {
         BLUE_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Blue", 0);
     }
 
-    public FileConfiguration getConfigFile() {
-        return configFile;
-    }
-
     public static String BOSS_BAR_TEXT(double value, double max, double reduce, double time){
         return replace(BOSS_BAR_TITLE, value, max, reduce, time);
     }
@@ -126,16 +151,16 @@ public class ConfigData {
     private static void setResourceThirst(@Nonnull TypeResourceThirst typeResourceThirst, @Nonnull String thirstChar,
                                           @Nonnull String thirstHalfLeftChar, @Nonnull String thirstHalfRightChar, @Nonnull String thirstEmptyChar){
         int numberOfItems = 20;
-        List<String> stringList = new ArrayList<>();
-
-        String shiftRightChar = convertUnicodeEscape("\\uf82a\\uf82b\\uf824");
-        String waterChar = convertUnicodeEscape("\\u"+thirstChar);
-        String waterHalfLeftChar = convertUnicodeEscape("\\u"+thirstHalfLeftChar);
-        String waterHalfRightChar = convertUnicodeEscape("\\u"+thirstHalfRightChar);
-        String waterEmptyChar = convertUnicodeEscape("\\u"+thirstEmptyChar);
+        List<ThirstCustomText> thirstCustomTextList = new ArrayList<>();
+        StringBuilder shiftRightString = new StringBuilder();
+        for (int i = 0; i < ConfigData.CUSTOM_ACTION_BAR_SPACE; i++) shiftRightString.append("\\uf82a");
+        String shiftRightChar = convertUnicodeEscape(shiftRightString.toString());
+        String waterChar = convertUnicodeEscape(thirstChar);
+        String waterHalfLeftChar = convertUnicodeEscape(thirstHalfLeftChar);
+        String waterHalfRightChar = convertUnicodeEscape(thirstHalfRightChar);
+        String waterEmptyChar = convertUnicodeEscape(thirstEmptyChar);
 
         for (int i = numberOfItems; i >= 0; i--) {
-            String percentage = "[" + (i * 5) + "%]"+shiftRightChar;
 
             StringBuilder part1Builder = new StringBuilder();
             for (int j = 0; j < i / 2; j++) {
@@ -151,21 +176,44 @@ public class ConfigData {
             }
             String part3 = part3Builder.toString();
 
-            String result;
-            if(CUSTOM_ACTION_BAR_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")){
+            ThirstCustomText thirstCustomText;
+            if(CUSTOM_ACTION_BAR_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")) {
                 String part2 = (i % 2 == 1) ? waterHalfRightChar : "";
-                result = percentage + part3 + part2 + part1;
+                thirstCustomText = new ThirstCustomText(i * 5, true, MethodDefault.formatColor("&r"+shiftRightChar+ part3 + part2 + part1));
             } else {
                 String part2 = (i % 2 == 1) ? waterHalfLeftChar : "";
-                result = percentage + part1 + part2 + part3;
+                thirstCustomText = new ThirstCustomText(i * 5, true,  MethodDefault.formatColor("&r"+shiftRightChar + part1 + part2 + part3));
             }
-            stringList.add(result);
+            thirstCustomTextList.add(thirstCustomText);
         }
 
-        ConfigData.resourcePackThirstMap.put(typeResourceThirst, stringList.stream().map(ThirstCustomText::new)
-                .sorted(Comparator.comparing(ThirstCustomText::getValue)).collect(Collectors.toList()));
+        ConfigData.resourcePackThirstMap.put(typeResourceThirst, thirstCustomTextList.stream().sorted(Comparator.comparing(ThirstCustomText::getValue)).collect(Collectors.toList()));
     }
 
+    @Nullable
+    public static String getThirstCustomText(@Nonnull Player player, @Nonnull PlayerData playerData) {
+        if (!ConfigData.CUSTOM_ACTION_BAR_ENABLE) return null;
+        PlaceholderAPI placeholderAPI = ThirstBar.getInstance().getPlaceholderAPI();
+        if(placeholderAPI == null) return null;
+        List<Stage> stageList = playerData.getStageCurrentList();
+        String text;
+        if(stageList.isEmpty()) {
+            text = ConfigData.getThirstCustomText(TypeResourceThirst.NORMAL,
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+            return placeholderAPI.parse(player, text);
+        }
+        Stage stage = stageList.get(stageList.size() - 1);
+        if (stage instanceof StageConfig) {
+            text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+        } else {
+            text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+        }
+        return placeholderAPI.parse(player, text);
+    }
+
+    @Nullable
     public static String getThirstCustomText(@Nonnull TypeResourceThirst typeResourceThirst, final double value, double valueMax, double reduce, double time){
         List<ThirstCustomText> thirstCustomTextList = resourcePackThirstMap.getOrDefault(typeResourceThirst, null);
         if(thirstCustomTextList == null) return null;
@@ -214,6 +262,15 @@ public class ConfigData {
         return builder.toString();
     }
 
+    private static String formatItemsAdder(@Nonnull FileConfiguration file, @Nonnull String name, @Nonnull String whenNull) {
+        if(!ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE) return whenNull;
+        String text = file.getString("CustomActionBar.ItemsAdder."+name, null);
+        if(text != null) return "%img_"+text+"%";
+        return whenNull;
+    }
+
+    @AllArgsConstructor
+    @Getter
     public static class ThirstCustomText {
         private double value;
         private boolean percent;
@@ -234,16 +291,5 @@ public class ConfigData {
             this.text = MethodDefault.formatColor(text.replaceAll(regex, ""));
         }
 
-        public double getValue() {
-            return value;
-        }
-
-        public boolean isPercent() {
-            return percent;
-        }
-
-        public String getText() {
-            return text;
-        }
     }
 }

@@ -2,6 +2,7 @@ package me.orineko.thirstbar.api;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.orineko.thirstbar.ThirstBar;
+import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.stage.Stage;
 import org.bukkit.entity.Player;
@@ -34,7 +35,7 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
         switch (identifier){
             case "stage":
                 List<Stage> stageList = playerData.getStageCurrentList();
-                return String.valueOf((stageList.size() > 0) ? stageList.get(stageList.size()-1) : "");
+                return String.valueOf((!stageList.isEmpty()) ? stageList.get(stageList.size()-1) : "");
             case "current_int":
                 return String.valueOf((int) playerData.getThirst());
             case "current_float":
@@ -57,6 +58,8 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
                 return String.format("%.2f", playerData.getReduceTotal() /(playerData.getThirstTime()/20));
             case "isdisabled":
                 return String.valueOf(playerData.isDisable());
+            case "thirst_pack":
+                return ConfigData.getThirstCustomText(player, playerData);
         }
         return null;
     }
