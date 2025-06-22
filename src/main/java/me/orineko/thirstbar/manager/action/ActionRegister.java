@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.api.PlaceholderAPI;
+import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -80,7 +81,7 @@ public abstract class ActionRegister {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
         if(playerData.getActionRegisterList().stream().anyMatch(v -> v.getName().equals(this.getName()))) return;
         playerData.getActionRegisterList().add(this);
-        if(isHideActionBar()) playerData.setEnableActionBar(false);
+        if(ConfigData.ACTION_BAR_ENABLE && isHideActionBar()) playerData.setEnableActionBar(false);
         playerData.updateAll(player);
         setExecuting(true);
     }
@@ -88,7 +89,7 @@ public abstract class ActionRegister {
     public void disableAction(@Nonnull Player player){
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
         playerData.getActionRegisterList().remove(this);
-        if(isHideActionBar()) playerData.setEnableActionBar(true);
+        if(ConfigData.ACTION_BAR_ENABLE && isHideActionBar()) playerData.setEnableActionBar(true);
         playerData.updateAll(player);
         setExecuting(false);
     }

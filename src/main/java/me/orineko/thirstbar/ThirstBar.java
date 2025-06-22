@@ -123,6 +123,7 @@ public final class ThirstBar extends JavaPlugin {
     @Override
     public void onDisable() {
         if(actionManager != null) actionManager.removeRegister();
+        if(getPlayerDataList() == null) return;
         getPlayerDataList().removeDataPlayers();
     }
 
