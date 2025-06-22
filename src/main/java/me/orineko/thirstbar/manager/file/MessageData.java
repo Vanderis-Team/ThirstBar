@@ -1,16 +1,17 @@
 package me.orineko.thirstbar.manager.file;
 
+import lombok.Getter;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+@Getter
 public class MessageData {
 
     public static HashMap<String, List<String>> HELP;
@@ -92,10 +93,6 @@ public class MessageData {
         ERROR_FORMAT = MethodDefault.formatColor(file.getString("ErrorFormat", ""));
         ERROR_CONSOLE_USE_COMMAND = MethodDefault.formatColor(file.getString("OnlyPlayerUseCommand", ""));
         ERROR_PERMISSION = MethodDefault.formatColor(file.getString("DontHavePermission", ""));
-    }
-
-    public FileManager getFile() {
-        return file;
     }
 
     public static String PLAYER_REFRESH_OTHER(@Nonnull String player) {

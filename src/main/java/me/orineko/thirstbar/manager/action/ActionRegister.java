@@ -1,5 +1,7 @@
 package me.orineko.thirstbar.manager.action;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.player.PlayerData;
@@ -13,6 +15,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public abstract class ActionRegister {
 
     private final String name;
@@ -36,51 +40,7 @@ public abstract class ActionRegister {
         return name.toUpperCase();
     }
 
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
-
-    public double getMultiple() {
-        return multiple;
-    }
-
-    public void setMultiple(double multiple) {
-        this.multiple = multiple;
-    }
-
-    public boolean isHideActionBar() {
-        return hideActionBar;
-    }
-
-    public void setHideActionBar(boolean hideActionBar) {
-        this.hideActionBar = hideActionBar;
-    }
-
-    public boolean isExecuting() {
-        return executing;
-    }
-
-    public void setExecuting(boolean executing) {
-        this.executing = executing;
-    }
-
     public abstract boolean checkCondition(@Nonnull Player player);
-
-    public void setIdRepeat(int idRepeat) {
-        this.idRepeat = idRepeat;
-    }
-
-    public int getIdRepeat() {
-        return idRepeat;
-    }
-
-    public List<Condition> getConditionList() {
-        return conditionList;
-    }
 
     public void removeScheduleRepeat(){
         if(getIdRepeat() != 0) {

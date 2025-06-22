@@ -1,5 +1,7 @@
 package me.orineko.thirstbar.manager.item;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.thirstbar.ThirstBar;
 import org.bukkit.inventory.ItemStack;
@@ -7,6 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@Getter
+@Setter
 public class ItemData {
 
     private final String name;
@@ -25,42 +29,14 @@ public class ItemData {
         this.file = ThirstBar.getInstance().getItemsFile();
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Nullable
     public ItemStack getItemStack() {
         return itemStack;
     }
 
-    public double getValue() {
-        return value;
-    }
-
-    public double getValuePercent() {
-        return valuePercent;
-    }
-
-    public boolean isVanilla() {
-        return vanilla;
-    }
-
     public void setItemStack(ItemStack itemStack) {
         this.itemStack = itemStack.clone();
         this.itemStack.setAmount(1);
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public void setValuePercent(double valuePercent) {
-        this.valuePercent = valuePercent;
-    }
-
-    public void setVanilla(boolean vanilla) {
-        this.vanilla = vanilla;
     }
 
     public void saveData(boolean percent){

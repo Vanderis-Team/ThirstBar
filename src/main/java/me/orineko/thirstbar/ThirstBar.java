@@ -1,7 +1,7 @@
 package me.orineko.thirstbar;
 
-import de.tr7zw.nbtapi.NBT;
 import lombok.Getter;
+import me.orineko.nbtapi.NBT;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.command.CommandManager;
@@ -21,10 +21,8 @@ import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.player.PlayerDataList;
 import me.orineko.thirstbar.manager.stage.StageList;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +56,7 @@ public final class ThirstBar extends JavaPlugin {
     private ActionManager actionManager;
     @Nullable
     private PlaceholderAPI placeholderAPI;
+    private int versionBukkit;
 
     @Override
     public void onLoad() {
@@ -74,6 +73,7 @@ public final class ThirstBar extends JavaPlugin {
         }
         saveDefaultConfig();
         plugin = this;
+        versionBukkit = (int) MethodDefault.formatNumber(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1], 0);
         sqlManager = new SqlManager();
 
         messageFile = new FileManager("message.yml", this);
@@ -112,8 +112,7 @@ public final class ThirstBar extends JavaPlugin {
         bottle.setItemMeta(meta);
         ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
         FurnaceRecipe furnaceRecipe;
-        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-        if(versionNumber < 16) {
+        if(getVersionBukkit() < 16) {
             furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
         } else {
             furnaceRecipe = new FurnaceRecipe(NamespacedKey.randomKey(), bottle, potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
@@ -133,9 +132,13 @@ public final class ThirstBar extends JavaPlugin {
             itemsFile.reloadWithoutCreateFile();
             playersFile.reloadWithoutCreateFile();
         }
-        messageFile.reload();
-        stageFile.reload();
-        actionsFile.reload();
+        try {
+            messageFile.reload();
+            stageFile.reload();
+            actionsFile.reload();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         configData = new ConfigData();
         messageData = new MessageData();
         itemDataList = new ItemDataList();
@@ -178,11 +181,10 @@ public final class ThirstBar extends JavaPlugin {
         List<String> textList = new ArrayList<>();
         new UpdateChecker(113587).getVersion(version -> {
 //            String versions = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-            int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
             List<Player> playerList = Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.isOp() || p.hasPermission("thirstbar.admin"))
                     .collect(Collectors.toList());
-            if(versionNumber < 16) {
+            if(getVersionBukkit() < 16) {
                 if (this.getDescription().getVersion().equals(version)) {
                     textList.add("§b[ThirstBar] §aThere is not a new update available.");
                 } else {

@@ -1,5 +1,6 @@
 package me.orineko.thirstbar.manager.stage;
 
+import lombok.Getter;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
@@ -16,8 +17,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
 public class StageList {
 
+    @Getter
     public enum KeyConfig {
         WATER("DrinkingRawWater"), RAIN("DrinkingRain");
         private final String name;
@@ -25,9 +28,6 @@ public class StageList {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
-        }
     }
 
     private final List<StageConfig> stageConfigList;
@@ -39,14 +39,6 @@ public class StageList {
         loadDataConfig(KeyConfig.WATER);
         loadDataConfig(KeyConfig.RAIN);
         loadDataStage();
-    }
-
-    public List<StageConfig> getStageConfigList() {
-        return stageConfigList;
-    }
-
-    public List<StageTimeline> getStageTimelineList() {
-        return stageTimelineList;
     }
 
     @Nullable

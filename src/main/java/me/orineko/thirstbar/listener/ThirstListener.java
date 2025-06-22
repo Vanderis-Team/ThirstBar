@@ -1,6 +1,6 @@
 package me.orineko.thirstbar.listener;
 
-import de.tr7zw.nbtapi.NBTItem;
+import me.orineko.nbtapi.NBTItem;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
@@ -426,12 +426,17 @@ public class ThirstListener implements Listener {
                         if (meta != null) {
                             meta.setDisplayName(ConfigData.NAME_RAW_POTION);
                             meta.setLore(ConfigData.LORE_RAW_POTION);
-                            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                            try {
+                                ItemFlag flag = ItemFlag.valueOf("HIDE_POTION_EFFECTS");
+                                meta.addItemFlags(flag);
+                            } catch (Exception ignore) {
+                                ItemFlag fallback = ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP");
+                                meta.addItemFlags(fallback);
+                            }
                             itemBottle.setItemMeta(meta);
                         }
 
-                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-                        if(versionNumber > 16) {
+                        if(ThirstBar.getInstance().getVersionBukkit() > 16) {
                             PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
                             if(potionMeta != null) {
                                 potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));

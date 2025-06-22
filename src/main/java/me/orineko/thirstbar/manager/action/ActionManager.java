@@ -1,5 +1,7 @@
 package me.orineko.thirstbar.manager.action;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.action.data.*;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,6 +11,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class ActionManager {
 
     private final List<ActionRegister> actionRegisterList;
@@ -48,15 +52,4 @@ public class ActionManager {
         return getActionRegister(actionType.name());
     }
 
-    public List<ActionRegister> getActionRegisterList() {
-        return actionRegisterList;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
 }

@@ -1,12 +1,12 @@
 package me.orineko.thirstbar.manager;
 
-import com.cryptomorin.xseries.XPotion;
-import com.cryptomorin.xseries.XSound;
-import com.cryptomorin.xseries.messages.Titles;
 import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.player.PlayerData;
+import me.orineko.xseries.XPotion;
+import me.orineko.xseries.XSound;
+import me.orineko.xseries.messages.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -87,13 +87,12 @@ public class ThirstBarMethod {
             switch (key) {
                 case "title":
                     titleMain.add(value);
-                    if (titleSub.size() > 0) {
+                    if (!titleSub.isEmpty()) {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
 
-                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-                        if (versionNumber <= 19) {
+                        if (ThirstBar.getInstance().getVersionBukkit() <= 19) {
                             if(idDelayMainTitle == 0) Titles.sendTitle(player, main, sub);
                         } else {
                             if(idDelayMainTitle == 0) {
@@ -109,12 +108,11 @@ public class ThirstBarMethod {
                     break;
                 case "subtitle":
                     titleSub.add(value);
-                    if (titleMain.size() > 0) {
+                    if (!titleMain.isEmpty()) {
                         String main = titleMain.get(0);
                         String sub = titleSub.get(0);
                         if (main == null || sub == null) return;
-                        int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-                        if (versionNumber <= 19) {
+                        if (ThirstBar.getInstance().getVersionBukkit() <= 19) {
                             if(idDelaySubTitle == 0) Titles.sendTitle(player, main, sub);
                         } else {
                             if(idDelaySubTitle == 0) player.sendTitle(main, sub, 10, 20, 10);
@@ -144,10 +142,9 @@ public class ThirstBarMethod {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("<player>", player.getName()));
                     break;
             }
-            String titleMainRemain = (titleMain.size() > 0) ? titleMain.get(0) : null;
-            String titleSubRemain = (titleSub.size() > 0) ? titleSub.get(0) : null;
-            int versionNumber = Integer.parseInt(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1]);
-            if(versionNumber <= 19) {
+            String titleMainRemain = (!titleMain.isEmpty()) ? titleMain.get(0) : null;
+            String titleSubRemain = (!titleSub.isEmpty()) ? titleSub.get(0) : null;
+            if(ThirstBar.getInstance().getVersionBukkit() <= 19) {
                 if (titleMainRemain != null) Titles.sendTitle(player, titleMainRemain, "");
                 if (titleSubRemain != null) Titles.sendTitle(player, "", titleSubRemain);
             } else {
