@@ -9,7 +9,6 @@ import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.stage.Stage;
 import me.orineko.thirstbar.manager.stage.StageConfig;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
