@@ -1,12 +1,12 @@
 package me.orineko.thirstbar.manager;
 
 import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.xseries.XPotion;
+import me.orineko.pluginspigottools.xseries.XSound;
+import me.orineko.pluginspigottools.xseries.messages.Titles;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.player.PlayerData;
-import me.orineko.xseries.XPotion;
-import me.orineko.xseries.XSound;
-import me.orineko.xseries.messages.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

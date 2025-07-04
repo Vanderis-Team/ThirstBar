@@ -1,9 +1,9 @@
 package me.orineko.thirstbar;
 
 import lombok.Getter;
-import me.orineko.nbtapi.NBT;
 import me.orineko.pluginspigottools.FileManager;
 import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.nbtapi.NBT;
 import me.orineko.thirstbar.command.CommandManager;
 import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;

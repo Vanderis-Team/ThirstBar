@@ -2,6 +2,7 @@ package me.orineko.thirstbar.manager.player;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.orineko.pluginspigottools.xseries.messages.ActionBar;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.action.ActionRegister;
@@ -10,7 +11,6 @@ import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.stage.Stage;
 import me.orineko.thirstbar.manager.stage.StageConfig;
 import me.orineko.thirstbar.manager.stage.StageList;
-import me.orineko.xseries.messages.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

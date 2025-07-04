@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.listener;
 
-import me.orineko.nbtapi.NBTItem;
 import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.nbtapi.NBTItem;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.api.worldguardapi.WorldGuardApi;
