@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.manager.stage;
 
 import lombok.Getter;
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import org.bukkit.boss.BarColor;

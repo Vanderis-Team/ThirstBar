@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.listener;
 
-import me.orineko.pluginspigottools.MethodDefault;
 import me.orineko.pluginspigottools.nbtapi.NBTItem;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.api.worldguardapi.WorldGuardApi;
@@ -16,6 +16,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -31,7 +32,7 @@ import java.util.*;
 
 public class ThirstListener implements Listener {
 
-//    public static final HashMap<UUID, ArmorStand> armorStandMap = new HashMap<>();
+    //    public static final HashMap<UUID, ArmorStand> armorStandMap = new HashMap<>();
     private final List<UUID> delayClickMap = new ArrayList<>();
     private final List<UUID> delayMoveMap = new ArrayList<>();
     private final String keyPotionRaw = "RawWater";
@@ -261,15 +262,17 @@ public class ThirstListener implements Listener {
             if (!location.getChunk().isLoaded()) location.getChunk().load();
             try {
                 armorStand.teleport(location);
-            } catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
             playerData.setArmorStandBehindPlayer(true);
-        } else if(playerData.isArmorStandBehindPlayer()) {
+        } else if (playerData.isArmorStandBehindPlayer()) {
             Location playerLocation = player.getLocation();
             Location location = new Location(player.getWorld(), playerLocation.getX(), 255, playerLocation.getZ());
             if (!location.getChunk().isLoaded()) location.getChunk().load();
             try {
                 armorStand.teleport(location);
-            } catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
             playerData.setArmorStandBehindPlayer(false);
         }
     }
@@ -369,92 +372,84 @@ public class ThirstListener implements Listener {
     }
 
     @SuppressWarnings("deprecation")
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onClick(PlayerInteractEvent e) {
+        if(e.isCancelled()) return;
         if (!(e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) return;
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         if (playerData.isDisableAll() || playerData.isDisable()) return;
         ItemStack itemStack = player.getItemInHand();
-        if (itemStack.getType().equals(Material.AIR)) {
-            if (player.isSneaking()) {
-                if (!ConfigData.STOP_DRINKING || playerData.getThirst() >= playerData.getThirstMax()) {
-                    StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
-                    if (stageWater != null) {
-                        if (!delayClickMap.contains(player.getUniqueId())) {
-                            if (stageWater.isEnable()) {
-                                if (ThirstBarMethod.checkSightIsWater(player)) {
-                                    delayClickMap.add(player.getUniqueId());
-                                    if (playerData.idDelayDisable != 0) {
-                                        Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
-                                        playerData.idDelayDisable = 0;
-                                    }
-                                    playerData.disableStage(player, StageList.KeyConfig.WATER);
-                                    playerData.setStage(player, stageWater);
-                                    playerData.addThirst(stageWater.getValue());
-                                    if (playerData.getThirst() > playerData.getThirstMax())
-                                        playerData.setThirst(playerData.getThirstMax());
-                                    if (playerData.getThirst() < 0) playerData.setThirst(0);
-                                    playerData.updateAll(player);
-                                    playerData.idDelayDisable = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
-                                            () -> {
-                                                playerData.disableStage(player, StageList.KeyConfig.WATER);
-                                                playerData.idDelayDisable = 0;
-                                                playerData.updateAll(player);
-                                            }, stageWater.getDuration());
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
-                                            () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());
-                                }
-                            }
-                        }
+        if (itemStack.getType().equals(Material.AIR) && player.isSneaking()) {
+            if (!ConfigData.STOP_DRINKING || playerData.getThirst() >= playerData.getThirstMax()) {
+                StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
+                if (stageWater != null && !delayClickMap.contains(player.getUniqueId()) &&
+                        stageWater.isEnable() && ThirstBarMethod.checkSightIsWater(player)) {
+                    delayClickMap.add(player.getUniqueId());
+                    if (playerData.idDelayDisable != 0) {
+                        Bukkit.getScheduler().cancelTask(playerData.idDelayDisable);
+                        playerData.idDelayDisable = 0;
                     }
+                    playerData.disableStage(player, StageList.KeyConfig.WATER);
+                    playerData.setStage(player, stageWater);
+                    playerData.addThirst(stageWater.getValue());
+                    if (playerData.getThirst() > playerData.getThirstMax())
+                        playerData.setThirst(playerData.getThirstMax());
+                    if (playerData.getThirst() < 0) playerData.setThirst(0);
+                    playerData.updateAll(player);
+                    playerData.idDelayDisable = Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                            () -> {
+                                playerData.disableStage(player, StageList.KeyConfig.WATER);
+                                playerData.idDelayDisable = 0;
+                                playerData.updateAll(player);
+                            }, stageWater.getDuration());
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(ThirstBar.getInstance(),
+                            () -> delayClickMap.remove(player.getUniqueId()), stageWater.getDelay());
                 }
             }
         }
 
-        if(player.getInventory().getItemInOffHand().getType().equals(Material.GLASS_BOTTLE)) {
+        if (player.getInventory().getItemInOffHand().getType().equals(Material.GLASS_BOTTLE)) {
             e.setCancelled(true);
-        } else {
-            if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
-                if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-                    if (ThirstBarMethod.checkSightIsWater(player)) {
-                        ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
-                        NBTItem nbtItem = new NBTItem(itemBottle);
-                        nbtItem.setString(keyPotionRaw, "true");
-                        itemBottle = nbtItem.getItem();
-                        ItemMeta meta = itemBottle.getItemMeta();
-                        if (meta != null) {
-                            meta.setDisplayName(ConfigData.NAME_RAW_POTION);
-                            meta.setLore(ConfigData.LORE_RAW_POTION);
-                            try {
-                                ItemFlag flag = ItemFlag.valueOf("HIDE_POTION_EFFECTS");
-                                meta.addItemFlags(flag);
-                            } catch (Exception ignore) {
-                                ItemFlag fallback = ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP");
-                                meta.addItemFlags(fallback);
-                            }
-                            itemBottle.setItemMeta(meta);
+        } else if (itemStack.getType().equals(Material.GLASS_BOTTLE)) {
+            if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                if (ThirstBarMethod.checkSightIsWater(player)) {
+                    ItemStack itemBottle = MethodDefault.getItemAllVersion("POTION");
+                    NBTItem nbtItem = new NBTItem(itemBottle);
+                    nbtItem.setString(keyPotionRaw, "true");
+                    itemBottle = nbtItem.getItem();
+                    ItemMeta meta = itemBottle.getItemMeta();
+                    if (meta != null) {
+                        meta.setDisplayName(ConfigData.NAME_RAW_POTION);
+                        meta.setLore(ConfigData.LORE_RAW_POTION);
+                        try {
+                            ItemFlag flag = ItemFlag.valueOf("HIDE_POTION_EFFECTS");
+                            meta.addItemFlags(flag);
+                        } catch (Exception ignore) {
+                            ItemFlag fallback = ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP");
+                            meta.addItemFlags(fallback);
                         }
-
-                        if(ThirstBar.getInstance().getVersionBukkit() > 16) {
-                            PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
-                            if(potionMeta != null) {
-                                potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));
-                                itemBottle.setItemMeta(potionMeta);
-                            }
-                        }
-                        e.setCancelled(true);
-                        if (itemStack.getAmount() == 1) {
-                            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
-                        } else {
-                            ItemStack item = itemStack.clone();
-                            item.setAmount(itemStack.getAmount() - 1);
-                            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
-                            player.getInventory().addItem(itemBottle);
-                        }
-                    } else {
-                        e.setCancelled(true);
+                        itemBottle.setItemMeta(meta);
                     }
+
+                    if (ThirstBar.getInstance().getVersionBukkit() > 16) {
+                        PotionMeta potionMeta = (PotionMeta) itemBottle.getItemMeta();
+                        if (potionMeta != null) {
+                            potionMeta.setColor(Color.fromRGB(ConfigData.RED_COLOR_RAW_POTION, ConfigData.GREEN_COLOR_RAW_POTION, ConfigData.BLUE_COLOR_RAW_POTION));
+                            itemBottle.setItemMeta(potionMeta);
+                        }
+                    }
+                    e.setCancelled(true);
+                    if (itemStack.getAmount() == 1) {
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemBottle);
+                    } else {
+                        ItemStack item = itemStack.clone();
+                        item.setAmount(itemStack.getAmount() - 1);
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), item);
+                        player.getInventory().addItem(itemBottle);
+                    }
+                } else {
+                    e.setCancelled(true);
                 }
             }
         }

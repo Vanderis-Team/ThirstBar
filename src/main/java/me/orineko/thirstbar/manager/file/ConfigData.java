@@ -2,7 +2,7 @@ package me.orineko.thirstbar.manager.file;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.api.PlaceholderAPI;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
@@ -72,7 +72,7 @@ public class ConfigData {
             String thirst_normal = formatItemsAdder(this.configFile, "Normal_Thirst", "\\ueea1");
             String thirstHalfLeft_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfLeft", "\\ueea2");
             String thirstHalfRight_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfRight", "\\ueeb1");
-            String thirstEmpty_normal = formatItemsAdder(this.configFile, "Normal_ThirstEmpty", "\\eea3");
+            String thirstEmpty_normal = formatItemsAdder(this.configFile, "Normal_ThirstEmpty", "\\ueea3");
 
             String thirst_debuff = formatItemsAdder(this.configFile, "Debuff_Thirst", "\\ueea4");
             String thirstHalfLeft_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstHalfLeft", "\\ueea5");

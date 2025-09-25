@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.manager.player;
 
-import me.orineko.pluginspigottools.DataList;
-import me.orineko.pluginspigottools.FileManager;
+import me.orineko.pluginspigottools.core.FileManager;
+import me.orineko.pluginspigottools.data.DataList;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import org.bukkit.Bukkit;

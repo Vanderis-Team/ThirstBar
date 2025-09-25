@@ -1,6 +1,6 @@
 package me.orineko.thirstbar.manager;
 
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.pluginspigottools.xseries.XPotion;
 import me.orineko.pluginspigottools.xseries.XSound;
 import me.orineko.pluginspigottools.xseries.messages.Titles;

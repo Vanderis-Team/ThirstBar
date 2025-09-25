@@ -2,7 +2,7 @@ package me.orineko.thirstbar.manager.item;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.orineko.pluginspigottools.FileManager;
+import me.orineko.pluginspigottools.core.FileManager;
 import me.orineko.thirstbar.ThirstBar;
 import org.bukkit.inventory.ItemStack;
 

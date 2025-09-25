@@ -1,6 +1,6 @@
 package me.orineko.thirstbar.api;
 
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;

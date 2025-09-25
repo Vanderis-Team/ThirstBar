@@ -1,8 +1,8 @@
 package me.orineko.thirstbar.manager.item;
 
-import me.orineko.pluginspigottools.DataList;
-import me.orineko.pluginspigottools.FileManager;
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.core.FileManager;
+import me.orineko.pluginspigottools.data.DataList;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.api.sql.SqlManager;
 import me.orineko.thirstbar.manager.file.ConfigData;

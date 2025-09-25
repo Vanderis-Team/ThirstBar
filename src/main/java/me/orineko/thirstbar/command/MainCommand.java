@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.command;
 
-import me.orineko.pluginspigottools.FileManager;
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.core.FileManager;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.file.MessageData;

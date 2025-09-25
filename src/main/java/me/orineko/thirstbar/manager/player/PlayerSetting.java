@@ -1,6 +1,6 @@
 package me.orineko.thirstbar.manager.player;
 
-import me.orineko.pluginspigottools.MethodDefault;
+import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
