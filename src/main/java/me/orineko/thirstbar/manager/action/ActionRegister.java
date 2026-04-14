@@ -24,7 +24,6 @@ public abstract class ActionRegister {
     private boolean enable;
     private double multiple;
     private boolean hideActionBar;
-    private boolean executing;
     private int idRepeat;
     private final List<Condition> conditionList;
 
@@ -70,20 +69,25 @@ public abstract class ActionRegister {
     }
 
     public boolean checkCanExecute(@Nonnull Player player){
-        return isEnable() && !isExecuting() && checkCondition(player);
+        if (!isEnable()) return false;
+        PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
+        boolean isExecuting = playerData.getActionRegisterList().contains(this);
+        return !isExecuting && checkCondition(player);
     }
 
     public boolean checkCanNotExecute(@Nonnull Player player){
-        return isEnable() && isExecuting() && !checkCondition(player);
+        if (!isEnable()) return false;
+        PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
+        boolean isExecuting = playerData.getActionRegisterList().contains(this);
+        return isExecuting && !checkCondition(player);
     }
 
     public void executeAction(@Nonnull Player player){
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
-        if(playerData.getActionRegisterList().stream().anyMatch(v -> v.getName().equals(this.getName()))) return;
+        if(playerData.getActionRegisterList().contains(this)) return;
         playerData.getActionRegisterList().add(this);
         if(ConfigData.ACTION_BAR_ENABLE && isHideActionBar()) playerData.setEnableActionBar(false);
         playerData.updateAll(player);
-        setExecuting(true);
     }
 
     public void disableAction(@Nonnull Player player){
@@ -91,7 +95,6 @@ public abstract class ActionRegister {
         playerData.getActionRegisterList().remove(this);
         if(ConfigData.ACTION_BAR_ENABLE && isHideActionBar()) playerData.setEnableActionBar(true);
         playerData.updateAll(player);
-        setExecuting(false);
     }
 
     @Nullable

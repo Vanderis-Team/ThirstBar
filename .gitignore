@@ -111,3 +111,8 @@ buildNumber.properties
 
 # Common working directory
 run/
+.vscode/*
+.gitnexus
+AGENTS.md
+CLAUDE.md
+.claude/*

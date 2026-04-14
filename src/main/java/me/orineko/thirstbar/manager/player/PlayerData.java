@@ -155,6 +155,10 @@ public class PlayerData extends PlayerSetting implements PlayerThirstValue, Play
             Bukkit.getScheduler().cancelTask(idRepeat2ActionBar);
             idRepeat2ActionBar = 0;
         }
+        if (idDelayDisable != 0) {
+            Bukkit.getScheduler().cancelTask(idDelayDisable);
+            idDelayDisable = 0;
+        }
     }
 
     @Override

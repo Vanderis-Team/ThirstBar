@@ -455,16 +455,11 @@ public abstract class CommandManager extends BukkitCommand implements CommandExe
         @Nullable
         private static SimpleCommandMap getSimpleCommandMap() {
             try {
-                String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-                Class<?> craftServerClass = Class.forName("org.bukkit.craftbukkit." + version + ".CraftServer");
-                Object craftServer = craftServerClass.cast(Bukkit.getServer());
-                Object simpleCommandMap = craftServer.getClass().getMethod("getCommandMap").invoke(craftServer);
+                // Try direct method invocation first (works on all versions)
+                Object simpleCommandMap = Bukkit.getServer().getClass()
+                        .getMethod("getCommandMap").invoke(Bukkit.getServer());
                 return ((SimpleCommandMap) simpleCommandMap);
-            } catch (IllegalAccessException | ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;

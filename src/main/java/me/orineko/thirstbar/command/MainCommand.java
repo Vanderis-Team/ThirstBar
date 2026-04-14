@@ -49,48 +49,28 @@ public class MainCommand extends CommandManager {
         return null;
     }
 
+    private void sendHelp(CommandSender sender, String page) {
+        if (MessageData.HELP.isEmpty()) return;
+        List<String> list = MessageData.HELP.getOrDefault(page, MessageData.HELP.getOrDefault("1", null));
+        if (list != null) {
+            list.forEach(sender::sendMessage);
+        }
+    }
+
     @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "help", permissions = "thirstbar.help")
     public void onHelp(CommandSender sender, String[] args) {
-        if (MessageData.HELP.isEmpty()) return;
-
-        List<String> list = null;
-        if(args.length >= 1) {
-            if(checkEqualArgs(args, 0, "help")) {
-                if(args.length >= 2){
-                    if(args[1].equalsIgnoreCase("2")){
-                        list = MessageData.HELP.getOrDefault("2", null);
-                    } else {
-                        list = MessageData.HELP.getOrDefault("1", null);
-                    }
-                }
-            } else if (args[0].equalsIgnoreCase("1")) {
-                list = MessageData.HELP.getOrDefault("1", null);
-            } else {
-                list = MessageData.HELP.getOrDefault("1", null);
-            }
-        } else {
-            list = MessageData.HELP.getOrDefault("1", null);
-        }
-        if (list == null) return;
-        list.forEach(sender::sendMessage);
+        String page = (args.length >= 2 && args[1].equals("2")) ? "2" : "1";
+        sendHelp(sender, page);
     }
 
     @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "1", permissions = "thirstbar.help")
     public void onHelp1(CommandSender sender, String[] args) {
-        if (MessageData.HELP.isEmpty()) return;
-
-        List<String> list = MessageData.HELP.getOrDefault("1", null);
-        if (list == null) return;
-        list.forEach(sender::sendMessage);
+        sendHelp(sender, "1");
     }
 
     @CommandSub(length = 0, command = {"thirstbar", "tb"}, names = "2", permissions = "thirstbar.help")
     public void onHelp2(CommandSender sender, String[] args) {
-        if (MessageData.HELP.isEmpty()) return;
-
-        List<String> list = MessageData.HELP.getOrDefault("2", null);
-        if (list == null) return;
-        list.forEach(sender::sendMessage);
+        sendHelp(sender, "2");
     }
 
     @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "reload", permissions = "thirstbar.reload")
@@ -317,7 +297,7 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 4, command = {"thirstbar", "tb"}, names = {"item", "save"}, justPlayerUseCmd = true, permissions = "thirstbar.item.save")
     public void onItemSave(Player player, String[] args) {
-        ItemStack item = player.getItemInHand();
+        ItemStack item = player.getInventory().getItemInMainHand();
         if (checkObjectIsFalse(!item.getType().equals(Material.AIR), player, MessageData.ERROR_NEED_ITEM_IN_HAND))
             return;
         String name = args[2];

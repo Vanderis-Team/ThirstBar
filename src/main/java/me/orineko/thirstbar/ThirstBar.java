@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nullable;
@@ -64,6 +63,7 @@ public final class ThirstBar extends JavaPlugin {
         registerFlag();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
         if (!NBT.preloadApi()) {
@@ -107,15 +107,28 @@ public final class ThirstBar extends JavaPlugin {
         ItemStack bottle = new ItemStack(Material.POTION, 1);
         ItemMeta meta = bottle.getItemMeta();
         PotionMeta pmeta = (PotionMeta) meta;
-        PotionData pdata = new PotionData(PotionType.WATER);
-        if(pmeta != null) pmeta.setBasePotionData(pdata);
+        if(pmeta != null) {
+            if(getVersionBukkit() >= 20) {
+                pmeta.setBasePotionType(PotionType.WATER);
+            } else {
+                try {
+                    Object pdata = Class.forName("org.bukkit.potion.PotionData")
+                            .getConstructor(PotionType.class).newInstance(PotionType.WATER);
+                    pmeta.getClass().getMethod("setBasePotionData", Class.forName("org.bukkit.potion.PotionData"))
+                            .invoke(pmeta, pdata);
+                } catch (Exception e) {
+                    pmeta.setBasePotionType(PotionType.WATER);
+                }
+            }
+        }
         bottle.setItemMeta(meta);
         ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
         FurnaceRecipe furnaceRecipe;
         if(getVersionBukkit() < 16) {
+            //noinspection deprecation
             furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
         } else {
-            furnaceRecipe = new FurnaceRecipe(NamespacedKey.randomKey(), bottle, potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
+            furnaceRecipe = new FurnaceRecipe(new NamespacedKey(this, "raw_water_furnace"), bottle, potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
         }
         Bukkit.addRecipe(furnaceRecipe);
     }
@@ -145,6 +158,12 @@ public final class ThirstBar extends JavaPlugin {
         itemDataList = new ItemDataList();
         itemDataList.loadData();
         stageList = new StageList();
+
+        // Clean up old player data BEFORE creating new list to prevent leaks
+        if (playerDataList != null) {
+            playerDataList.removeDataPlayers();
+        }
+
         playerDataList = new PlayerDataList();
         Bukkit.getOnlinePlayers().forEach(p -> {
             PlayerData playerData = getPlayerDataList().addData(p);
@@ -185,28 +204,21 @@ public final class ThirstBar extends JavaPlugin {
             List<Player> playerList = Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.isOp() || p.hasPermission("thirstbar.admin"))
                     .collect(Collectors.toList());
-            if(getVersionBukkit() < 16) {
-                if (this.getDescription().getVersion().equals(version)) {
-                    textList.add("§b[ThirstBar] §aThere is not a new update available.");
-                } else {
-                    textList.add("§b[ThirstBar] §7The plugin version you are using is §4out of date§7!");
-                    textList.add("§b[ThirstBar] §7There is a new update available.");
-                    textList.add("§b[ThirstBar] §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
-                }
-                textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
-                playerList.forEach(p -> textList.forEach(p::sendMessage));
+            String textTitle;
+            if (getVersionBukkit() < 16) {
+                textTitle = "§b[ThirstBar]";
             } else {
-                String textTitle = MethodDefault.formatColor("§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
-                if (this.getDescription().getVersion().equals(version)) {
-                    textList.add(textTitle + " §aThere is not a new update available.");
-                } else {
-                    textList.add(textTitle + " §7The plugin version you are using is §4out of date§7!");
-                    textList.add(textTitle + " §7There is a new update available.");
-                    textList.add(textTitle + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
-                }
-                textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
-                playerList.forEach(p -> textList.forEach(p::sendMessage));
+                textTitle = MethodDefault.formatColor("§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
             }
+            if (this.getDescription().getVersion().equals(version)) {
+                textList.add(textTitle + " §aThere is not a new update available.");
+            } else {
+                textList.add(textTitle + " §7The plugin version you are using is §4out of date§7!");
+                textList.add(textTitle + " §7There is a new update available.");
+                textList.add(textTitle + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
+            }
+            textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
+            playerList.forEach(p -> textList.forEach(p::sendMessage));
         });
     }
 

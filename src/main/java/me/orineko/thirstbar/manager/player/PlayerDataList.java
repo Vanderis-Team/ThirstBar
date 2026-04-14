@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.manager.player;
 
 import me.orineko.pluginspigottools.core.FileManager;
-import me.orineko.pluginspigottools.data.DataList;
+import me.orineko.pluginspigottools.data.MultiIndexDataMap;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import org.bukkit.Bukkit;
@@ -12,16 +12,27 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PlayerDataList extends DataList<PlayerData> {
+public class PlayerDataList extends MultiIndexDataMap<PlayerData> {
+
+    @Override
+    protected void setupIndexes() {
+        // No secondary indexes needed — all lookups are by player name (primary key)
+    }
+
+    @Override
+    protected Object getPrimaryKey(PlayerData playerData) {
+        return playerData.getName();
+    }
 
     public PlayerData addData(@Nonnull String name) {
-        PlayerData playerData = getData(name);
-        if (playerData != null) return playerData;
-        playerData = new PlayerData(name);
-        getDataList().add(playerData);
+        PlayerData existing = getData(name);
+        if (existing != null) return existing;
+        PlayerData playerData = new PlayerData(name);
+        addData(playerData);
         return playerData;
     }
 
@@ -31,22 +42,36 @@ public class PlayerDataList extends DataList<PlayerData> {
 
     @Nullable
     public PlayerData getData(@Nonnull String name) {
-        return super.getData(d -> d.getName().equals(name));
+        return getDataByPrimaryKey(name);
+    }
+
+    /**
+     * Provides backward-compatible List view of all data.
+     * Used by commands that iterate over all players.
+     */
+    public List<PlayerData> getDataList() {
+        return new ArrayList<>(getAllData());
     }
 
     public void removeDataPlayers() {
-        Bukkit.getScheduler().cancelTasks(ThirstBar.getInstance());
-        getDataList().forEach(playerData -> {
+        // Cancel per-player scheduler tasks first to prevent leaks
+        getAllData().forEach(playerData -> {
+            playerData.disableExecuteReduce();
+            playerData.disableExecuteRefresh();
+
             if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
                 ThirstBar.getInstance().getPlayersFile().set(playerData.getName() + ".Thirst", playerData.getThirst());
             } else {
                 ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), playerData.getThirst());
             }
+
+            // Clean up ArmorStand entity to prevent ghost entities
             if(playerData.getArmorStandFrontPlayer() != null) {
                 playerData.getArmorStandFrontPlayer().remove();
                 playerData.setArmorStandFrontPlayer(null);
             }
             playerData.setThirst(playerData.getThirstMax());
+
             Player player = playerData.getPlayer();
             if (player != null){
                 playerData.disableStage(player, null);
@@ -54,12 +79,14 @@ public class PlayerDataList extends DataList<PlayerData> {
                     player.removePotionEffect(v.getType());
                 });
             }
+            // Clean up BossBar to prevent orphaned references
             playerData.getBossBar().removeAll();
         });
+
         if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             ThirstBar.getInstance().getPlayersFile().save();
         }
-        getDataList().clear();
+        clear();
     }
 
     public void loadData() {

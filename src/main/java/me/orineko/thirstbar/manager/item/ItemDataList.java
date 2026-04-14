@@ -1,7 +1,7 @@
 package me.orineko.thirstbar.manager.item;
 
 import me.orineko.pluginspigottools.core.FileManager;
-import me.orineko.pluginspigottools.data.DataList;
+import me.orineko.pluginspigottools.data.MultiIndexDataMap;
 import me.orineko.pluginspigottools.utils.MethodDefault;
 import me.orineko.thirstbar.ThirstBar;
 import me.orineko.thirstbar.api.sql.SqlManager;
@@ -14,10 +14,24 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class ItemDataList extends DataList<ItemData> {
+public class ItemDataList extends MultiIndexDataMap<ItemData> {
+
+    @Override
+    protected void setupIndexes() {
+        // No secondary indexes needed — ItemStack lookups use predicate-based search
+    }
+
+    @Override
+    protected Object getPrimaryKey(ItemData itemData) {
+        return itemData.getName();
+    }
 
     public ItemData addData(@Nonnull String name) {
-        return super.addData(new ItemData(name), getData(name));
+        ItemData existing = getData(name);
+        if (existing != null) return existing;
+        ItemData itemData = new ItemData(name);
+        addData(itemData);
+        return itemData;
     }
 
     public ItemData addData(@Nonnull String name, @Nonnull ItemStack itemStack){
@@ -28,14 +42,16 @@ public class ItemDataList extends DataList<ItemData> {
 
     @Nullable
     public ItemData getData(@Nonnull String name) {
-        return super.getData(d -> d.getName().equals(name));
+        return getDataByPrimaryKey(name);
     }
 
     @Nullable
     public ItemData getData(@Nonnull ItemStack itemStack) {
-        ItemData itemDataCustom = super.getData(d -> d.getItemStack() != null && d.getItemStack().isSimilar(itemStack));
+        // First check custom items (exact match)
+        ItemData itemDataCustom = getData(d -> d.getItemStack() != null && d.getItemStack().isSimilar(itemStack));
         if(itemDataCustom != null) return itemDataCustom;
-        return super.getData(d -> {
+        // Then check vanilla items
+        return getData(d -> {
             ItemStack finalItemStack = itemStack;
             if(d.getItemStack() != null && d.getItemStack().getType().equals(Material.POTION)){
                 finalItemStack = finalItemStack.clone();
@@ -47,11 +63,19 @@ public class ItemDataList extends DataList<ItemData> {
     }
 
     public void removeData(@Nonnull String name){
-        super.getDataList().removeIf(d -> d.getName().equals(name));
+        removeDataByPrimaryKey(name);
+    }
+
+    /**
+     * Provides backward-compatible List view of all data.
+     * Used by commands that iterate/filter items.
+     */
+    public List<ItemData> getDataList() {
+        return new ArrayList<>(getAllData());
     }
 
     public void loadData(){
-        dataList.clear();
+        clear();
         if(ThirstBar.getInstance().getSqlManager().getConnection() == null){
             FileManager file = ThirstBar.getInstance().getItemsFile();
             ConfigurationSection section = file.getConfigurationSection("");
@@ -84,7 +108,8 @@ public class ItemDataList extends DataList<ItemData> {
                 itemData.setValuePercent(valuePercent);
             });
         }
-        dataList.addAll(getItemDataVanilla());
+        // Add vanilla items from config
+        getItemDataVanilla().forEach(this::addData);
     }
 
     public static List<ItemData> getItemDataVanilla(){
