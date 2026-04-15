@@ -66,11 +66,6 @@ public final class ThirstBar extends JavaPlugin {
     @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
-        if (!NBT.preloadApi()) {
-            getLogger().warning("NBT-API wasn't initialized properly, disabling the plugin");
-            getPluginLoader().disablePlugin(this);
-            return;
-        }
         saveDefaultConfig();
         plugin = this;
         versionBukkit = (int) MethodDefault.formatNumber(Bukkit.getBukkitVersion().split("-")[0].split("\\.")[1], 0);
@@ -94,7 +89,6 @@ public final class ThirstBar extends JavaPlugin {
         renewData();
         Bukkit.getOnlinePlayers().forEach(ThirstBarMethod::disableGameMode);
 
-
         CommandManager.CommandRegistry.register(true, this, new MainCommand(this));
         getServer().getPluginManager().registerEvents(new ThirstListener(), this);
 
@@ -107,8 +101,8 @@ public final class ThirstBar extends JavaPlugin {
         ItemStack bottle = new ItemStack(Material.POTION, 1);
         ItemMeta meta = bottle.getItemMeta();
         PotionMeta pmeta = (PotionMeta) meta;
-        if(pmeta != null) {
-            if(getVersionBukkit() >= 20) {
+        if (pmeta != null) {
+            if (getVersionBukkit() >= 20) {
                 pmeta.setBasePotionType(PotionType.WATER);
             } else {
                 try {
@@ -124,19 +118,22 @@ public final class ThirstBar extends JavaPlugin {
         bottle.setItemMeta(meta);
         ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
         FurnaceRecipe furnaceRecipe;
-        if(getVersionBukkit() < 16) {
-            //noinspection deprecation
+        if (getVersionBukkit() < 16) {
+            // noinspection deprecation
             furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
         } else {
-            furnaceRecipe = new FurnaceRecipe(new NamespacedKey(this, "raw_water_furnace"), bottle, potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
+            furnaceRecipe = new FurnaceRecipe(new NamespacedKey(this, "raw_water_furnace"), bottle,
+                    potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
         }
         Bukkit.addRecipe(furnaceRecipe);
     }
 
     @Override
     public void onDisable() {
-        if(actionManager != null) actionManager.removeRegister();
-        if(getPlayerDataList() == null) return;
+        if (actionManager != null)
+            actionManager.removeRegister();
+        if (getPlayerDataList() == null)
+            return;
         getPlayerDataList().removeDataPlayers();
     }
 
@@ -167,21 +164,23 @@ public final class ThirstBar extends JavaPlugin {
         playerDataList = new PlayerDataList();
         Bukkit.getOnlinePlayers().forEach(p -> {
             PlayerData playerData = getPlayerDataList().addData(p);
-            boolean check = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
-                    p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
+            boolean check = ConfigData.DISABLED_WORLDS.stream()
+                    .anyMatch(w -> p.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
             playerData.setDisableAll(check);
             playerData.createArmorStand(p);
         });
-        if(actionManager != null) actionManager.removeRegister();
+        if (actionManager != null)
+            actionManager.removeRegister();
         actionManager = new ActionManager();
         playerDataList.loadData();
     }
 
-    private void loadResourcePackFile(){
+    private void loadResourcePackFile() {
         try {
             FileManager tutorialFile = new FileManager("tutorial.txt", this);
             tutorialFile.copyDefault();
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     private void registerFlag() {
@@ -196,11 +195,12 @@ public final class ThirstBar extends JavaPlugin {
         WorldGuardApi.registerFlag();
     }
 
-
     private void checkForUpdate() {
         List<String> textList = new ArrayList<>();
         new UpdateChecker(113587).getVersion(version -> {
-//            String versions = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+            // String versions =
+            // Bukkit.getServer().getClass().getPackage().getName().replace(".",
+            // ",").split(",")[3];
             List<Player> playerList = Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.isOp() || p.hasPermission("thirstbar.admin"))
                     .collect(Collectors.toList());
@@ -208,14 +208,16 @@ public final class ThirstBar extends JavaPlugin {
             if (getVersionBukkit() < 16) {
                 textTitle = "§b[ThirstBar]";
             } else {
-                textTitle = MethodDefault.formatColor("§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
+                textTitle = MethodDefault.formatColor(
+                        "§7§l[§r#007fff§lT#008afe§lH#0095fe§lI#009ffd§lR#00aafd§lS#00b5fc§lT#17bdf8 #2ec5f3§lB#44ccef§lA#5bd4ea§lR§7§l]");
             }
             if (this.getDescription().getVersion().equals(version)) {
                 textList.add(textTitle + " §aThere is not a new update available.");
             } else {
                 textList.add(textTitle + " §7The plugin version you are using is §4out of date§7!");
                 textList.add(textTitle + " §7There is a new update available.");
-                textList.add(textTitle + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
+                textList.add(textTitle
+                        + " §7Download it here: §6https://www.spigotmc.org/resources/1-9-1-20-1-%E2%9A%A1-thirst-bar-%E2%9A%A1-add-thirst-unit-for-player-%E2%AD%90-placeholderapi-and-worldguard-support.113587/");
             }
             textList.forEach(t -> Bukkit.getConsoleSender().sendMessage(t));
             playerList.forEach(p -> textList.forEach(p::sendMessage));

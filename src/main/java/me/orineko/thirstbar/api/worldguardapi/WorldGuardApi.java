@@ -38,14 +38,27 @@ public class WorldGuardApi {
             Flag<?> existing = registry.get(name);
             if (existing instanceof StateFlag) {
                 stateFlag = (StateFlag) existing;
-                //integerFlag = (IntegerFlag) existing;
-            } else {
-                ex.printStackTrace();
+            }
+            Flag<?> existing2 = registry.get(name2);
+            if (existing2 instanceof DoubleFlag) {
+                doubleFlag = (DoubleFlag) existing2;
+            }
+        } catch (IllegalStateException ex) {
+            // Registry is locked (e.g. plugin hot-loaded via PlugMan after server startup)
+            // Retrieve already-registered flags instead
+            Flag<?> existing = registry.get(name);
+            if (existing instanceof StateFlag) {
+                stateFlag = (StateFlag) existing;
+            }
+            Flag<?> existing2 = registry.get(name2);
+            if (existing2 instanceof DoubleFlag) {
+                doubleFlag = (DoubleFlag) existing2;
             }
         }
     }
 
     public static void registerFlag() {
+        if (stateFlag == null) return;
         try {
             SessionManager sessionManager = WorldGuard.getInstance().getPlatform().getSessionManager();
             CustomFlagWorldGuard.Factory factory = CustomFlagWorldGuard.FACTORY;
