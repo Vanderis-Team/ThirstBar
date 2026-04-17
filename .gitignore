@@ -117,3 +117,7 @@ AGENTS.md
 CLAUDE.md
 .claude/*
 TEST_CASES.md
+*.txt
+src/test/*
+THIRSTBAR_FEATURES.md
+GITNEXUS_ANALYSIS.md

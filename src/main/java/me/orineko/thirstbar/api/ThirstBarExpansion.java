@@ -32,10 +32,10 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         String identifier = params.toLowerCase();
-        switch (identifier){
+        switch (identifier) {
             case "stage":
                 List<Stage> stageList = playerData.getStageCurrentList();
-                return String.valueOf((!stageList.isEmpty()) ? stageList.get(stageList.size()-1) : "");
+                return String.valueOf((!stageList.isEmpty()) ? stageList.get(stageList.size() - 1) : "");
             case "current_int":
                 return String.valueOf((int) playerData.getThirst());
             case "current_float":
@@ -49,13 +49,13 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
             case "reducevalue_float":
                 return String.format("%.2f", playerData.getReduceTotal());
             case "reducetime_int":
-                return String.valueOf((int) playerData.getThirstTime()/20);
+                return String.valueOf((int) playerData.getThirstTime() / 20);
             case "reducetime_float":
-                return String.format("%.2f", (double) playerData.getThirstTime()/20);
+                return String.format("%.2f", (double) playerData.getThirstTime() / 20);
             case "reducepersec_int":
-                return String.valueOf((int) playerData.getReduceTotal()/(playerData.getThirstTime()/20));
+                return String.valueOf((int) playerData.getReduceTotal() / (playerData.getThirstTime() / 20));
             case "reducepersec_float":
-                return String.format("%.2f", playerData.getReduceTotal() /(playerData.getThirstTime()/20));
+                return String.format("%.2f", playerData.getReduceTotal() / (playerData.getThirstTime() / 20));
             case "isdisabled":
                 return String.valueOf(playerData.isDisable());
             case "thirst_pack":

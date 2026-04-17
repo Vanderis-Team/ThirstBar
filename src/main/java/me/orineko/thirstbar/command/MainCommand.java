@@ -80,7 +80,7 @@ public class MainCommand extends CommandManager {
         sender.sendMessage(MessageData.RELOAD);
     }
 
-    @CommandSub(length = 0, command = "Refresh")
+    @CommandSub(length = 0, command = "Refresh", permissions = "thirstbar.refresh")
     public void onRefresh(CommandSender sender, String[] args) {
         if (args.length > 0) {
             if (!(sender instanceof Player &&

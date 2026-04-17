@@ -98,7 +98,10 @@ public abstract class CommandManager extends BukkitCommand implements CommandExe
                 if(dataCommand == null) permList = Arrays.asList(commandInfo.permissions());
                 else permList = Stream.concat(Stream.of(commandInfo.permissions()),
                         dataCommand.getPermissionList().stream()).collect(Collectors.toList());
-                if(permList.stream().noneMatch(player::hasPermission)) return true;
+                if(permList.stream().noneMatch(player::hasPermission)) {
+                    if (errorPermissionMessage != null) sender.sendMessage(errorPermissionMessage);
+                    return true;
+                }
             }
         }
         if (checkObjectIsNull(dataCommand, sender, errorCommandMessage) || dataCommand == null) return true;

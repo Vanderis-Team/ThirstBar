@@ -148,7 +148,12 @@ public class ThirstBarMethod {
                 if (titleMainRemain != null) Titles.sendTitle(player, titleMainRemain, "");
                 if (titleSubRemain != null) Titles.sendTitle(player, "", titleSubRemain);
             } else {
-                player.sendTitle(titleMainRemain, titleSubRemain, 10, 20, 10);
+                if (titleMainRemain != null || titleSubRemain != null) {
+                    player.sendTitle(
+                        titleMainRemain != null ? titleMainRemain : "", 
+                        titleSubRemain != null ? titleSubRemain : "", 
+                        10, 20, 10);
+                }
             }
         });
     }

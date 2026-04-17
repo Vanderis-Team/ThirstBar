@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public final class ThirstBar extends JavaPlugin {
+public class ThirstBar extends JavaPlugin {
 
     private static ThirstBar plugin;
     private PlayerDataList playerDataList;
