@@ -45,17 +45,17 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
             case "max_float":
                 return String.format("%.2f", playerData.getThirstMax());
             case "reducevalue_int":
-                return String.valueOf((int) playerData.getReduceTotal());
+                return String.valueOf((int) playerData.getReduceTotal(player));
             case "reducevalue_float":
-                return String.format("%.2f", playerData.getReduceTotal());
+                return String.format("%.2f", playerData.getReduceTotal(player));
             case "reducetime_int":
                 return String.valueOf((int) playerData.getThirstTime() / 20);
             case "reducetime_float":
                 return String.format("%.2f", (double) playerData.getThirstTime() / 20);
             case "reducepersec_int":
-                return String.valueOf((int) playerData.getReduceTotal() / (playerData.getThirstTime() / 20));
+                return String.valueOf((int) playerData.getReduceTotal(player) / (playerData.getThirstTime() / 20));
             case "reducepersec_float":
-                return String.format("%.2f", playerData.getReduceTotal() / (playerData.getThirstTime() / 20));
+                return String.format("%.2f", playerData.getReduceTotal(player) / (playerData.getThirstTime() / 20));
             case "isdisabled":
                 return String.valueOf(playerData.isDisable());
             case "thirst_pack":

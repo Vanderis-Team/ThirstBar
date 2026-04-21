@@ -198,16 +198,16 @@ public class ConfigData {
         String text;
         if(stageList.isEmpty()) {
             text = ConfigData.getThirstCustomText(TypeResourceThirst.NORMAL,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
             return placeholderAPI.parse(player, text);
         }
         Stage stage = stageList.get(stageList.size() - 1);
         if (stage instanceof StageConfig) {
             text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
         } else {
             text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(), playerData.getThirstTime() / 20.0);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
         }
         return placeholderAPI.parse(player, text);
     }

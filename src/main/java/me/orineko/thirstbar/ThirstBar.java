@@ -9,6 +9,7 @@ import me.orineko.thirstbar.command.MainCommand;
 import me.orineko.thirstbar.listener.ThirstListener;
 import me.orineko.thirstbar.manager.ThirstBarMethod;
 import me.orineko.thirstbar.manager.action.ActionManager;
+import me.orineko.thirstbar.manager.player.ThirstGlobalTask;
 import me.orineko.thirstbar.api.PlaceholderAPI;
 import me.orineko.thirstbar.api.ThirstBarExpansion;
 import me.orineko.thirstbar.api.UpdateChecker;
@@ -56,6 +57,7 @@ public class ThirstBar extends JavaPlugin {
     @Nullable
     private PlaceholderAPI placeholderAPI;
     private int versionBukkit;
+    private ThirstGlobalTask globalTask;
 
     @Override
     public void onLoad() {
@@ -130,6 +132,11 @@ public class ThirstBar extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (globalTask != null) {
+            try {
+                globalTask.cancel();
+            } catch(Exception ignore) {}
+        }
         if (actionManager != null)
             actionManager.removeRegister();
         if (getPlayerDataList() == null)
@@ -173,6 +180,14 @@ public class ThirstBar extends JavaPlugin {
             actionManager.removeRegister();
         actionManager = new ActionManager();
         playerDataList.loadData();
+
+        if (globalTask != null) {
+            try {
+                globalTask.cancel();
+            } catch(Exception ignore) {}
+        }
+        globalTask = new ThirstGlobalTask();
+        globalTask.runTaskTimer(this, 0L, 1L);
     }
 
     private void loadResourcePackFile() {

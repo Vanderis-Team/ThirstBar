@@ -37,7 +37,9 @@ public class PlayerDataList extends MultiIndexDataMap<PlayerData> {
     }
 
     public PlayerData addData(@Nonnull Player player) {
-        return addData(player.getName());
+        PlayerData data = addData(player.getName());
+        if (data.getUniqueId() == null) data.setUniqueId(player.getUniqueId());
+        return data;
     }
 
     @Nullable

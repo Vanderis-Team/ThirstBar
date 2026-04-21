@@ -41,33 +41,45 @@ public class ThirstListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
-        if (ThirstBar.getInstance().getSqlManager().getConnection() == null) {
-            double thirstFile = ThirstBar.getInstance().getPlayersFile()
-                    .getDouble(playerData.getName() + ".Thirst", -1);
-            if (thirstFile >= 0) {
-                playerData.setThirst(thirstFile);
-                ThirstBar.getInstance().getPlayersFile().setAndSave(playerData.getName() + ".Thirst", null);
-            }
-        } else {
-            double thirstFile = ThirstBar.getInstance().getSqlManager().runGetThirstCurrentPlayer(playerData.getName());
-            if (thirstFile >= 0) {
-                playerData.setThirst(thirstFile);
-                ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), -1);
-            }
-        }
 
-        playerData.showBossBar(player);
-        boolean check1 = false;
-        try {
-            check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
-                    player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
-        } catch (IllegalArgumentException ignore) {
-        }
-        boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
-                player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
-        playerData.setDisableAll(check1 || check2);
-        playerData.updateAll(player);
-        playerData.createArmorStand(player);
+        Bukkit.getScheduler().runTaskAsynchronously(ThirstBar.getInstance(), () -> {
+            double tempThirstFile = -1;
+            boolean isSql = ThirstBar.getInstance().getSqlManager().getConnection() != null;
+            if (!isSql) {
+                tempThirstFile = ThirstBar.getInstance().getPlayersFile()
+                        .getDouble(playerData.getName() + ".Thirst", -1);
+                if (tempThirstFile >= 0) {
+                    ThirstBar.getInstance().getPlayersFile().setAndSave(playerData.getName() + ".Thirst", null);
+                }
+            } else {
+                tempThirstFile = ThirstBar.getInstance().getSqlManager().runGetThirstCurrentPlayer(playerData.getName());
+                if (tempThirstFile >= 0) {
+                    ThirstBar.getInstance().getSqlManager().runSetThirstPlayer(playerData.getName(), -1);
+                }
+            }
+
+            final double finalThirst = tempThirstFile;
+            Bukkit.getScheduler().runTask(ThirstBar.getInstance(), () -> {
+                if (player == null || !player.isOnline()) return;
+
+                if (finalThirst >= 0) {
+                    playerData.setThirst(finalThirst);
+                }
+
+                playerData.showBossBar(player);
+                boolean check1 = false;
+                try {
+                    check1 = ConfigData.DISABLED_GAMEMODE.stream().anyMatch(g ->
+                            player.getGameMode().equals(GameMode.valueOf(g.toUpperCase())));
+                } catch (IllegalArgumentException ignore) {
+                }
+                boolean check2 = ConfigData.DISABLED_WORLDS.stream().anyMatch(w ->
+                        player.getWorld().getName().trim().equalsIgnoreCase(w.trim()));
+                playerData.setDisableAll(check1 || check2);
+                playerData.updateAll(player);
+                playerData.createArmorStand(player);
+            });
+        });
     }
 
     @EventHandler
@@ -218,6 +230,12 @@ public class ThirstListener implements Listener {
     @SuppressWarnings("deprecation")
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
+        if (e.getFrom().getBlockX() == e.getTo().getBlockX() &&
+                e.getFrom().getBlockY() == e.getTo().getBlockY() &&
+                e.getFrom().getBlockZ() == e.getTo().getBlockZ()) {
+            return;
+        }
+
         Player player = e.getPlayer();
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player.getName());
 
@@ -250,30 +268,6 @@ public class ThirstListener implements Listener {
                     }
                 }
             }
-        }
-
-        ArmorStand armorStand = playerData.getArmorStandFrontPlayer();
-        if (armorStand == null) return;
-        if (player.isSneaking() && player.getItemInHand().getType().equals(Material.AIR)) {
-            Location location = player.getEyeLocation().clone();
-            Vector vector = location.getDirection();
-            location = location.add(vector.getX() * 3, vector.getY() * 3, vector.getZ() * 3);
-            location = location.subtract(vector.getX() * 0.5, 1, vector.getZ() * 0.5);
-            if (!location.getChunk().isLoaded()) location.getChunk().load();
-            try {
-                armorStand.teleport(location);
-            } catch (Exception ignored) {
-            }
-            playerData.setArmorStandBehindPlayer(true);
-        } else if (playerData.isArmorStandBehindPlayer()) {
-            Location playerLocation = player.getLocation();
-            Location location = new Location(player.getWorld(), playerLocation.getX(), 255, playerLocation.getZ());
-            if (!location.getChunk().isLoaded()) location.getChunk().load();
-            try {
-                armorStand.teleport(location);
-            } catch (Exception ignored) {
-            }
-            playerData.setArmorStandBehindPlayer(false);
         }
     }
 
