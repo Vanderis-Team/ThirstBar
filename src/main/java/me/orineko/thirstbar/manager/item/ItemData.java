@@ -18,6 +18,8 @@ public class ItemData {
     private double value;
     private double valuePercent;
     private boolean vanilla;
+    private String mmoitemsId;
+    private String itemsadderId;
     private final FileManager file;
 
     public ItemData(@Nonnull String name){
@@ -26,6 +28,8 @@ public class ItemData {
         this.value = 0;
         this.valuePercent = 0;
         this.vanilla = false;
+        this.mmoitemsId = null;
+        this.itemsadderId = null;
         this.file = ThirstBar.getInstance().getItemsFile();
     }
 
@@ -40,15 +44,25 @@ public class ItemData {
     }
 
     public void saveData(boolean percent){
-        if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
-            file.setAndSave(name+".Item", itemStack);
-            if(!percent) file.setAndSave(name+".Value", value);
-            else file.setAndSave(name+".Value", valuePercent+"%");
-        } else {
-            if(!percent)
-                ThirstBar.getInstance().getSqlManager().runAddItems(name, itemStack, value, 0);
-            else
-                ThirstBar.getInstance().getSqlManager().runAddItems(name, itemStack, 0, valuePercent);
+        if(mmoitemsId != null || itemsadderId != null) return; // Cannot save external items via command easily
+        String path = "custom-items." + name + ".";
+        file.set(path + "material", itemStack.getType().name());
+        if(itemStack.hasItemMeta()){
+            org.bukkit.inventory.meta.ItemMeta meta = itemStack.getItemMeta();
+            if(meta.hasCustomModelData()){
+                file.set(path + "custom-model-data", meta.getCustomModelData());
+            }
+            if(meta.hasDisplayName()){
+                file.set(path + "display_name", meta.getDisplayName().replace("§", "&"));
+            }
+            if(meta.hasLore() && meta.getLore() != null){
+                java.util.List<String> lore = new java.util.ArrayList<>();
+                for(String l : meta.getLore()) lore.add(l.replace("§", "&"));
+                file.set(path + "lore", lore);
+            }
         }
+        if(!percent) file.set(path + "restore", value);
+        else file.set(path + "restore", valuePercent+"%");
+        file.save();
     }
 }

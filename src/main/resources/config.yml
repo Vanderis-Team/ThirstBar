@@ -98,12 +98,7 @@ ActionBar:
   Enable: true
   Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
   DisableTitle: "&a<value>&f/&b<max> &f- <reduce>/<time>s - &4DISABLE"
-Materials:
-  - "APPLE:20"
-  - "POTATO:20%"
-  - "POTION:30"
-  - "GOLDEN_APPLE:50"
-  - "MILK_BUCKET:75%"
+
 RawPotion:
   Name: "&cA dirty potion bottle"
   Lore:

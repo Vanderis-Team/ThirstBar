@@ -1,0 +1,52 @@
+#########################
+# You can use either a positive number or a positive percentage
+# to define how much thirst an item restores.
+#
+# Examples:
+# 20   = restores 20 thirst points
+# 20%  = restores 20% of the maximum thirst
+#
+# Negative values are also supported if you want an item to reduce thirst.
+#
+# Examples:
+# -67  = reduces thirst by 67 points
+# -99% = reduces 99% of the maximum thirst
+#########################
+  
+# Configure vanilla Minecraft items that affect thirst here.
+vanilla-items:
+  - "APPLE:20"
+  - "POTATO:20%"
+  - "ROTTEN_FLESH:-10"
+  - "POTION:30"
+  - "GOLDEN_APPLE:50"
+  - "MILK_BUCKET:75%"
+
+# Configure custom items that affect thirst here.
+# If you do not want to use this feature, set custom-items to [].
+custom-items:
+  'super_juicy_watermelon':
+    material: MELON_SLICE
+    # Use custom-model-data to apply a custom texture to this item.
+    # Remove this line if you do not need custom model data.
+    custom-model-data: 1020
+    restore: 50
+    # Hex color codes in the format &#RRGGBB are supported
+    # in both the display name and lore.
+    display_name: "&6Super Dupper Juicy &#FA3C72Watermelon"
+    lore:
+      - '&7A ridiculously juicy watermelon.'
+      - '&7One bite and your thirst melts away.'
+      - ''
+      - '&bRestores a large amount of thirst.'
+  'mojito':
+    # Use itemsadder-[namespace]:[id] to reference an ItemsAdder item.
+    material: itemsadder-cocktail:mojito
+    restore: 25%
+    display_name: "<#C8F1CF>Mojito Cocktail</#51F16C>"
+  'mmo-items_example':
+    # Use mmoitems-id: [category]:[id] to reference an MMOItems item.
+    # The plugin will automatically load the display name, lore,
+    # and other supported item properties from MMOItems.
+    mmoitems-id: 'consumable:coke'
+    restore: 30

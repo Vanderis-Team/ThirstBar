@@ -76,15 +76,15 @@ public class ThirstBar extends JavaPlugin {
         messageFile = new FileManager("message.yml", this);
         stageFile = new FileManager("stages.yml", this);
         actionsFile = new FileManager("actions.yml", this);
+        itemsFile = new FileManager("items.yml", this);
         messageFile.copyDefault();
         stageFile.copyDefault();
         actionsFile.copyDefault();
+        itemsFile.copyDefault();
         loadResourcePackFile();
 
         if (sqlManager.getConnection() == null) {
-            itemsFile = new FileManager("customitems.db", this);
             playersFile = new FileManager("players.db", this);
-            itemsFile.createFile();
             playersFile.createFile();
         }
 
@@ -147,10 +147,10 @@ public class ThirstBar extends JavaPlugin {
     public void renewData() {
         reloadConfig();
         if (sqlManager.getConnection() == null) {
-            itemsFile.reloadWithoutCreateFile();
             playersFile.reloadWithoutCreateFile();
         }
         try {
+            itemsFile.reload();
             messageFile.reload();
             stageFile.reload();
             actionsFile.reload();

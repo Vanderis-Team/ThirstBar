@@ -133,8 +133,12 @@ public class ThirstListener implements Listener {
         PlayerData playerData = ThirstBar.getInstance().getPlayerDataList().addData(player);
         if (playerData.isDisableAll() || playerData.isDisable()) return;
 
-        NBTItem nbtItem = new NBTItem(itemHand);
-        String tagRawWater = nbtItem.getString(keyPotionRaw);
+        String tagRawWater = null;
+        try {
+            NBTItem nbtItem = new NBTItem(itemHand);
+            tagRawWater = nbtItem.getString(keyPotionRaw);
+        } catch (Throwable ignore) {}
+        
         if (tagRawWater != null && tagRawWater.equals("true")) {
             StageConfig stageWater = ThirstBar.getInstance().getStageList().getStageConfig(StageList.KeyConfig.WATER);
             if (stageWater != null) {

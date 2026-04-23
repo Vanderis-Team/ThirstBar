@@ -52,7 +52,6 @@ public class ConfigData {
     public static boolean ACTION_BAR_ENABLE;
     private static String ACTION_BAR_TITLE;
     private static String ACTION_BAR_DISABLE_TITLE;
-    public static List<String> MATERIALS;
     public static String NAME_RAW_POTION;
     public static List<String> LORE_RAW_POTION;
     public static int RED_COLOR_RAW_POTION;
@@ -123,7 +122,6 @@ public class ConfigData {
         ACTION_BAR_ENABLE = configFile.getBoolean("ActionBar.Enable", false);
         ACTION_BAR_TITLE = MethodDefault.formatColor(configFile.getString("ActionBar.Title", ""));
         ACTION_BAR_DISABLE_TITLE = MethodDefault.formatColor(configFile.getString("ActionBar.DisableTitle", ""));
-        MATERIALS = configFile.getStringList("Materials");
         NAME_RAW_POTION = MethodDefault.formatColor(configFile.getString("RawPotion.Name", ""));
         LORE_RAW_POTION = MethodDefault.formatColor(configFile.getStringList("RawPotion.Lore"));
         RED_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Red", 0);

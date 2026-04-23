@@ -138,87 +138,83 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "set", permissions = "thirstbar.set.current")
     public void onSet(CommandSender sender, String[] args) {
-        if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
-        double value = MethodDefault.formatNumber(args[1], 0);
-        if (value < 0) value = 0;
+        double value;
+        Player player;
         if (args.length > 2) {
-            Player player = Bukkit.getPlayer(args[2]);
+            player = Bukkit.getPlayer(args[1]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value > data.getThirstMax()) value = data.getThirstMax();
-            data.setThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_SET(String.valueOf(value)));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_SET_OTHER(player.getName(), String.valueOf(value)));
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[2], 0);
         } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
-            Player player = (Player) sender;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value > data.getThirstMax()) value = data.getThirstMax();
-            data.setThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_SET(String.valueOf(value)));
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
+            player = (Player) sender;
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[1], 0);
         }
+        if (value < 0) value = 0;
+        
+        PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        if (value > data.getThirstMax()) value = data.getThirstMax();
+        data.setThirst(value);
+        data.updateAll(player);
+        player.sendMessage(MessageData.PLAYER_SET(String.valueOf(value)));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_SET_OTHER(player.getName(), String.valueOf(value)));
     }
 
     @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "restore", permissions = "thirstbar.restore")
     public void onRestore(CommandSender sender, String[] args) {
-        if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
-        double value = MethodDefault.formatNumber(args[1], 0);
+        double value;
+        Player player;
         if (args.length > 2) {
-            Player player = Bukkit.getPlayer(args[2]);
+            player = Bukkit.getPlayer(args[1]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
-            else if (value > 0 && data.getThirst() + value > data.getThirstMax()) value = data.getThirstMax();
-            data.addThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_ADD(String.valueOf(value)));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_ADD_OTHER(player.getName(), String.valueOf(value)));
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[2], 0);
         } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
-            Player player = (Player) sender;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
-            else if (value > 0 && data.getThirst() + value > data.getThirstMax()) value = data.getThirstMax();
-            data.addThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_ADD(String.valueOf(value)));
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
+            player = (Player) sender;
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[1], 0);
         }
+
+        PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
+        else if (value > 0 && data.getThirst() + value > data.getThirstMax()) value = data.getThirstMax() - data.getThirst();
+        
+        data.addThirst(value);
+        data.updateAll(player);
+        player.sendMessage(MessageData.PLAYER_ADD(String.valueOf(value)));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_ADD_OTHER(player.getName(), String.valueOf(value)));
     }
 
     @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "reduce", permissions = "thirstbar.reduce")
     public void onReduce(CommandSender sender, String[] args) {
-        if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
-        double value = -MethodDefault.formatNumber(args[1], 0);
+        double value;
+        Player player;
         if (args.length > 2) {
-            Player player = Bukkit.getPlayer(args[2]);
+            player = Bukkit.getPlayer(args[1]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
-            else if (value > 0 && data.getThirst() + value > data.getThirstMax())
-                value = data.getThirstMax() - data.getThirst();
-            data.addThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_REDUCE(String.valueOf(-value)));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_REDUCE_OTHER(player.getName(), String.valueOf(-value)));
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
+            value = -MethodDefault.formatNumber(args[2], 0);
         } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
-            Player player = (Player) sender;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
-            else if (value > 0 && data.getThirst() + value > data.getThirstMax())
-                value = data.getThirstMax() - data.getThirst();
-            data.addThirst(value);
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_REDUCE(String.valueOf(-value)));
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
+            player = (Player) sender;
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[1]), sender, MessageData.ERROR_FORMAT)) return;
+            value = -MethodDefault.formatNumber(args[1], 0);
         }
+
+        PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        if (value < 0 && data.getThirst() + value < 0) value = -data.getThirst();
+        else if (value > 0 && data.getThirst() + value > data.getThirstMax())
+            value = data.getThirstMax() - data.getThirst();
+            
+        data.addThirst(value);
+        data.updateAll(player);
+        player.sendMessage(MessageData.PLAYER_REDUCE(String.valueOf(-value)));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_REDUCE_OTHER(player.getName(), String.valueOf(-value)));
     }
 
     @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "disable", permissions = "thirstbar.disable")
@@ -267,27 +263,29 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 3, command = {"thirstbar", "tb"}, names = {"max", "set"}, permissions = "thirstbar.set.max")
     public void onMaxSet(CommandSender sender, String[] args) {
-        if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
-        double value = MethodDefault.formatNumber(args[2], 0);
-        if (value < 1) value = 1;
-        value = BigDecimal.valueOf(value).min(BigDecimal.valueOf(Double.MAX_VALUE)).doubleValue();
+        double value;
         Player player;
         if (args.length > 3) {
-            player = Bukkit.getPlayer(args[3]);
+            player = Bukkit.getPlayer(args[2]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            data.setThirstMax(value);
-            player.sendMessage(MessageData.PLAYER_MAX_SET(data.getName()));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_MAX_SET_OTHER(player.getName(), data.getName()));
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[3]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[3], 0);
         } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
             player = (Player) sender;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            data.setThirstMax(value);
-            player.sendMessage(MessageData.PLAYER_MAX_SET(data.getName()));
+            if (checkObjectIsFalse(MethodDefault.checkFormatNumber(args[2]), sender, MessageData.ERROR_FORMAT)) return;
+            value = MethodDefault.formatNumber(args[2], 0);
         }
+        
+        if (value < 1) value = 1;
+        value = BigDecimal.valueOf(value).min(BigDecimal.valueOf(Double.MAX_VALUE)).doubleValue();
+        
+        PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        data.setThirstMax(value);
+        player.sendMessage(MessageData.PLAYER_MAX_SET(data.getName()));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_MAX_SET_OTHER(player.getName(), data.getName()));
+            
         if(ThirstBar.getInstance().getSqlManager().getConnection() == null) {
             ThirstBar.getInstance().getPlayersFile().setAndSave(player.getName() + ".Max", value);
         } else {
@@ -318,31 +316,35 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 3, command = {"thirstbar", "tb"}, names = {"item", "give"}, permissions = "thirstbar.item.give")
     public void onItemGive(CommandSender sender, String[] args) {
-        String name = args[2];
+        String name;
+        Player player;
+        int amount = 1;
+        
+        if (args.length > 3) {
+            player = Bukkit.getPlayer(args[2]);
+            if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
+            name = args[3];
+            if (args.length > 4) {
+                if(checkObjectIsFalse(MethodDefault.checkFormatNumber(args[4]), sender, MessageData.ERROR_FORMAT)) return;
+                amount = (int) MethodDefault.formatNumber(args[4], 1);
+            }
+        } else {
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
+            player = (Player) sender;
+            name = args[2];
+        }
+
         ItemData data = ThirstBar.getInstance().getItemDataList().getData(name);
         if (checkObjectIsNull(data, sender, MessageData.ERROR_ITEM_NOT_FOUND) || data == null) return;
-        if (checkObjectIsNull(data.getItemStack(), sender, MessageData.ERROR_ITEM_NOT_FOUND) || data.getItemStack() == null)
-            return;
-        if (args.length > 3) {
-            Player player = Bukkit.getPlayer(args[3]);
-            if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            ItemStack item = data.getItemStack();
-            if(args.length > 4){
-                if(checkObjectIsFalse(MethodDefault.checkFormatNumber(args[4]), sender, MessageData.ERROR_FORMAT)) return;
-                item.setAmount((int) MethodDefault.formatNumber(args[4], 1));
-            }
-            ThirstBarMethod.sendItemToInv(player, item);
+        if (checkObjectIsNull(data.getItemStack(), sender, MessageData.ERROR_ITEM_NOT_FOUND) || data.getItemStack() == null) return;
+        
+        ItemStack item = data.getItemStack().clone();
+        item.setAmount(amount);
+        ThirstBarMethod.sendItemToInv(player, item);
 
-            player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_LOAD_OTHER(player.getName(), data.getName()));
-        } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
-            Player player = (Player) sender;
-            ThirstBarMethod.sendItemToInv(player, data.getItemStack());
-            player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
-        }
+        player.sendMessage(MessageData.PLAYER_LOAD(data.getName()));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_LOAD_OTHER(player.getName(), data.getName()));
     }
 
     @CommandSub(length = 1, command = {"thirstbar", "tb"}, names = "reset", permissions = "thirstbar.reset")
@@ -363,28 +365,27 @@ public class MainCommand extends CommandManager {
 
     @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "stage", permissions = "thirstbar.stage")
     public void onStage(CommandSender sender, String[] args) {
-        String stageString = args[1];
-        StageTimeline stageTimeline = ThirstBar.getInstance().getStageList().getStageTimeline(stageString);
-        if (checkObjectIsNull(stageTimeline, sender, MessageData.ERROR_STAGE_NOT_FOUND) || stageTimeline == null)
-            return;
+        String stageString;
+        Player player;
         if (args.length > 2) {
-            Player player = Bukkit.getPlayer(args[2]);
+            player = Bukkit.getPlayer(args[1]);
             if (checkObjectIsNull(player, sender, MessageData.ERROR_PLAYER_NOT_FOUND) || player == null) return;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            data.setThirst(stageTimeline.getThirstMax());
-            data.updateAll(player);
-            player.sendMessage(MessageData.PLAYER_SET_STAGE(stageTimeline.getName()));
-            if (!sender.getName().equals(player.getName()))
-                sender.sendMessage(MessageData.PLAYER_SET_STAGE_OTHER(player.getName(), stageTimeline.getName()));
+            stageString = args[2];
         } else {
-            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player))
-                return;
-            Player player = (Player) sender;
-            PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
-            data.setThirst(stageTimeline.getThirstMax());
-            data.updateAll(player);
-            sender.sendMessage(MessageData.PLAYER_SET_STAGE(stageTimeline.getName()));
+            if (checkObjectIsFalse(sender instanceof Player, sender, MessageData.ERROR_CONSOLE_USE_COMMAND) || !(sender instanceof Player)) return;
+            player = (Player) sender;
+            stageString = args[1];
         }
+
+        StageTimeline stageTimeline = ThirstBar.getInstance().getStageList().getStageTimeline(stageString);
+        if (checkObjectIsNull(stageTimeline, sender, MessageData.ERROR_STAGE_NOT_FOUND) || stageTimeline == null) return;
+        
+        PlayerData data = ThirstBar.getInstance().getPlayerDataList().addData(player);
+        data.setThirst(stageTimeline.getThirstMax());
+        data.updateAll(player);
+        player.sendMessage(MessageData.PLAYER_SET_STAGE(stageTimeline.getName()));
+        if (!sender.getName().equals(player.getName()))
+            sender.sendMessage(MessageData.PLAYER_SET_STAGE_OTHER(player.getName(), stageTimeline.getName()));
     }
 
     @CommandSub(length = 2, command = {"thirstbar", "tb"}, names = "stageall", permissions = "thirstbar.stageall")
