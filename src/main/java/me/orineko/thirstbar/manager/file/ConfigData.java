@@ -29,6 +29,8 @@ public class ConfigData {
     public static boolean STOP_DRINKING;
     public static boolean CUSTOM_ACTION_BAR_ENABLE;
     public static boolean CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE;
+    public static String CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_PATH;
+    public static String CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_SOURCE;
     public static int CUSTOM_ACTION_BAR_SPACE;
     public static String CUSTOM_ACTION_BAR_ORIENTATION;
     public static float CUSTOM_FURNACE_EXP;
@@ -66,6 +68,8 @@ public class ConfigData {
 
         CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
         CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE = configFile.getBoolean("CustomActionBar.ItemsAdder.Enable", false);
+        CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_PATH = configFile.getString("CustomActionBar.ItemsAdder.AutoDeploy.Path", "contents/thirstbar");
+        CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_SOURCE = configFile.getString("CustomActionBar.ItemsAdder.AutoDeploy.SourceFolder", "ItemsAdder");
         CUSTOM_ACTION_BAR_SPACE = configFile.getInt("CustomActionBar.Space", 0);
         CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
         if(CUSTOM_ACTION_BAR_ENABLE){

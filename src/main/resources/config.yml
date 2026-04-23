@@ -12,6 +12,11 @@ CustomActionBar:
   Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
   ItemsAdder:
     Enable: false
+    AutoDeploy:
+      # Path: The destination folder relative to the ItemsAdder plugin directory
+      Path: "contents/thirstbar"
+      # SourceFolder: The folder name inside the plugin's jar that contains the resource files
+      SourceFolder: "ItemsAdder"
     Normal_Thirst: "normal_thirst"
     Normal_ThirstHalfLeft: "normal_thirst_half_left"
     Normal_ThirstHalfRight: "normal_thirst_half_right"

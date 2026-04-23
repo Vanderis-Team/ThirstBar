@@ -188,6 +188,8 @@ public class ThirstBar extends JavaPlugin {
         }
         globalTask = new ThirstGlobalTask();
         globalTask.runTaskTimer(this, 0L, 1L);
+
+        me.orineko.thirstbar.manager.ItemsAdderDeployer.checkAndDeploy();
     }
 
     private void loadResourcePackFile() {
