@@ -1,6 +1,8 @@
 plugins {
     java
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    eclipse
+    idea
 }
 
 group = "me.orineko"
@@ -63,4 +65,19 @@ tasks.shadowJar {
 tasks.test {
     useJUnitPlatform()
     jvmArgs("-Djdk.net.URLClassPath.disableClassPathURLCheck=true")
+}
+
+eclipse {
+    classpath {
+        file {
+            whenMerged {
+                val classpath = this as org.gradle.plugins.ide.eclipse.model.Classpath
+                classpath.entries.forEach { entry ->
+                    if (entry is org.gradle.plugins.ide.eclipse.model.Library) {
+                        entry.entryAttributes.remove("gradle_used_by_scope")
+                    }
+                }
+            }
+        }
+    }
 }
