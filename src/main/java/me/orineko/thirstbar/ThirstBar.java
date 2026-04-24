@@ -124,10 +124,16 @@ public class ThirstBar extends JavaPlugin {
             // noinspection deprecation
             furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
         } else {
-            furnaceRecipe = new FurnaceRecipe(new NamespacedKey(this, "raw_water_furnace"), bottle,
+            NamespacedKey key = new NamespacedKey(this, "raw_water_furnace");
+            try {
+                Bukkit.removeRecipe(key);
+            } catch (NoSuchMethodError | Exception ignore) {}
+            furnaceRecipe = new FurnaceRecipe(key, bottle,
                     potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
         }
-        Bukkit.addRecipe(furnaceRecipe);
+        try {
+            Bukkit.addRecipe(furnaceRecipe);
+        } catch (Exception ignored) {}
     }
 
     @Override

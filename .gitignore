@@ -121,3 +121,5 @@ TEST_CASES.md
 src/test/*
 THIRSTBAR_FEATURES.md
 GITNEXUS_ANALYSIS.md
+.gradle/*
+build/*
