@@ -1,33 +1,42 @@
+# ============================================================
+#                    ThirstBar Messages
+# ============================================================
+# Placeholders: <player>, <value>, <item>, <time>, <stage>
+# Color codes: &a, &b, &c, &e, &f, etc.
+
+# ---- Command Feedback ----
 SetItemSuccess: "&eSet item success."
 Refresh: "&eYou have been successfully refreshed."
 RefreshOther: "&e<player> has been successfully refreshed."
 RefreshAll: "&eAll players have been successfully refreshed."
 Set: "&eYour thirst value has been set to <value>."
 SetOther: "&e<player>'s thirst value has been set to <value>."
-Restore: "&eYou have been restored to <value> thirst values"
-RestoreOther: "&e<player> has been restored to <value> thirst values"
-Reduce: "&eYou have been reduced by <value> thirst values"
-ReduceOther: "&e<player> has been reduced by <value> thirst values"
+Restore: "&eYou have been restored to <value> thirst values."
+RestoreOther: "&e<player> has been restored to <value> thirst values."
+Reduce: "&eYou have been reduced by <value> thirst values."
+ReduceOther: "&e<player> has been reduced by <value> thirst values."
 Load: "&eYou have received <item>."
 LoadOther: "&e<player> has received <item>."
 Disable: "&eYour thirst bar has been disabled."
-DisableOther: "&e<player>'s thirst  bar has been disabled."
+DisableOther: "&e<player>'s thirst bar has been disabled."
 Enable: "&eYour thirst bar has been enabled."
-EnableOther: "&e<player> has been enabled."
-DisableAll: "&eAll players's thirst bars have been enabled."
+EnableOther: "&e<player>'s thirst bar has been enabled."
+DisableAll: "&eAll players' thirst bars have been disabled."
 SetMax: "&eYour maximum thirst value has been set to <value>."
 SetMaxOther: "&e<player>'s max thirst value has been set to <value>."
 SetStage: "&eYour stage has been set to <stage>."
-SetStageOther: "&e<player>'s stage has been set to <value>."
-SetStageAll: "&eAll players' stage have been set to <value>."
+SetStageOther: "&e<player>'s stage has been set to <stage>."
+SetStageAll: "&eAll players' stage have been set to <stage>."
 Reload: "&eReload successful."
 Reset: "&eReset successful."
+
+# ---- Error Messages ----
 CommandNotExist: "&cThis command does not exist."
 ItemNotFound: "&cItem is not found."
 StageNotFound: "&cStage is not found."
 PlayerNotFound: "&cPlayer is not online."
 NeedItemInHand: "&cYou need to hold the item in your hand."
-WaitingRefresh: "&cYou need to wait <time> seconds to to this again."
+WaitingRefresh: "&cYou need to wait <time> seconds to do this again."
 ErrorFormat: "&cYour format is not correct."
 OnlyPlayerUseCommand: "&cOnly players can use this command."
 DontHavePermission: "&cYou don't have permission to do this."

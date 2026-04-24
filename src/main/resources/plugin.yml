@@ -2,13 +2,14 @@ name: ThirstBar
 version: '${project.version}'
 main: me.orineko.thirstbar.ThirstBar
 api-version: 1.13
-softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard]
+description: 'A realistic thirst system with custom items, stages, and actions.'
+softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard, ItemsAdder, MMOItems]
 commands:
   ThirstBar:
-    description: This is command main.
+    description: Main ThirstBar management command.
   TB:
-    description: This is command main.
+    description: Shortcut for the ThirstBar command.
   Refresh:
-    description: This is command main.
+    description: Refresh your thirst bar.
   RefreshAll:
-    description: This is command main.
+    description: Refresh all online players' thirst bars.

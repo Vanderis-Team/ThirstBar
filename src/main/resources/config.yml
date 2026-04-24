@@ -1,15 +1,27 @@
+# ============================================================
+#                    ThirstBar Configuration
+# ============================================================
+
+# ---- Database ----
+# Enable MySQL/MariaDB storage. If false, uses local flatfile.
 Sql:
   Enable: false
   Host: 'localhost'
   Port: '3306'
   Username: 'root'
-  Password: '123456'
+  Password: ''
   Database: 'ThirstBar'
-StopDrinking: true # Prevents players from drinking water when their thirst bar is full
+
+# ---- Prevent Overdrinking ----
+# If true, prevents players from drinking water when their thirst bar is full.
+StopDrinking: true
+
+# ---- Custom ActionBar (Icon-based display) ----
 CustomActionBar:
   Enable: false
   Space: 3
-  Orientation: LEFT_TO_RIGHT #LEFT_TO_RIGHT/RIGHT_TO_LEFT
+  # Display direction: LEFT_TO_RIGHT or RIGHT_TO_LEFT
+  Orientation: LEFT_TO_RIGHT
   ItemsAdder:
     Enable: false
     AutoDeploy:
@@ -17,6 +29,7 @@ CustomActionBar:
       Path: "contents/thirstbar"
       # SourceFolder: The folder name inside the plugin's jar that contains the resource files
       SourceFolder: "ItemsAdder"
+    # Icon names registered in ItemsAdder for each thirst state
     Normal_Thirst: "normal_thirst"
     Normal_ThirstHalfLeft: "normal_thirst_half_left"
     Normal_ThirstHalfRight: "normal_thirst_half_right"
@@ -29,34 +42,53 @@ CustomActionBar:
     RawWater_ThirstHalfLeft: "raw_water_thirst_half_left"
     RawWater_ThirstHalfRight: "raw_water_thirst_half_right"
     RawWater_ThirstEmpty: "raw_water_thirst_empty"
-#CustomFurnace apply for 1.16 above
+
+# ---- Furnace: Purify Raw Water ----
+# Only works on Minecraft 1.16 and above
 CustomFurnace:
   Exp: 10.0
   CookingTime: 10
+
+# ---- Core Thirst Settings ----
 Thirsty:
-  Max: 100
-  Reduce: 1
-  Time: 100 #Tick (20 ticks = 1 second)
-  Damage: 1.5 #Lost 1.5 hp when thirsty to 0
-CooldownRefresh: 5 #Second
+  Max: 100              # Maximum thirst value (points)
+  Reduce: 1             # Thirst points lost per tick cycle
+  Time: 100             # Ticks between each reduce cycle (20 ticks = 1 second)
+  Damage: 1.5           # Damage dealt when thirst reaches 0 (in half-hearts, 1.5 = 0.75 heart)
+
+# Cooldown (in seconds) before player can use /refresh again
+CooldownRefresh: 5
+
+# ---- Disabled Contexts ----
+# Players in these gamemodes will not lose thirst
 DisabledGamemode:
   - "CREATIVE"
   - "SPECTATOR"
+
+# Players in these worlds will not lose thirst
 DisabledWorlds:
   - "world_nether"
+
+# ---- Drinking Raw Water (right-click water source block) ----
 DrinkingRawWater:
   Enable: true
-  Delay: 10 #Tick
-  Value: 5 #Value to increase thirst
+  Delay: 10             # Ticks to hold right-click before drinking
+  Value: 5              # Thirst points restored per drink
+  # How much FASTER thirst drains while debuffed (percentage).
+  # Example: 50 = thirst drain speed increases by 50%
   Reduce: 50
-  #Your thirst speed will increase by 50%
-  Duration: 100 #Tick
+  Duration: 100         # Ticks the raw water debuff lasts
   TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAW WATER"
   TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAW WATER"
+  # Options: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
   Color: BLUE
+  # Options: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
   Style: SEGMENTED_10
+  # Potion effects applied while debuffed. Format: EFFECT_NAME:AMPLIFIER
   Effects:
     - "SLOW:1"
+  # Actions executed when player drinks raw water.
+  # Supported: [message], [sound], [title], [subtitle], [player], [console]
   Actions:
     - "[message] &cYou are drinking raw water!"
     - "[sound] ENTITY_GENERIC_DRINK"
@@ -65,12 +97,16 @@ DrinkingRawWater:
     # - "[subtitle] &cYou are drinking raw water!"
     # - "[player] help"
     # - "[console] msg <player> You are drinking raw water!."
+
+# ---- Drinking Rain Water (look up during rain without a roof) ----
 DrinkingRain:
   Enable: true
-  Delay: 10
-  Value: 5
+  Delay: 10             # Ticks to hold position before drinking
+  Value: 5              # Thirst points restored per drink
+  # How much FASTER thirst drains while debuffed (percentage).
+  # Example: 50 = thirst drain speed increases by 50%
   Reduce: 50
-  Duration: 100
+  Duration: 100         # Ticks the rain water debuff lasts
   TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAIN WATER"
   TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &f-&c RAIN WATER"
   Color: BLUE
@@ -86,25 +122,37 @@ DrinkingRain:
     # - "[sound] BLOCK_ANVIL_BREAK"
     # - "[player] help"
     # - "[console] msg <player> You are drinking rain water!."
+
+# ---- Replace Hunger ----
+# If true, the player's vanilla hunger bar becomes the thirst bar.
 ReplaceHunger: false
-# If enabled, the player's hunger bar will be the thirst bar.
+
+# ---- Display: BossBar ----
 BossBar:
   Enable: true
+  # Placeholders: <value>, <max>, <reduce>, <time>
   Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
   DisableTitle: "&a<value>&f/&b<max> &f- <reduce>/<time>s - &4DISABLE"
-  Color: BLUE #BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
-  Style: SEGMENTED_10 #SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+  # Options: BLUE, GREEN, PINK, PURPLE, RED, WHITE, YELLOW
+  Color: BLUE
+  # Options: SOLID, SEGMENTED_6, SEGMENTED_10, SEGMENTED_12, SEGMENTED_20
+  Style: SEGMENTED_10
+
+# ---- Display: ActionBar ----
 ActionBar:
   Enable: true
+  # Placeholders: <value>, <max>, <reduce>, <time>
   Title: "&a<value>&f/&b<max> &f- <reduce>/<time>s"
   DisableTitle: "&a<value>&f/&b<max> &f- <reduce>/<time>s - &4DISABLE"
 
+# ---- Raw Potion Appearance ----
+# Customizes the look of the raw/dirty water potion bottle item.
 RawPotion:
   Name: "&cA dirty potion bottle"
   Lore:
     - "&f- When consumed, it will cause illness."
     - "&e&oPlease heat it before drinking."
-  #Color apply for 1.16 above
+  # Color only works on Minecraft 1.16 and above (RGB values 0-255)
   Color:
     Red: 120
     Green: 130

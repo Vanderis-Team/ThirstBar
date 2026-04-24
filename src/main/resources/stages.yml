@@ -1,6 +1,28 @@
+# ============================================================
+#                     ThirstBar Stages
+# ============================================================
+# Stages activate debuffs when thirst drops into a certain range.
+# You can add as many stages as you want (Stage3, Stage4, etc.)
+#
+# Range format: "upper:lower"
+#   Example: "40:20" = this stage activates when thirst is between 20 and 40
+#   Example: "19:0"  = this stage activates when thirst is between 0 and 19
+#
+# Reduce: How much FASTER thirst drains (percentage increase).
+#   Example: 50  = drain 50% faster than normal
+#   Example: 100 = drain 100% faster (2x speed)
+#
+# Effects format: "EFFECT_NAME:AMPLIFIER"
+#   Example: "SLOW:1" = Slowness I, "NAUSEA:2" = Nausea II
+#
+# Actions are executed once when the player enters this stage.
+#   Supported: [message], [sound], [title], [subtitle], [player], [console]
+#   Placeholder: <player> = player name
+# ============================================================
+
 Stage1:
   Range: "40:20"
-  Reduce: 50 #This means the thirst speed will be 50% faster than the default
+  Reduce: 50
   TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 1"
   TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 1"
   Color: YELLOW
@@ -8,19 +30,20 @@ Stage1:
   Effects:
     - "SLOW:1"
   Actions:
-    - "[title] &6You start to feel thirst"
+    - "[title] &6You start to feel thirsty"
     - "[subtitle] &fLook for water sources"
-    # You can also use other actions such as below:
+    # More action examples:
     # - "[sound] BLOCK_ANVIL_BREAK"
     # - "[message] &eYou start to feel thirst."
     # - "[player] idk"
     # - "[console] msg <player> Admin reminds you to drink water every day"
     # - "[console] give <player> milk_bucket"
+
 Stage2:
   Range: "19:0"
   Reduce: 100
-  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
-  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage2"
+  TitleActionBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 2"
+  TitleBossBar: "&a<value>&f/&b<max> &f- <reduce>/<time>s &c- Stage 2"
   Color: RED
   Style: SEGMENTED_10
   Effects:

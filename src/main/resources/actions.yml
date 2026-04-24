@@ -1,8 +1,27 @@
+# ============================================================
+#                    ThirstBar Actions
+# ============================================================
+# Adjusts thirst drain speed based on player activity.
+#
+# multiply: Speed multiplier for thirst drain.
+#   1.0  = normal drain speed
+#   >1.0 = faster drain (e.g. 1.2 = 20% faster)
+#   <1.0 = slower drain (e.g. 0.8 = 20% slower)
+#
+# hideActionBar: If true, hides the actionbar while this action is active.
+#
+# cases (optional): Conditional overrides using PlaceholderAPI.
+#   Each case is checked in order; first matching condition wins.
+#   Condition format uses PlaceholderAPI placeholders with comparison operators.
+# ============================================================
+
 enable: true
-# if false, this feature will not be enabled
+
 standing:
   enable: true
   multiply: 1
+  # Conditional overrides - requires PlaceholderAPI
+  # Each case is checked in order; first match wins
   cases:
     1:
       condition: "%rs_temperature_int% > 30"
@@ -11,21 +30,23 @@ standing:
       condition: "%rs_temperature_int% < -5"
       multiply: 0.8
   hideActionBar: false
+
 sprinting:
   enable: true
+  # Example: if default drain = 5 points/cycle, sprinting = 5 × 1.2 = 6 points/cycle
   multiply: 1.2
-  # For example, if the default thirst rate is 5 thirst value per second,
-  # then when the player sprints, it will cost 5*1.2 = 6 thirst value per second.
   hideActionBar: false
-  # If true, the action bar will be hidden when the player is sprinting.
+
 underwater:
   enable: true
   multiply: 0.85
   hideActionBar: true
+
 sneaking:
   enable: true
   multiply: 0.8
   hideActionBar: true
+
 fighting:
   enable: true
   multiply: 1.3
