@@ -126,7 +126,8 @@ public class PlayerData extends PlayerSetting
 
     @Nullable
     public Player getPlayer() {
-        if (uniqueId != null) return Bukkit.getPlayer(uniqueId);
+        if (uniqueId != null)
+            return Bukkit.getPlayer(uniqueId);
         return Bukkit.getPlayerExact(name);
     }
 
@@ -194,21 +195,22 @@ public class PlayerData extends PlayerSetting
         if (!isEnableActionBar())
             return;
         if (isDisableAll()) {
-            setTitleDisableActionBar(thirst, thirstMax, getReduceTotal(player), thirstTime / 20.0);
+            setTitleDisableActionBar(player, thirst, thirstMax, getReduceTotal(player), thirstTime / 20.0);
         } else {
             if (!stageCurrentList.isEmpty()) {
-                String actionBar = ConfigData.getThirstCustomText(player, this);
+                String actionBar = ConfigData.CUSTOM_ACTION_BAR_ENABLE ? ConfigData.getThirstCustomText(player, this) : null;
                 if (actionBar != null) {
                     setTitleActionBar(actionBar);
                 } else {
                     Stage stage = stageCurrentList.get(stageCurrentList.size() - 1);
                     if (stage.getTitleActionBar() != null && !stage.getTitleActionBar().isEmpty())
-                        setTitleActionBar(stage.getTitleActionBar(), thirst, thirstMax, getReduceTotal(player),
+                        setTitleActionBar(player, stage.getTitleActionBar(), thirst, thirstMax, getReduceTotal(player),
                                 thirstTime / 20.0);
                 }
             } else
-                setTitleActionBar(thirst, thirstMax, getReduceTotal(player), thirstTime / 20.0);
+                setTitleActionBar(player, thirst, thirstMax, getReduceTotal(player), thirstTime / 20.0);
         }
+        actionBarTick = 5;
     }
 
     @Override
@@ -355,9 +357,14 @@ public class PlayerData extends PlayerSetting
             updateBossBar(player);
             if (isEnableActionBar()) {
                 actionBarTick++;
-                if (actionBarTick >= 20) {
+                if (actionBarTick >= 5) {
                     actionBarTick = 0;
-                    ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), 20);
+                    String text = getTitleActionBar();
+                    me.orineko.thirstbar.api.PlaceholderAPI placeholderAPI = me.orineko.thirstbar.ThirstBar
+                            .getInstance().getPlaceholderAPI();
+                    if (placeholderAPI != null)
+                        text = placeholderAPI.parse(player, text);
+                    ActionBar.sendActionBar(ThirstBar.getInstance(), player, text, 20);
                 }
             }
             return;
@@ -378,7 +385,8 @@ public class PlayerData extends PlayerSetting
             damageTick++;
             if (damageTick >= 30) {
                 damageTick = 0;
-                if (!player.getGameMode().equals(GameMode.CREATIVE) && !player.getGameMode().equals(GameMode.SPECTATOR)) {
+                if (!player.getGameMode().equals(GameMode.CREATIVE)
+                        && !player.getGameMode().equals(GameMode.SPECTATOR)) {
                     if (thirst <= 0) {
                         setThirst(0);
                         if (player.getHealth() - thirstDamage < 0)
@@ -390,7 +398,7 @@ public class PlayerData extends PlayerSetting
                 }
             }
         }
-        
+
         // Handle refresh timeout
         if (isRefreshing && delayRefresh > 0) {
             refreshTick++;
@@ -406,12 +414,16 @@ public class PlayerData extends PlayerSetting
         // Action Bar Display Loop
         if (isEnableActionBar() && !isDisable()) {
             actionBarTick++;
-            if (actionBarTick >= 20) {
+            if (actionBarTick >= 5) {
                 actionBarTick = 0;
-                ActionBar.sendActionBar(ThirstBar.getInstance(), player, getTitleActionBar(), 20);
+                String text = getTitleActionBar();
+                me.orineko.thirstbar.api.PlaceholderAPI placeholderAPI = me.orineko.thirstbar.ThirstBar.getInstance()
+                        .getPlaceholderAPI();
+                if (placeholderAPI != null) {
+                    text = placeholderAPI.parse(player, text);
+                }
+                ActionBar.sendActionBar(ThirstBar.getInstance(), player, text, 20);
             }
         }
     }
-
-
 }

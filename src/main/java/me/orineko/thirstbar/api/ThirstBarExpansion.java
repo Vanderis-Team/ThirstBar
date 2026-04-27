@@ -60,6 +60,15 @@ public class ThirstBarExpansion extends PlaceholderExpansion {
                 return String.valueOf(playerData.isDisable());
             case "thirst_pack":
                 return ConfigData.getThirstCustomText(player, playerData);
+            case "bar":
+                String bar = ConfigData.getThirstCustomText(player, playerData);
+                if (bar != null) {
+                    return bar.replace("\uF82A", "");
+                }
+                if (playerData.isDisable()) {
+                    return ConfigData.ACTION_BAR_DISABLE_TEXT(playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
+                }
+                return ConfigData.ACTION_BAR_TEXT(playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
         }
         return null;
     }

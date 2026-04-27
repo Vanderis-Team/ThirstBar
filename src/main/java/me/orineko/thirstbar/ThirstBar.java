@@ -98,6 +98,10 @@ public class ThirstBar extends JavaPlugin {
             placeholderAPI = new PlaceholderAPI();
             new ThirstBarExpansion().register();
         }
+        
+        if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
+            getServer().getPluginManager().registerEvents(new me.orineko.thirstbar.api.itemsadderapi.ItemsAdderListener(), this);
+        }
         checkForUpdate();
 
         ItemStack bottle = new ItemStack(Material.POTION, 1);
@@ -165,6 +169,9 @@ public class ThirstBar extends JavaPlugin {
         }
         configData = new ConfigData();
         messageData = new MessageData();
+        
+        me.orineko.thirstbar.api.itemsadderapi.ItemsAdderDeployer.checkAndDeploy();
+        
         itemDataList = new ItemDataList();
         itemDataList.loadData();
         stageList = new StageList();
@@ -195,7 +202,7 @@ public class ThirstBar extends JavaPlugin {
         globalTask = new ThirstGlobalTask();
         globalTask.runTaskTimer(this, 0L, 1L);
 
-        me.orineko.thirstbar.manager.ItemsAdderDeployer.checkAndDeploy();
+        me.orineko.thirstbar.api.itemsadderapi.ItemsAdderDeployer.checkAndDeploy();
     }
 
     private void loadResourcePackFile() {

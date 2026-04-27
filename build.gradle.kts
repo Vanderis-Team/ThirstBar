@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.8"
     eclipse
     idea
 }
@@ -42,6 +42,8 @@ dependencies {
     testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.108.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+    
+    compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 }
 
 tasks.withType<JavaCompile> {
@@ -58,6 +60,7 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
+    archiveClassifier.set("")
     minimize()
     relocate("me.orineko.pluginspigottools", "me.orineko.thirstbar.tools")
 }
@@ -65,6 +68,11 @@ tasks.shadowJar {
 tasks.test {
     useJUnitPlatform()
     jvmArgs("-Djdk.net.URLClassPath.disableClassPathURLCheck=true")
+    
+    // Only run tests if "test" is explicitly passed in the command line
+    onlyIf {
+        project.gradle.startParameter.taskNames.contains("test")
+    }
 }
 
 eclipse {

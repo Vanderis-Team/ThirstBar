@@ -18,31 +18,21 @@ StopDrinking: true
 
 # ---- Custom ActionBar (Icon-based display) ----
 CustomActionBar:
+  # Enable the custom icon-based bar (for placeholder %thirstbar_bar% and optionally ActionBar)
   Enable: false
-  Space: 3
+  # Mode can be ITEMSADDER or VANILLA (Vanilla requires your own resource pack)
+  Mode: ITEMSADDER
   # Display direction: LEFT_TO_RIGHT or RIGHT_TO_LEFT
   Orientation: LEFT_TO_RIGHT
-  ItemsAdder:
-    Enable: false
-    AutoDeploy:
-      # Path: The destination folder relative to the ItemsAdder plugin directory
-      Path: "contents/thirstbar"
-      # SourceFolder: The folder name inside the plugin's jar that contains the resource files
-      SourceFolder: "ItemsAdder"
-    # Icon names registered in ItemsAdder for each thirst state
-    Normal_Thirst: "normal_thirst"
-    Normal_ThirstHalfLeft: "normal_thirst_half_left"
-    Normal_ThirstHalfRight: "normal_thirst_half_right"
-    Normal_ThirstEmpty: "normal_thirst_empty"
-    Debuff_Thirst: "debuff_thirst"
-    Debuff_ThirstHalfLeft: "debuff_thirst_half_left"
-    Debuff_ThirstHalfRight: "debuff_thirst_half_right"
-    Debuff_ThirstEmpty: "debuff_thirst_empty"
-    RawWater_Thirst: "raw_water_thirst"
-    RawWater_ThirstHalfLeft: "raw_water_thirst_half_left"
-    RawWater_ThirstHalfRight: "raw_water_thirst_half_right"
-    RawWater_ThirstEmpty: "raw_water_thirst_empty"
-
+  # The horizontal position of the action bar icons (high/low). Default: 3
+  X_Position: 96
+  # The vertical position of the action bar icons (high/low). Default: -7
+  Y_Position: -6
+  # The scale size of the action bar icons. Default: 8
+  Scale_Ratio: 10
+  # AutoDeploy: The destination folder relative to the ItemsAdder plugin directory (Only used if Mode is ITEMSADDER)
+  AutoDeploy: "contents/thirstbar"
+    
 # ---- Furnace: Purify Raw Water ----
 # Only works on Minecraft 1.16 and above
 CustomFurnace:

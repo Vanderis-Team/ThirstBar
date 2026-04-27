@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 
@@ -50,7 +51,7 @@ public class PlayerSetting {
     }
 
     public void setEnableBossBar(boolean enableBossBar){
-        this.enableActionBar = enableBossBar;
+        this.enableBossBar = enableBossBar;
     }
 
     public void setEnableActionBar(boolean enableActionBar){
@@ -89,16 +90,19 @@ public class PlayerSetting {
         setTitleBossBar(MethodDefault.formatColor(ConfigData.replace(text, value, max, reduce, time)));
     }
 
-    public void setTitleActionBar(double value, double max, double reduce, double time) {
-        setTitleActionBar(ConfigData.ACTION_BAR_TEXT(value, max, reduce, time));
+    public void setTitleActionBar(Player player, double value, double max, double reduce, double time) {
+        String title = ConfigData.ACTION_BAR_TEXT(value, max, reduce, time);
+        setTitleActionBar(title);
     }
 
-    public void setTitleDisableActionBar(double value, double max, double reduce, double time) {
-        setTitleActionBar(ConfigData.ACTION_BAR_DISABLE_TEXT(value, max, reduce, time));
+    public void setTitleDisableActionBar(Player player, double value, double max, double reduce, double time) {
+        String title = ConfigData.ACTION_BAR_DISABLE_TEXT(value, max, reduce, time);
+        setTitleActionBar(title);
     }
 
-    public void setTitleActionBar(@Nonnull String text, double value, double max, double reduce, double time) {
-        setTitleActionBar(MethodDefault.formatColor(ConfigData.replace(text, value, max, reduce, time)));
+    public void setTitleActionBar(Player player, @Nonnull String text, double value, double max, double reduce, double time) {
+        String title = MethodDefault.formatColor(ConfigData.replace(text, value, max, reduce, time));
+        setTitleActionBar(title);
     }
 
     public boolean isDisable() {

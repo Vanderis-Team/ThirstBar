@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ConfigData {
 
-    public enum TypeResourceThirst{
+    public enum TypeResourceThirst {
         NORMAL, DEBUFF, RAW_WATTER
     }
 
@@ -30,9 +30,10 @@ public class ConfigData {
     public static boolean CUSTOM_ACTION_BAR_ENABLE;
     public static boolean CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE;
     public static String CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_PATH;
-    public static String CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_SOURCE;
-    public static int CUSTOM_ACTION_BAR_SPACE;
-    public static String CUSTOM_ACTION_BAR_ORIENTATION;
+    public static int CUSTOM_ACTION_BAR_ITEMSADDER_Y_POSITION;
+    public static int CUSTOM_ACTION_BAR_ITEMSADDER_SCALE_RATIO;
+    public static int CUSTOM_ACTION_BAR_ITEMSADDER_X_POSITION;
+    public static String CUSTOM_ACTION_BAR_ITEMSADDER_ORIENTATION;
     public static float CUSTOM_FURNACE_EXP;
     public static int CUSTOM_FURNACE_COOKING_TIME;
     public static double THIRSTY_MAX;
@@ -60,36 +61,41 @@ public class ConfigData {
 
     private final FileConfiguration configFile;
 
-    public static final HashMap<TypeResourceThirst,List<ThirstCustomText>> resourcePackThirstMap = new HashMap<>();
+    public static final HashMap<TypeResourceThirst, List<ThirstCustomText>> resourcePackThirstMap = new HashMap<>();
 
-    public ConfigData(){
+    public ConfigData() {
         this.configFile = ThirstBar.getInstance().getConfig();
 
         CUSTOM_ACTION_BAR_ENABLE = configFile.getBoolean("CustomActionBar.Enable", false);
-        CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE = configFile.getBoolean("CustomActionBar.ItemsAdder.Enable", false);
-        CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_PATH = configFile.getString("CustomActionBar.ItemsAdder.AutoDeploy.Path", "contents/thirstbar");
-        CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_SOURCE = configFile.getString("CustomActionBar.ItemsAdder.AutoDeploy.SourceFolder", "ItemsAdder");
-        CUSTOM_ACTION_BAR_SPACE = configFile.getInt("CustomActionBar.Space", 0);
-        CUSTOM_ACTION_BAR_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
-        if(CUSTOM_ACTION_BAR_ENABLE){
-            String thirst_normal = formatItemsAdder(this.configFile, "Normal_Thirst", "\\ueea1");
-            String thirstHalfLeft_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfLeft", "\\ueea2");
-            String thirstHalfRight_normal = formatItemsAdder(this.configFile, "Normal_ThirstHalfRight", "\\ueeb1");
-            String thirstEmpty_normal = formatItemsAdder(this.configFile, "Normal_ThirstEmpty", "\\ueea3");
+        CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE = configFile.getString("CustomActionBar.Mode", "ITEMSADDER").equalsIgnoreCase("ITEMSADDER");
+        CUSTOM_ACTION_BAR_ITEMSADDER_AUTO_DEPLOY_PATH = configFile
+                .getString("CustomActionBar.AutoDeploy", "contents/thirstbar");
+        CUSTOM_ACTION_BAR_ITEMSADDER_Y_POSITION = configFile.getInt("CustomActionBar.Y_Position", -7);
+        CUSTOM_ACTION_BAR_ITEMSADDER_SCALE_RATIO = configFile.getInt("CustomActionBar.Scale_Ratio", 8);
+        CUSTOM_ACTION_BAR_ITEMSADDER_X_POSITION = configFile.getInt("CustomActionBar.X_Position", 0);
+        CUSTOM_ACTION_BAR_ITEMSADDER_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
+        if (CUSTOM_ACTION_BAR_ENABLE) {
+            String thirst_normal = formatItemsAdder("normal_thirst", "\\ueea1");
+            String thirstHalfLeft_normal = formatItemsAdder("normal_thirst_half_left", "\\ueea2");
+            String thirstHalfRight_normal = formatItemsAdder("normal_thirst_half_right", "\\ueeb1");
+            String thirstEmpty_normal = formatItemsAdder("normal_thirst_empty", "\\ueea3");
 
-            String thirst_debuff = formatItemsAdder(this.configFile, "Debuff_Thirst", "\\ueea4");
-            String thirstHalfLeft_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstHalfLeft", "\\ueea5");
-            String thirstHalfRight_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstHalfRight", "\\ueeb2");
-            String thirstEmpty_debuff = formatItemsAdder(this.configFile, "Debuff_ThirstEmpty", "\\ueea6");
+            String thirst_debuff = formatItemsAdder("debuff_thirst", "\\ueea4");
+            String thirstHalfLeft_debuff = formatItemsAdder("debuff_thirst_half_left", "\\ueea5");
+            String thirstHalfRight_debuff = formatItemsAdder("debuff_thirst_half_right", "\\ueeb2");
+            String thirstEmpty_debuff = formatItemsAdder("debuff_thirst_empty", "\\ueea6");
 
-            String thirst_raw = formatItemsAdder(this.configFile, "RawWater_Thirst", "\\ueea7");
-            String thirstHalfLeft_raw = formatItemsAdder(this.configFile, "RawWater_ThirstHalfLeft", "\\ueea8");
-            String thirstHalfRight_raw = formatItemsAdder(this.configFile, "RawWater_ThirstHalfRight", "\\ueeb3");
-            String thirstEmpty_raw = formatItemsAdder(this.configFile, "RawWater_ThirstEmpty", "\\ueea9");
+            String thirst_raw = formatItemsAdder("raw_water_thirst", "\\ueea7");
+            String thirstHalfLeft_raw = formatItemsAdder("raw_water_thirst_half_left", "\\ueea8");
+            String thirstHalfRight_raw = formatItemsAdder("raw_water_thirst_half_right", "\\ueeb3");
+            String thirstEmpty_raw = formatItemsAdder("raw_water_thirst_empty", "\\ueea9");
 
-            setResourceThirst(TypeResourceThirst.NORMAL, thirst_normal, thirstHalfLeft_normal, thirstHalfRight_normal, thirstEmpty_normal);
-            setResourceThirst(TypeResourceThirst.DEBUFF, thirst_debuff, thirstHalfLeft_debuff, thirstHalfRight_debuff, thirstEmpty_debuff);
-            setResourceThirst(TypeResourceThirst.RAW_WATTER, thirst_raw, thirstHalfLeft_raw, thirstHalfRight_raw, thirstEmpty_raw);
+            setResourceThirst(TypeResourceThirst.NORMAL, thirst_normal, thirstHalfLeft_normal, thirstHalfRight_normal,
+                    thirstEmpty_normal);
+            setResourceThirst(TypeResourceThirst.DEBUFF, thirst_debuff, thirstHalfLeft_debuff, thirstHalfRight_debuff,
+                    thirstEmpty_debuff);
+            setResourceThirst(TypeResourceThirst.RAW_WATTER, thirst_raw, thirstHalfLeft_raw, thirstHalfRight_raw,
+                    thirstEmpty_raw);
         } else {
             resourcePackThirstMap.clear();
         }
@@ -107,10 +113,12 @@ public class ConfigData {
         FLAG_REDUCE = new HashMap<>();
         configFile.getStringList("FlagReduce").forEach(s -> {
             String[] arr = s.split(":");
-            if(arr.length <= 1) return;
+            if (arr.length <= 1)
+                return;
             String flag = arr[0].trim();
             double reduce = MethodDefault.formatNumber(arr[1].trim(), 0);
-            if(reduce <= 0) return;
+            if (reduce <= 0)
+                return;
             FLAG_REDUCE.put(flag, reduce);
         });
         REPLACE_HUNGER = configFile.getBoolean("ReplaceHunger", false);
@@ -129,33 +137,42 @@ public class ConfigData {
         BLUE_COLOR_RAW_POTION = configFile.getInt("RawPotion.Color.Blue", 0);
     }
 
-    public static String BOSS_BAR_TEXT(double value, double max, double reduce, double time){
+    public static String BOSS_BAR_TEXT(double value, double max, double reduce, double time) {
         return replace(BOSS_BAR_TITLE, value, max, reduce, time);
     }
 
-    public static String BOSS_BAR_DISABLE_TEXT(double value, double max, double reduce, double time){
+    public static String BOSS_BAR_DISABLE_TEXT(double value, double max, double reduce, double time) {
         return replace(BOSS_BAR_DISABLE_TITLE, value, max, reduce, time);
     }
 
-    public static String ACTION_BAR_TEXT(double value, double max, double reduce, double time){
-        String resourceThirstText = getThirstCustomText(TypeResourceThirst.NORMAL, value, max, reduce, time);
-        if(resourceThirstText != null) return resourceThirstText;
+    public static String ACTION_BAR_TEXT(double value, double max, double reduce, double time) {
+        if (ConfigData.CUSTOM_ACTION_BAR_ENABLE) {
+            String resourceThirstText = getThirstCustomText(TypeResourceThirst.NORMAL, value, max, reduce, time);
+            if (resourceThirstText != null)
+                return resourceThirstText;
+        }
         return replace(ACTION_BAR_TITLE, value, max, reduce, time);
     }
 
-    public static String ACTION_BAR_DISABLE_TEXT(double value, double max, double reduce, double time){
-        String resourceThirstText = getThirstCustomText(TypeResourceThirst.NORMAL, value, max, reduce, time);
-        if(resourceThirstText != null) return resourceThirstText;
+    public static String ACTION_BAR_DISABLE_TEXT(double value, double max, double reduce, double time) {
+        if (ConfigData.CUSTOM_ACTION_BAR_ENABLE) {
+            String resourceThirstText = getThirstCustomText(TypeResourceThirst.NORMAL, value, max, reduce, time);
+            if (resourceThirstText != null)
+                return resourceThirstText;
+        }
         return replace(ACTION_BAR_DISABLE_TITLE, value, max, reduce, time);
     }
 
     private static void setResourceThirst(@Nonnull TypeResourceThirst typeResourceThirst, @Nonnull String thirstChar,
-                                          @Nonnull String thirstHalfLeftChar, @Nonnull String thirstHalfRightChar, @Nonnull String thirstEmptyChar){
+            @Nonnull String thirstHalfLeftChar, @Nonnull String thirstHalfRightChar, @Nonnull String thirstEmptyChar) {
         int numberOfItems = 20;
         List<ThirstCustomText> thirstCustomTextList = new ArrayList<>();
-        StringBuilder shiftRightString = new StringBuilder();
-        for (int i = 0; i < ConfigData.CUSTOM_ACTION_BAR_SPACE; i++) shiftRightString.append("\\uf82a");
-        String shiftRightChar = convertUnicodeEscape(shiftRightString.toString());
+        String shiftRightChar = "";
+        if (ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_X_POSITION != 0) {
+            if (ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE) {
+                shiftRightChar = "%img_offset_" + ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_X_POSITION + "%";
+            }
+        }
         String waterChar = convertUnicodeEscape(thirstChar);
         String waterHalfLeftChar = convertUnicodeEscape(thirstHalfLeftChar);
         String waterHalfRightChar = convertUnicodeEscape(thirstHalfRightChar);
@@ -178,66 +195,79 @@ public class ConfigData {
             String part3 = part3Builder.toString();
 
             ThirstCustomText thirstCustomText;
-            if(CUSTOM_ACTION_BAR_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")) {
+            if (CUSTOM_ACTION_BAR_ITEMSADDER_ORIENTATION.equalsIgnoreCase("LEFT_TO_RIGHT")) {
                 String part2 = (i % 2 == 1) ? waterHalfRightChar : "";
-                thirstCustomText = new ThirstCustomText(i * 5, true, MethodDefault.formatColor("&r"+shiftRightChar+ part3 + part2 + part1));
+                thirstCustomText = new ThirstCustomText(i * 5, true,
+                        MethodDefault.formatColor("&r" + shiftRightChar + part3 + part2 + part1));
             } else {
                 String part2 = (i % 2 == 1) ? waterHalfLeftChar : "";
-                thirstCustomText = new ThirstCustomText(i * 5, true,  MethodDefault.formatColor("&r"+shiftRightChar + part1 + part2 + part3));
+                thirstCustomText = new ThirstCustomText(i * 5, true,
+                        MethodDefault.formatColor("&r" + shiftRightChar + part1 + part2 + part3));
             }
             thirstCustomTextList.add(thirstCustomText);
         }
 
-        ConfigData.resourcePackThirstMap.put(typeResourceThirst, thirstCustomTextList.stream().sorted(Comparator.comparing(ThirstCustomText::getValue)).collect(Collectors.toList()));
+        ConfigData.resourcePackThirstMap.put(typeResourceThirst, thirstCustomTextList.stream()
+                .sorted(Comparator.comparing(ThirstCustomText::getValue)).collect(Collectors.toList()));
     }
 
     @Nullable
     public static String getThirstCustomText(@Nonnull Player player, @Nonnull PlayerData playerData) {
-        if (!ConfigData.CUSTOM_ACTION_BAR_ENABLE) return null;
+        if (!ConfigData.CUSTOM_ACTION_BAR_ENABLE)
+            return null;
         PlaceholderAPI placeholderAPI = ThirstBar.getInstance().getPlaceholderAPI();
-        if(placeholderAPI == null) return null;
+        if (placeholderAPI == null)
+            return null;
         List<Stage> stageList = playerData.getStageCurrentList();
         String text;
-        if(stageList.isEmpty()) {
+        if (stageList.isEmpty()) {
             text = ConfigData.getThirstCustomText(TypeResourceThirst.NORMAL,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
-            return placeholderAPI.parse(player, text);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player),
+                    playerData.getThirstTime() / 20.0);
+            return text;
         }
         Stage stage = stageList.get(stageList.size() - 1);
         if (stage instanceof StageConfig) {
             text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.RAW_WATTER,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player),
+                    playerData.getThirstTime() / 20.0);
         } else {
             text = ConfigData.getThirstCustomText(ConfigData.TypeResourceThirst.DEBUFF,
-                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player), playerData.getThirstTime() / 20.0);
+                    playerData.getThirst(), playerData.getThirstMax(), playerData.getReduceTotal(player),
+                    playerData.getThirstTime() / 20.0);
         }
-        return placeholderAPI.parse(player, text);
+        return text;
     }
 
     @Nullable
-    public static String getThirstCustomText(@Nonnull TypeResourceThirst typeResourceThirst, final double value, double valueMax, double reduce, double time){
+    public static String getThirstCustomText(@Nonnull TypeResourceThirst typeResourceThirst, final double value,
+            double valueMax, double reduce, double time) {
         List<ThirstCustomText> thirstCustomTextList = resourcePackThirstMap.getOrDefault(typeResourceThirst, null);
-        if(thirstCustomTextList == null) return null;
+        if (thirstCustomTextList == null)
+            return null;
         ThirstCustomText thirstCustomText = thirstCustomTextList.stream()
                 .filter(v -> {
                     double finalValue = value;
-                    if(v.isPercent()){
-                        finalValue = (finalValue*100)/valueMax;
+                    if (v.isPercent()) {
+                        finalValue = (finalValue * 100) / valueMax;
                     }
                     boolean a = v.getValue() <= finalValue;
                     int index = thirstCustomTextList.indexOf(v);
                     boolean b = index != -1 && index + 1 < thirstCustomTextList.size();
-                    if(!b) return a;
-                    boolean c = thirstCustomTextList.get(index+1).getValue() > finalValue;
+                    if (!b)
+                        return a;
+                    boolean c = thirstCustomTextList.get(index + 1).getValue() > finalValue;
                     return a & c;
                 }).findAny().orElse(null);
         return (thirstCustomText != null) ? replace(thirstCustomText.getText(), value, valueMax, reduce, time) : "None";
     }
 
-    public static String replace(@Nonnull String text, double value, double max, double reduce, double time){
+    public static String replace(@Nonnull String text, double value, double max, double reduce, double time) {
         String timeChange;
-        if(time == (long) time) timeChange = String.valueOf((long) time);
-        else timeChange = String.format("%.2f", time).replaceAll("0*$", "").replaceAll("\\.$", "");
+        if (time == (long) time)
+            timeChange = String.valueOf((long) time);
+        else
+            timeChange = String.format("%.2f", time).replaceAll("0*$", "").replaceAll("\\.$", "");
         return text.replace("<value>", ThirstBarMethod.changeDoubleToInt(Math.max(value, 0)))
                 .replace("<max>", ThirstBarMethod.changeDoubleToInt(max))
                 .replace("<reduce>", ThirstBarMethod.changeDoubleToInt(reduce))
@@ -263,10 +293,11 @@ public class ConfigData {
         return builder.toString();
     }
 
-    private static String formatItemsAdder(@Nonnull FileConfiguration file, @Nonnull String name, @Nonnull String whenNull) {
-        if(!ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE) return whenNull;
-        String text = file.getString("CustomActionBar.ItemsAdder."+name, null);
-        if(text != null) return "%img_"+text+"%";
+    private static String formatItemsAdder(@Nonnull String text, @Nonnull String whenNull) {
+        if (!ConfigData.CUSTOM_ACTION_BAR_ITEMSADDER_ENABLE)
+            return whenNull;
+        if (!text.isEmpty())
+            return "%img_" + text + "%";
         return whenNull;
     }
 
@@ -277,7 +308,7 @@ public class ConfigData {
         private boolean percent;
         private final String text;
 
-        public ThirstCustomText(@Nonnull String text){
+        public ThirstCustomText(@Nonnull String text) {
             String regex = "\\[(\\d+)%?]";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(text);
@@ -286,7 +317,8 @@ public class ConfigData {
                 String value = matcher.group(1);
                 double doubleValue = MethodDefault.formatNumber(value, 0);
 
-                if (matcher.group(0).contains("%")) this.percent = true;
+                if (matcher.group(0).contains("%"))
+                    this.percent = true;
                 this.value = doubleValue;
             }
             this.text = MethodDefault.formatColor(text.replaceAll(regex, ""));

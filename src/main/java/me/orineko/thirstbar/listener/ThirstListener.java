@@ -477,6 +477,7 @@ public class ThirstListener implements Listener {
         playerData.updateAll(player);
     }
 
+
     /*public void onFurnace(FurnaceSmeltEvent e){
         Bukkit.add
         ItemStack source = e.getSource();
