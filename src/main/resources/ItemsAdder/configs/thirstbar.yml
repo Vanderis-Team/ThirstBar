@@ -3,61 +3,61 @@ info:
 font_images:
   normal_thirst:
     show_in_gui: false
-    path: font/water.png
+    path: font/water_full.png
     y_position: -7
     scale_ratio: 8
   normal_thirst_half_left:
     show_in_gui: false
-    path: font/water2.png
+    path: font/water_half_left.png
     y_position: -7
     scale_ratio: 8
   normal_thirst_half_right:
     show_in_gui: false
-    path: font/water2_r.png
+    path: font/water_half_right.png
     y_position: -7
     scale_ratio: 8
   normal_thirst_empty:
     show_in_gui: false
-    path: font/water3.png
+    path: font/water_empty.png
     y_position: -7
     scale_ratio: 8
   debuff_thirst:
     show_in_gui: false
-    path: font/water_debuff.png
+    path: font/water_debuff_full.png
     y_position: -7
     scale_ratio: 8
   debuff_thirst_half_left:
     show_in_gui: false
-    path: font/water_debuff2.png
+    path: font/water_debuff_half_left.png
     y_position: -7
     scale_ratio: 8
   debuff_thirst_half_right:
     show_in_gui: false
-    path: font/water_debuff2_r.png
+    path: font/water_debuff_half_right.png
     y_position: -7
     scale_ratio: 8
   debuff_thirst_empty:
     show_in_gui: false
-    path: font/water_debuff3.png
+    path: font/water_debuff_empty.png
     y_position: -7
     scale_ratio: 8
   raw_water_thirst:
     show_in_gui: false
-    path: font/raw_water.png
+    path: font/raw_water_full.png
     y_position: -7
     scale_ratio: 8
   raw_water_thirst_half_left:
     show_in_gui: false
-    path: font/raw_water2.png
+    path: font/raw_water_half_left.png
     y_position: -7
     scale_ratio: 8
   raw_water_thirst_half_right:
     show_in_gui: false
-    path: font/raw_water2_r.png
+    path: font/raw_water_half_right.png
     y_position: -7
     scale_ratio: 8
   raw_water_thirst_empty:
     show_in_gui: false
-    path: font/raw_water3.png
+    path: font/raw_water_empty.png
     y_position: -7
     scale_ratio: 8
