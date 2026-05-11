@@ -12,7 +12,7 @@
 # -67  = reduces thirst by 67 points
 # -99% = reduces 99% of the maximum thirst
 #########################
-  
+
 # Configure vanilla Minecraft items that affect thirst here.
 # Format: "MATERIAL_NAME:restore_value"
 vanilla-items:
@@ -26,28 +26,100 @@ vanilla-items:
 # Configure custom items that affect thirst here.
 # If you do not want to use this feature, set custom-items to [].
 custom-items:
-  'super_juicy_watermelon':
-    material: MELON_SLICE
+  'canteen':
+    material: WOODEN_SWORD
+    hide-attribute: true
     # Use custom-model-data to apply a custom texture to this item.
     # Remove this line if you do not need custom model data.
-    custom-model-data: 1020
-    restore: 50
+    custom-model-data: 1023
+    events:
+      right_click:
+        type: on_water
+        replace: dirty_water_canteen
+      crafting:
+        type: crafting
+        variable:
+          A: LEATHER
+          B: STRING
+          C: CHARCOAL
+          X: NONE
+        recipe:
+          - "X | A | B"
+          - "A | C | A"
+          - "X | A | X"
     # Hex color codes in the format &#RRGGBB are supported
     # in both the display name and lore.
-    display_name: "&6Super Dupper Juicy &#FA3C72Watermelon"
+    display_name: "&6Canteen"
     lore:
-      - '&7A ridiculously juicy watermelon.'
-      - '&7One bite and your thirst melts away.'
-      - ''
-      - '&bRestores a large amount of thirst.'
-  'mojito':
-    # Use itemsadder-[namespace]:[id] to reference an ItemsAdder item.
-    material: itemsadder-cocktail:mojito
-    restore: 25%
-    display_name: "<#C8F1CF>Mojito Cocktail</#51F16C>"
-  'mmo-items_example':
-    # Use mmoitems-id: [category]:[id] to reference an MMOItems item.
-    # The plugin will automatically load the display name, lore,
-    # and other supported item properties from MMOItems.
-    mmoitems-id: 'consumable:coke'
-    restore: 30
+      - '&7An empty canteen.'
+  'dirty_water_canteen':
+    material: WOODEN_SWORD
+    drinking-model:
+      material: POTION
+      custom-model-data: 1023
+    hide-attribute: true
+    show-durability: true # Show durability bar when the item have been used/consume
+    # Use custom-model-data to apply a custom texture to this item.
+    # Remove this line if you do not need custom model data.
+    custom-model-data: 1023
+    events:
+      right_click:
+        type: on_water
+        replace: dirty_water_canteen
+      consume:
+        type: on_player
+        max-usage: 5
+        restore: 5 #restore thirst per consume
+        water-type: RAW_WATER
+        replace: canteen
+      cook:
+        type: cooking
+        exp: 10.0
+        cooking-time: 200
+        replace: clean_water_canteen
+    usage-bar:
+      font: "customcrops:default" # default is minecraft:default
+      left: '뀂'   # Left cap of the water bar
+      fill: '뀁뀃' # Segment representing fill water level
+      empty: '뀁뀄' # Segment representing empty water level
+      right: '뀁뀅' # Right cap of the water bar
+    # Hex color codes in the format &#RRGGBB are supported
+    # in both the display name and lore.
+    display_name: "&6Dirty Water Canteen\n&r<usage-bar>"
+    lore:
+      - "&r<usage-bar>" # Display the usage bar in the lore
+      - "&fWhen consumed, it will cause illness."
+      - "&e&oPlease heat it before drinking."
+
+  'clean_water_canteen':
+    material: WOODEN_SWORD
+    drinking-model:
+      material: POTION
+      custom-model-data: 1023
+    hide-attribute: true
+    show-durability: true # Show durability bar when the item have been used/consume
+    # Use custom-model-data to apply a custom texture to this item.
+    # Remove this line if you do not need custom model data.
+    custom-model-data: 1023
+    events:
+      right_click:
+        type: on_water
+        replace: dirty_water_canteen
+      consume:
+        type: on_player
+        max-usage: 5
+        restore: 30 #restore thirst per consume
+        water-type: CLEAN_WATER
+        replace: canteen
+    # Hex color codes in the format &#RRGGBB are supported
+    # in both the display name and lore.
+    display_name: "&6Clean Water Canteen\n&r<usage-bar>"
+    usage-bar:
+      font: "customcrops:default" # get from resource pack custom font
+      left: '뀂'   # Left cap of the water bar
+      fill: '뀁뀃' # Segment representing fill water level
+      empty: '뀁뀄' # Segment representing empty water level
+      right: '뀁뀅' # Right cap of the water bar
+    lore:
+      - "&r<usage-bar>" # Display the usage bar in the lore
+      - "&fClean water."

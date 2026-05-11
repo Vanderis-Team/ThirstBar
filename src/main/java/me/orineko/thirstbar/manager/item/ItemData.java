@@ -20,6 +20,31 @@ public class ItemData {
     private boolean vanilla;
     private String mmoitemsId;
     private String itemsadderId;
+    private boolean hideAttribute;
+    private boolean showDurability;
+    private String rightClickType;
+    private String rightClickReplace;
+    private String consumeType;
+    private int consumeMaxUsage;
+    private double consumeRestore;
+    private String consumeWaterType;
+    private String consumeReplace;
+    private String drinkingModelMaterial;
+    private int drinkingModelData;
+    private String cookType;
+    private float cookExp;
+    private int cookTime;
+    private String cookReplace;
+    private String craftingType;
+    private java.util.Map<Character, String> craftingVariable;
+    private java.util.List<String> craftingRecipe;
+    private String usageBarLeft;
+    private String usageBarFill;
+    private String usageBarEmpty;
+    private String usageBarRight;
+    private String usageBarFont;
+    private String displayNameTemplate;
+    private java.util.List<String> loreTemplate;
     private final FileManager file;
 
     public ItemData(@Nonnull String name){
@@ -30,6 +55,31 @@ public class ItemData {
         this.vanilla = false;
         this.mmoitemsId = null;
         this.itemsadderId = null;
+        this.hideAttribute = false;
+        this.showDurability = false;
+        this.rightClickType = null;
+        this.rightClickReplace = null;
+        this.consumeType = null;
+        this.consumeMaxUsage = 0;
+        this.consumeRestore = 0;
+        this.consumeWaterType = null;
+        this.consumeReplace = null;
+        this.drinkingModelMaterial = null;
+        this.drinkingModelData = 0;
+        this.cookType = null;
+        this.cookExp = 0;
+        this.cookTime = 0;
+        this.cookReplace = null;
+        this.craftingType = null;
+        this.craftingVariable = new java.util.HashMap<>();
+        this.craftingRecipe = new java.util.ArrayList<>();
+        this.usageBarLeft = "";
+        this.usageBarFill = "";
+        this.usageBarEmpty = "";
+        this.usageBarRight = "";
+        this.usageBarFont = "minecraft:default";
+        this.displayNameTemplate = null;
+        this.loreTemplate = new java.util.ArrayList<>();
         this.file = ThirstBar.getInstance().getItemsFile();
     }
 
