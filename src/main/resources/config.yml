@@ -22,8 +22,8 @@ CustomActionBar:
   Enable: false
   # Mode can be ITEMSADDER or VANILLA (Vanilla requires your own resource pack)
   Mode: ITEMSADDER
-  # Display direction: LEFT_TO_RIGHT or RIGHT_TO_LEFT
-  Orientation: LEFT_TO_RIGHT
+  # Display direction: 1 = LEFT_TO_RIGHT, 2 = RIGHT_TO_LEFT
+  Orientation: 1
   # The horizontal position of the action bar icons (high/low). Default: 3
   X_Position: 96
   # The vertical position of the action bar icons (high/low). Default: -7

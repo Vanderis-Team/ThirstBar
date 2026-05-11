@@ -14,6 +14,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -31,7 +32,7 @@ configurations.all {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
-    implementation("com.github.huynhphap100:PluginSpigotTools:1.3.6-4")
+    implementation("me.orineko:Tools:1.3.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
     testImplementation("me.clip:placeholderapi:2.11.6")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
@@ -61,8 +62,15 @@ tasks.processResources {
 
 tasks.shadowJar {
     archiveClassifier.set("")
-    minimize()
     relocate("me.orineko.pluginspigottools", "me.orineko.thirstbar.tools")
+}
+
+tasks.jar {
+    enabled = false
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks.test {

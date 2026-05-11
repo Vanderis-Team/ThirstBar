@@ -73,7 +73,7 @@ public class ConfigData {
         CUSTOM_ACTION_BAR_ITEMSADDER_Y_POSITION = configFile.getInt("CustomActionBar.Y_Position", -7);
         CUSTOM_ACTION_BAR_ITEMSADDER_SCALE_RATIO = configFile.getInt("CustomActionBar.Scale_Ratio", 8);
         CUSTOM_ACTION_BAR_ITEMSADDER_X_POSITION = configFile.getInt("CustomActionBar.X_Position", 0);
-        CUSTOM_ACTION_BAR_ITEMSADDER_ORIENTATION = configFile.getString("CustomActionBar.Orientation", "");
+        CUSTOM_ACTION_BAR_ITEMSADDER_ORIENTATION = formatOrientation(configFile.getString("CustomActionBar.Orientation", "1"));
         if (CUSTOM_ACTION_BAR_ENABLE) {
             String thirst_normal = formatItemsAdder("normal_thirst", "\\ueea1");
             String thirstHalfLeft_normal = formatItemsAdder("normal_thirst_half_left", "\\ueea2");
@@ -299,6 +299,15 @@ public class ConfigData {
         if (!text.isEmpty())
             return "%img_" + text + "%";
         return whenNull;
+    }
+
+    private static String formatOrientation(@Nullable String orientation) {
+        if (orientation == null)
+            return "LEFT_TO_RIGHT";
+        String value = orientation.trim();
+        if (value.equals("2") || value.equalsIgnoreCase("RIGHT_TO_LEFT"))
+            return "RIGHT_TO_LEFT";
+        return "LEFT_TO_RIGHT";
     }
 
     @AllArgsConstructor
