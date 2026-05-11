@@ -47,6 +47,10 @@ public class ThirstBarMethod {
         return true;
     }
 
+    private static final java.util.Set<String> HIDDEN_VISUAL_EFFECT_NAMES = new java.util.HashSet<>(
+            java.util.Arrays.asList("SLOW", "SLOWNESS", "CONFUSION", "NAUSEA", "WEAKNESS")
+    );
+
     public static PotionEffect getPotionEffect(@Nonnull String text) {
         String[] arr = text.split(":");
         if (arr.length == 0) return null;
@@ -54,7 +58,18 @@ public class ThirstBarMethod {
         int power = (arr.length > 1) ? (int) MethodDefault.formatNumber(arr[1].trim(), 1) : 1;
         XPotion.Effect effect = XPotion.parseEffect(effString);
         if (effect == null) return null;
-        return new PotionEffect(effect.getEffect().getType(), Integer.MAX_VALUE, power - 1);
+
+        // Hide particles and HUD icon for effects that would visually clutter the screen
+        boolean hideVisuals = HIDDEN_VISUAL_EFFECT_NAMES.contains(effString.toUpperCase())
+                || HIDDEN_VISUAL_EFFECT_NAMES.contains(effect.getEffect().getType().getName().toUpperCase());
+        return new PotionEffect(
+                effect.getEffect().getType(),
+                Integer.MAX_VALUE,
+                power - 1,
+                false,          // ambient
+                !hideVisuals,   // particles
+                !hideVisuals    // icon
+        );
     }
 
     public static String changeDoubleToInt(double value) {
@@ -150,9 +165,9 @@ public class ThirstBarMethod {
             } else {
                 if (titleMainRemain != null || titleSubRemain != null) {
                     player.sendTitle(
-                        titleMainRemain != null ? titleMainRemain : "", 
-                        titleSubRemain != null ? titleSubRemain : "", 
-                        10, 20, 10);
+                            titleMainRemain != null ? titleMainRemain : "",
+                            titleSubRemain != null ? titleSubRemain : "",
+                            10, 20, 10);
                 }
             }
         });

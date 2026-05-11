@@ -17,6 +17,7 @@ import me.orineko.thirstbar.api.sql.SqlManager;
 import me.orineko.thirstbar.api.worldguardapi.WorldGuardApi;
 import me.orineko.thirstbar.manager.file.ConfigData;
 import me.orineko.thirstbar.manager.file.MessageData;
+import me.orineko.thirstbar.manager.item.ItemData;
 import me.orineko.thirstbar.manager.item.ItemDataList;
 import me.orineko.thirstbar.manager.player.PlayerData;
 import me.orineko.thirstbar.manager.player.PlayerDataList;
@@ -27,6 +28,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,6 +38,7 @@ import org.bukkit.potion.PotionType;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -65,7 +69,6 @@ public class ThirstBar extends JavaPlugin {
         registerFlag();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -123,18 +126,17 @@ public class ThirstBar extends JavaPlugin {
         }
         bottle.setItemMeta(meta);
         ItemStack potionRawItem = MethodDefault.getItemAllVersion("POTION");
-        FurnaceRecipe furnaceRecipe;
-        if (getVersionBukkit() < 16) {
-            // noinspection deprecation
-            furnaceRecipe = new FurnaceRecipe(bottle, potionRawItem.getType());
-        } else {
-            NamespacedKey key = new NamespacedKey(this, "raw_water_furnace");
-            try {
-                Bukkit.removeRecipe(key);
-            } catch (NoSuchMethodError | Exception ignore) {}
-            furnaceRecipe = new FurnaceRecipe(key, bottle,
-                    potionRawItem.getType(), ConfigData.CUSTOM_FURNACE_EXP, ConfigData.CUSTOM_FURNACE_COOKING_TIME);
-        }
+        NamespacedKey key = new NamespacedKey(this, "raw_water_furnace");
+        try {
+            Bukkit.removeRecipe(key);
+        } catch (NoSuchMethodError | Exception ignore) {}
+        FurnaceRecipe furnaceRecipe = new FurnaceRecipe(
+                key,
+                bottle,
+                potionRawItem.getType(),
+                ConfigData.CUSTOM_FURNACE_EXP,
+                ConfigData.CUSTOM_FURNACE_COOKING_TIME
+        );
         try {
             Bukkit.addRecipe(furnaceRecipe);
         } catch (Exception ignored) {}
@@ -174,6 +176,8 @@ public class ThirstBar extends JavaPlugin {
         
         itemDataList = new ItemDataList();
         itemDataList.loadData();
+        registerCustomCookRecipes();
+        registerCustomCraftRecipes();
         stageList = new StageList();
 
         // Clean up old player data BEFORE creating new list to prevent leaks
@@ -256,5 +260,102 @@ public class ThirstBar extends JavaPlugin {
 
     public static ThirstBar getInstance() {
         return plugin;
+    }
+
+    private void registerCustomCookRecipes() {
+        List<NamespacedKey> toRemove = new ArrayList<>();
+        Bukkit.recipeIterator().forEachRemaining(recipe -> {
+            if (recipe instanceof FurnaceRecipe) {
+                NamespacedKey key = ((FurnaceRecipe) recipe).getKey();
+                if (key != null && key.getNamespace().equalsIgnoreCase(getName().toLowerCase())
+                        && key.getKey().startsWith("custom_cook_")) {
+                    toRemove.add(key);
+                }
+            }
+        });
+        toRemove.forEach(Bukkit::removeRecipe);
+
+        for (ItemData itemData : itemDataList.getDataList()) {
+            if (itemData.getCookType() == null || !itemData.getCookType().equalsIgnoreCase("cooking")) continue;
+            if (itemData.getCookReplace() == null || itemData.getCookReplace().trim().isEmpty()) continue;
+            if (itemData.getItemStack() == null) continue;
+            ItemData target = itemDataList.getData(itemData.getCookReplace());
+            if (target == null || target.getItemStack() == null) continue;
+
+            NamespacedKey key = new NamespacedKey(this, "custom_cook_" + itemData.getName().toLowerCase());
+            FurnaceRecipe recipe = new FurnaceRecipe(
+                    key,
+                    target.getItemStack().clone(),
+                    new RecipeChoice.MaterialChoice(itemData.getItemStack().getType()),
+                    itemData.getCookExp(),
+                    Math.max(1, itemData.getCookTime())
+            );
+            try {
+                Bukkit.addRecipe(recipe);
+            } catch (Exception ignore) {}
+        }
+    }
+
+    private void registerCustomCraftRecipes() {
+        List<NamespacedKey> toRemove = new ArrayList<>();
+        Bukkit.recipeIterator().forEachRemaining(recipe -> {
+            if (recipe instanceof ShapedRecipe) {
+                NamespacedKey key = ((ShapedRecipe) recipe).getKey();
+                if (key != null && key.getNamespace().equalsIgnoreCase(getName().toLowerCase())
+                        && key.getKey().startsWith("custom_craft_")) {
+                    toRemove.add(key);
+                }
+            }
+        });
+        toRemove.forEach(Bukkit::removeRecipe);
+
+        for (ItemData itemData : itemDataList.getDataList()) {
+            if (itemData.getCraftingType() == null || !itemData.getCraftingType().equalsIgnoreCase("crafting")) continue;
+            if (itemData.getItemStack() == null) continue;
+            List<String> recipeRows = itemData.getCraftingRecipe();
+            if (recipeRows == null || recipeRows.size() != 3) continue;
+
+            String[] shape = new String[3];
+            boolean validShape = true;
+            for (int i = 0; i < 3; i++) {
+                String[] parts = recipeRows.get(i).split("\\|");
+                if (parts.length != 3) {
+                    validShape = false;
+                    break;
+                }
+                StringBuilder row = new StringBuilder();
+                for (String part : parts) {
+                    String token = part.trim();
+                    if (token.length() != 1) {
+                        validShape = false;
+                        break;
+                    }
+                    row.append(token.charAt(0));
+                }
+                if (!validShape) break;
+                shape[i] = row.toString();
+            }
+            if (!validShape) continue;
+
+            NamespacedKey key = new NamespacedKey(this, "custom_craft_" + itemData.getName().toLowerCase());
+            ShapedRecipe shaped = new ShapedRecipe(key, itemData.getItemStack().clone());
+            shaped.shape(shape[0], shape[1], shape[2]);
+
+            Map<Character, String> vars = itemData.getCraftingVariable();
+            if (vars == null) vars = java.util.Collections.emptyMap();
+            for (Map.Entry<Character, String> entry : vars.entrySet()) {
+                Character ch = entry.getKey();
+                if (ch == null) continue;
+                String materialName = entry.getValue();
+                if (materialName == null || materialName.trim().isEmpty() || materialName.equalsIgnoreCase("NONE")) continue;
+                Material mat = Material.matchMaterial(materialName.trim().toUpperCase());
+                if (mat == null || mat == Material.AIR) continue;
+                shaped.setIngredient(ch, mat);
+            }
+
+            try {
+                Bukkit.addRecipe(shaped);
+            } catch (Exception ignore) {}
+        }
     }
 }

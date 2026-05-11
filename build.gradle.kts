@@ -38,6 +38,7 @@ dependencies {
     testImplementation("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
+    compileOnly("net.dmulloy2:ProtocolLib:5.4.0")
 
     testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.108.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
@@ -60,10 +61,23 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    archiveClassifier.set("")
-    minimize()
+    archiveClassifier.set("") // Mengganti JAR asli dengan Fat JAR
+
+    // Relokasi library agar tidak konflik dengan plugin lain
     relocate("me.orineko.pluginspigottools", "me.orineko.thirstbar.tools")
+    relocate("com.cryptomorin.xseries","me.orineko.thirstbar.xseries")
+    relocate("de.tr7zw.changeme.nbtapi", "me.orineko.thirstbar.nbtapi")
+    relocate("net.objecthunter.exp4j", "me.orineko.thirstbar.exp4j")
+
+    // Penting: Menggabungkan file layanan dan menangani file duplikat
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
+}
+
 
 tasks.test {
     useJUnitPlatform()
